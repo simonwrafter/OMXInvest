@@ -17,23 +17,22 @@
 package stock;
 
 import java.util.*;
+import java.io.IOException;
+import java.net.*;
 
 import net.htmlparser.jericho.*;
 
-/**
- * @author simon
- *
- */
 public class StockFetcher {
 	
-	//		LC			,MC		,SC
-	private final String[][] listNames = {
-			{"L:10214","L:10216","L:10218","L:10150"}, // nordic (EUR)
+	//			LC			MC		SC			?
+	private final String[][] arrayLists = {
+			//{"L:10214","L:10216","L:10218","L:10150"}, // nordic (EUR)
 			{"L:10220","L:10222","L:10224"}, // cop (L:3244)
 			{"L:10208","L:10210","L:10212"}, // sto (L:3236)
 			{"L:10196","L:10198","L:10200"}, // hel (L:3228)
-			{"L:10238","L:10240","L:10242"}  // isk (L:3498)
 	};
+	private final String[] arrayMarkets = {/* "Nordic", */ "Copenhagen", "Stockholm", "Helsinki"};
+	private final String[] arrayCapital = {"Large Cap", "Medium Cap", "Small Cap" /* , "??" */};
 	
 	private final String stockListURL = 
 			"http://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx?" +
@@ -41,35 +40,56 @@ public class StockFetcher {
 			"&Action=Search" +
 			"&inst.an=nm,fnm,isin,tp,cr" +
 			"&InstrumentType=S" +
+			"&List=" +
 			"";
 	
-	
-	// FOR TESTING PURPOSES!! WILL BE REMOVED AT SOME POINT!
-	public static void main(String[] args) {
-		new StockFetcher();
-	}
-	
-	
-	private Source omxStockList;
+	//private Source omxStockList;
 	private Map<String, StockData> stockMap;
 	
-	
 	public StockFetcher() {
-		omxStockList = new Source(stockListURL);
+		System.out.println("constructor");
 		stockMap = buildMap();
 	}
 	
-	
-	
-	
-	private HashMap<String, StockData> buildMap() {
-		return null;
-		
+
+	// FOR TESTING PURPOSES!! WILL BE REMOVED AT SOME POINT!
+	public static void main(String[] args) {
+		System.out.println("main");
+		new StockFetcher();
+		System.out.println("done");
 	}
-
-
-
-
-			
+	// FOR TESTING PURPOSES!! WILL BE REMOVED AT SOME POINT!
 	
+	private Map<String, StockData> buildMap() {
+		System.out.println("builder");
+		Map<String, StockData> returnMap = new HashMap<String, StockData>();
+		
+		for (int i=0; i<3; i++) { //market
+			for (int j=0; j<3; j++) { //cap
+				System.out.println(i + " " + j);
+				Source omxStockSource = null;
+				try {
+					omxStockSource = new Source(new URL(stockListURL + arrayLists[i][j]));
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				List<Element> elist = omxStockSource.getAllElements("inst");
+				
+				for (Element e : elist) {
+					returnMap.put( e.getAttributeValue("id"), 
+										new StockData(
+										e.getAttributeValue("id"),
+										e.getAttributeValue("nm"),
+										e.getAttributeValue("fnm"),
+										e.getAttributeValue("isin"),
+										arrayMarkets[i] + arrayCapital[j],
+										e.getAttributeValue("cr")));
+				}
+			}
+		}
+		return returnMap;
+	}
 }

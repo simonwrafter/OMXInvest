@@ -25,45 +25,35 @@ public class StockData {
 	private String market;
 	private String currency;
 	
+	public StockData(String omxId, String shortName, String fullName, String ISIN, String market, String currency) {
+		this.omxId = omxId;
+		this.shortName = shortName;
+		this.fullName = fullName;
+		this.ISIN = ISIN;
+		this.market = market;
+		this.currency = currency;
+	}
 	
-	/**
-	 * @return the omxId
-	 */
 	public String getOmxId() {
 		return omxId;
 	}
 	
-	/**
-	 * @return the shortName
-	 */
 	public String getShortName() {
 		return shortName;
 	}
 	
-	/**
-	 * @return the fullName
-	 */
 	public String getFullName() {
 		return fullName;
 	}
 	
-	/**
-	 * @return the iSIN
-	 */
 	public String getISIN() {
 		return ISIN;
 	}
 	
-	/**
-	 * @return the market
-	 */
 	public String getMarket() {
 		return market;
 	}
 	
-	/**
-	 * @return the currency
-	 */
 	public String getCurrency() {
 		return currency;
 	}
