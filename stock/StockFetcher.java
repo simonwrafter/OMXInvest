@@ -23,7 +23,7 @@ import java.net.*;
 import net.htmlparser.jericho.*;
 
 public class StockFetcher {
-	
+
 	//			LC			MC		SC			?
 	private final String[][] arrayLists = {
 			//{"L:10214","L:10216","L:10218","L:10150"}, // nordic (EUR)
@@ -33,37 +33,45 @@ public class StockFetcher {
 	};
 	private final String[] arrayMarkets = {/* "Nordic", */ "Copenhagen", "Stockholm", "Helsinki"};
 	private final String[] arrayCapital = {"Large Cap", "Medium Cap", "Small Cap" /* , "??" */};
-	
+
 	private final String stockListURL = 
 			"http://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx?" +
-			"SubSystem=Prices" +
-			"&Action=Search" +
-			"&inst.an=nm,fnm,isin,tp,cr" +
-			"&InstrumentType=S" +
-			"&List=" +
-			"";
-	
+					"SubSystem=Prices" +
+					"&Action=Search" +
+					"&inst.an=nm,fnm,isin,tp,cr" +
+					"&InstrumentType=S" +
+					"&List=" +
+					"";
+
 	//private Source omxStockList;
 	private Map<String, StockData> stockMap;
-	
+
 	public StockFetcher() {
 		System.out.println("constructor");
 		stockMap = buildMap();
 	}
-	
+
 
 	// FOR TESTING PURPOSES!! WILL BE REMOVED AT SOME POINT!
 	public static void main(String[] args) {
 		System.out.println("main");
-		new StockFetcher();
+		new StockFetcher().run();
 		System.out.println("done");
 	}
+	private void run() {
+		print();
+	}
 	// FOR TESTING PURPOSES!! WILL BE REMOVED AT SOME POINT!
+	
+	private void print() {
+		for (StockData s : stockMap.values())
+			System.out.println(s);
+	}
 	
 	private Map<String, StockData> buildMap() {
 		System.out.println("builder");
 		Map<String, StockData> returnMap = new HashMap<String, StockData>();
-		
+
 		for (int i=0; i<3; i++) { //market
 			for (int j=0; j<3; j++) { //cap
 				System.out.println(i + " " + j);
@@ -75,18 +83,18 @@ public class StockFetcher {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
+
 				List<Element> elist = omxStockSource.getAllElements("inst");
-				
+
 				for (Element e : elist) {
-					returnMap.put( e.getAttributeValue("id"), 
-										new StockData(
-										e.getAttributeValue("id"),
-										e.getAttributeValue("nm"),
-										e.getAttributeValue("fnm"),
-										e.getAttributeValue("isin"),
-										arrayMarkets[i] + arrayCapital[j],
-										e.getAttributeValue("cr")));
+					returnMap.put(e.getAttributeValue("id"), 
+									new StockData(
+											e.getAttributeValue("id"),
+											e.getAttributeValue("nm"),
+											e.getAttributeValue("fnm"),
+											e.getAttributeValue("isin"),
+											arrayMarkets[i] + " " + arrayCapital[j],
+											e.getAttributeValue("cr")));
 				}
 			}
 		}

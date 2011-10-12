@@ -17,14 +17,14 @@
 package stock;
 
 public class StockData {
-	
+
 	private String omxId;
 	private String shortName;
 	private String fullName;
 	private String ISIN;
 	private String market;
 	private String currency;
-	
+
 	public StockData(String omxId, String shortName, String fullName, String ISIN, String market, String currency) {
 		this.omxId = omxId;
 		this.shortName = shortName;
@@ -33,28 +33,72 @@ public class StockData {
 		this.market = market;
 		this.currency = currency;
 	}
-	
+
 	public String getOmxId() {
 		return omxId;
 	}
-	
+
 	public String getShortName() {
 		return shortName;
 	}
-	
+
 	public String getFullName() {
 		return fullName;
 	}
-	
+
 	public String getISIN() {
 		return ISIN;
 	}
-	
+
 	public String getMarket() {
 		return market;
 	}
-	
+
 	public String getCurrency() {
 		return currency;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s [omxId=%s, shortName=%s, ISIN=%s, market=%s, currency=%s]",
+				fullName, omxId, shortName, ISIN, market, currency);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((ISIN == null) ? 0 : ISIN.hashCode());
+		result = prime * result + ((omxId == null) ? 0 : omxId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		StockData other = (StockData) obj;
+		if (ISIN == null) {
+			if (other.ISIN != null) {
+				return false;
+			}
+		} else if (!ISIN.equals(other.ISIN)) {
+			return false;
+		}
+		if (omxId == null) {
+			if (other.omxId != null) {
+				return false;
+			}
+		} else if (!omxId.equals(other.omxId)) {
+			return false;
+		}
+		return true;
 	}
 }
