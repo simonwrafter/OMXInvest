@@ -18,6 +18,7 @@ package stock;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 import net.htmlparser.jericho.*;
 
@@ -52,17 +53,33 @@ public class StockData {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		int i = 0;
-		for (Element e : histSource.getAllElements("hi")) {
-			histValue[0][i] = Double.valueOf(
-					new StringBuilder(e.getAttributeValue("dt"))
-					.deleteCharAt(4).deleteCharAt(6).toString());
-			histValue[1][i] = Double.valueOf(e.getAttributeValue("lp"));
-			histValue[2][i] = Double.valueOf(e.getAttributeValue("hp"));
-			histValue[3][i] = Double.valueOf(e.getAttributeValue("cp"));
-			histValue[4][i] = Double.valueOf(e.getAttributeValue("tv"));
-			histValue[5][i] = Double.valueOf(e.getAttributeValue("nt"));
+		
+		Iterator<Element> itr = histSource.getAllElements("hi").iterator();
+		int j=0;
+		while(j<500 && itr.hasNext()) {
+			makeHistoryRow(itr.next(), j++);
+		}
+	}
+	
+	private void makeHistoryRow(Element e, int i) {
+		histValue[0][i] = Double.valueOf(
+				new StringBuilder(e.getAttributeValue("dt"))
+				.deleteCharAt(4).deleteCharAt(6).toString());
+		
+		try {
+			String lp = (e.getAttributeValue("lp").equalsIgnoreCase("")) ? "0" : e.getAttributeValue("lp").toString();
+			String hp = (e.getAttributeValue("hp").equalsIgnoreCase("")) ? "0" : e.getAttributeValue("hp").toString();
+			String cp = (e.getAttributeValue("cp").equalsIgnoreCase("")) ? "0" : e.getAttributeValue("cp").toString();
+			String tv = (e.getAttributeValue("tv").equalsIgnoreCase("")) ? "0" : e.getAttributeValue("tv").toString();
+			String nt = (e.getAttributeValue("nt").equalsIgnoreCase("")) ? "0" : e.getAttributeValue("nt").toString();
+			
+			histValue[1][i] = Double.valueOf(lp);
+			histValue[2][i] = Double.valueOf(hp);
+			histValue[3][i] = Double.valueOf(cp);
+			histValue[4][i] = Double.valueOf(tv);
+			histValue[5][i] = Double.valueOf(nt);
+		} catch (Exception e2) {
+			System.out.println(e);
 		}
 	}
 

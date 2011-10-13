@@ -23,8 +23,7 @@ import java.net.*;
 import net.htmlparser.jericho.*;
 
 public class StockFetcher {
-
-	//private Source omxStockList;
+	
 	private Map<String, StockData> stockMap;
 
 	public StockFetcher() {
@@ -36,8 +35,9 @@ public class StockFetcher {
 	// FOR TESTING PURPOSES!! WILL BE REMOVED AT SOME POINT!
 	public static void main(String[] args) {				//
 		System.out.println("main");							//
+		long tid = System.currentTimeMillis();				//
 		new StockFetcher().run();							//
-		System.out.println("done");							//
+		System.out.println("done in " + ((System.currentTimeMillis() - tid) / 60000.00) + " min");
 	}														//
 	private void run() {									//
 		//print();											//
@@ -51,8 +51,10 @@ public class StockFetcher {
 	
 	private Map<String, StockData> buildMap() {
 		System.out.println("builder");
-		Map<String, StockData> returnMap = new HashMap<String, StockData>();
-
+		Map<String, StockData> returnMap = new HashMap<String, StockData>(620);
+		
+		int read = 0;
+		
 		for (int market=0; market<3; market++) { //market
 			for (int cap=0; cap<3; cap++) { //cap
 				Source omxStockSource = null;
