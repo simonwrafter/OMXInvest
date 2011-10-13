@@ -33,15 +33,20 @@ public class StockFetcher {
 	};
 	private final String[] arrayMarkets = {/* "Nordic", */ "Copenhagen", "Stockholm", "Helsinki"};
 	private final String[] arrayCapital = {"Large Cap", "Medium Cap", "Small Cap" /* , "??" */};
-
-	private final String stockListURL = 
-			"http://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx?" +
+	
+	private final String proxyURL = "http://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx?";
+	private final String listURL = proxyURL +
 					"SubSystem=Prices" +
 					"&Action=Search" +
 					"&inst.an=nm,fnm,isin,tp,cr" +
 					"&InstrumentType=S" +
 					"&List=" +
 					"";
+	private final String historyURLstart = proxyURL +
+					"SubSystem=History" +
+					"&Action=GetDataSeries" +
+					"&Instrument=";
+	private final String historyURLend = "&fromDate=" + fromDate() + "&toDate=" + toDate();
 
 	//private Source omxStockList;
 	private Map<String, StockData> stockMap;
@@ -77,7 +82,7 @@ public class StockFetcher {
 				System.out.println(i + " " + j);
 				Source omxStockSource = null;
 				try {
-					omxStockSource = new Source(new URL(stockListURL + arrayLists[i][j]));
+					omxStockSource = new Source(new URL(listURL + arrayLists[i][j]));
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
