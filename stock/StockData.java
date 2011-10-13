@@ -16,6 +16,11 @@
 
 package stock;
 
+import java.io.*;
+import java.net.*;
+
+import net.htmlparser.jericho.*;
+
 public class StockData {
 
 	private String omxId;
@@ -24,6 +29,7 @@ public class StockData {
 	private String ISIN;
 	private String market;
 	private String currency;
+	private double[][] histValue; // {[0][]=date, [1][]=low, [2][]=high, [3][]=close, [4][]=volume, [5][]=trades}
 
 	public StockData(String omxId, String shortName, String fullName, String ISIN, String market, String currency) {
 		this.omxId = omxId;
@@ -32,6 +38,32 @@ public class StockData {
 		this.ISIN = ISIN;
 		this.market = market;
 		this.currency = currency;
+		buildHistory();
+	}
+
+	private void buildHistory() {
+		histValue = new double[6][500];
+		Source histSource = null;
+
+		try {
+			histSource = new Source(new URL(MarketData.buildHistoryURL(omxId)));
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		int i = 0;
+		for (Element e : histSource.getAllElements("hi")) {
+			histValue[0][i] = Double.valueOf(
+					new StringBuilder(e.getAttributeValue("dt"))
+					.deleteCharAt(4).deleteCharAt(6).toString());
+			histValue[1][i] = Double.valueOf(e.getAttributeValue("lp"));
+			histValue[2][i] = Double.valueOf(e.getAttributeValue("hp"));
+			histValue[3][i] = Double.valueOf(e.getAttributeValue("cp"));
+			histValue[4][i] = Double.valueOf(e.getAttributeValue("tv"));
+			histValue[5][i] = Double.valueOf(e.getAttributeValue("nt"));
+		}
 	}
 
 	public String getOmxId() {

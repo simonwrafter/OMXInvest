@@ -24,30 +24,6 @@ import net.htmlparser.jericho.*;
 
 public class StockFetcher {
 
-	//			LC			MC		SC			?
-	private final String[][] arrayLists = {
-			//{"L:10214","L:10216","L:10218","L:10150"}, // nordic (EUR)
-			{"L:10220","L:10222","L:10224"}, // cop (L:3244)
-			{"L:10208","L:10210","L:10212"}, // sto (L:3236)
-			{"L:10196","L:10198","L:10200"}, // hel (L:3228)
-	};
-	private final String[] arrayMarkets = {/* "Nordic", */ "Copenhagen", "Stockholm", "Helsinki"};
-	private final String[] arrayCapital = {"Large Cap", "Medium Cap", "Small Cap" /* , "??" */};
-	
-	private final String proxyURL = "http://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx?";
-	private final String listURL = proxyURL +
-					"SubSystem=Prices" +
-					"&Action=Search" +
-					"&inst.an=nm,fnm,isin,tp,cr" +
-					"&InstrumentType=S" +
-					"&List=" +
-					"";
-	private final String historyURLstart = proxyURL +
-					"SubSystem=History" +
-					"&Action=GetDataSeries" +
-					"&Instrument=";
-	private final String historyURLend = "&fromDate=" + fromDate() + "&toDate=" + toDate();
-
 	//private Source omxStockList;
 	private Map<String, StockData> stockMap;
 
@@ -58,14 +34,14 @@ public class StockFetcher {
 
 
 	// FOR TESTING PURPOSES!! WILL BE REMOVED AT SOME POINT!
-	public static void main(String[] args) {
-		System.out.println("main");
-		new StockFetcher().run();
-		System.out.println("done");
-	}
-	private void run() {
-		print();
-	}
+	public static void main(String[] args) {				//
+		System.out.println("main");							//
+		new StockFetcher().run();							//
+		System.out.println("done");							//
+	}														//
+	private void run() {									//
+		//print();											//
+	}														//
 	// FOR TESTING PURPOSES!! WILL BE REMOVED AT SOME POINT!
 	
 	private void print() {
@@ -77,32 +53,35 @@ public class StockFetcher {
 		System.out.println("builder");
 		Map<String, StockData> returnMap = new HashMap<String, StockData>();
 
-		for (int i=0; i<3; i++) { //market
-			for (int j=0; j<3; j++) { //cap
-				System.out.println(i + " " + j);
+		for (int market=0; market<3; market++) { //market
+			for (int cap=0; cap<3; cap++) { //cap
 				Source omxStockSource = null;
 				try {
-					omxStockSource = new Source(new URL(listURL + arrayLists[i][j]));
+					omxStockSource = new Source(new URL(MarketData.buildListURL(market, cap)));
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
+					System.exit(1);
 				} catch (IOException e) {
 					e.printStackTrace();
+					return buildMap();
 				}
-
-				List<Element> elist = omxStockSource.getAllElements("inst");
-
-				for (Element e : elist) {
-					returnMap.put(e.getAttributeValue("id"), 
-									new StockData(
-											e.getAttributeValue("id"),
-											e.getAttributeValue("nm"),
-											e.getAttributeValue("fnm"),
-											e.getAttributeValue("isin"),
-											arrayMarkets[i] + " " + arrayCapital[j],
-											e.getAttributeValue("cr")));
+				
+				System.out.println(market + " " + cap);
+				for (Element e : omxStockSource.getAllElements("inst")) {
+					returnMap.put(e.getAttributeValue("id"), buildStockData(e, market, cap));
 				}
 			}
 		}
 		return returnMap;
+	}
+	
+	private StockData buildStockData(Element e, int market, int cap) {
+		return new StockData(
+				e.getAttributeValue("id"),
+				e.getAttributeValue("nm"),
+				e.getAttributeValue("fnm"),
+				e.getAttributeValue("isin"),
+				MarketData.arrayMarkets[market] + " " + MarketData.arrayCapital[cap],
+				e.getAttributeValue("cr"));
 	}
 }
