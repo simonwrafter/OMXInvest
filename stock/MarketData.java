@@ -26,12 +26,19 @@ public class MarketData {
 	};
 	public static final String[] arrayMarkets = {/* "Nordic", */ "Copenhagen", "Stockholm", "Helsinki"};
 	public static final String[] arrayCapital = {"Large Cap", "Medium Cap", "Small Cap" /* , "??" */};
-
+	
+	
 	public static final String proxyURL = "http://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx?";
+	
 	public static final String listURL = "SubSystem=Prices&Action=Search&inst.an=nm,fnm,isin,tp,cr&InstrumentType=S&List=";
+	
 	public static final String historyURLstart = "SubSystem=History&Action=GetDataSeries&Instrument=";
 	public static final String fromDate = "&fromDate=";
 	public static final String toDate = "&toDate=";
+	
+	public static final String newsURL = "https://newsclient.omxgroup.com/cdsPublic/viewDisclosure.action?";
+	public static final String newsId = "disclosureId=";
+	public static final String newslang = "&lang=";
 	
 	public static final String historyAdjusted = "&historyadjusted=true"; // not right :(
 	public static final String realtime = "&realtime=true"; // might come in handy
