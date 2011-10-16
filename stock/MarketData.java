@@ -43,6 +43,15 @@ public class MarketData {
 	public static final String historyAdjusted = "&historyadjusted=true"; // not right :(
 	public static final String realtime = "&realtime=true"; // might come in handy
 	
+	/*
+	 * Avista: 
+	 *	http://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx?SubSystem=Prices&Action=GetInstrument&Instrument=SSE3966&inst__a=0,1,2,37,20,21,23,24,35,36,39,10&Exception=false&ext_xslt=inst_table.xsl&ext_xslt_lang=sv&ext_xslt_tableId=avistaTable&ext_xslt_options=noflag,nolink
+	 *
+	 * history graph:
+	 *  http://www.nasdaqomxnordic.com/charting/ChartingBin.aspx?width=630&height=152&instid=SSE3966&dtype=history&fromdate=2011-01-01&todate=2011-10-15&showdeftitle=true&historyadjusted=true
+	 * 
+	 */
+	
 	public static final String buildListURL(String stockListOMXid) {
 		return proxyURL + listURL + stockListOMXid;
 	}
