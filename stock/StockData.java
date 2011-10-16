@@ -30,8 +30,66 @@ public class StockData {
 	private String ISIN;
 	private String market;
 	private String currency;
-	private double[][] histValue; // {[0][]=date, [1][]=low, [2][]=high, [3][]=close, [4][]=volume, [5][]=trades}
-
+	private double[][] histValue; 
+	/* 
+	 * vector	meaning		key	  hi.a
+	 * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	 * {[0][] = date		dt  -  0
+	 *  [1][] = low			lp  -  2
+	 *  [2][] = high		hp  -  1
+	 *  [3][] = close		cp  -  4
+	 *  [][] = average		avp - 21
+	 *  [4][] = volume		tv  -  8
+	 *  [5][] = trades		nt  -  9
+	 *  [][] = turnover		to  - 10 
+	 *  [][] = 
+	 *  [][] = factor		ip  - 11
+	 *  [][] = 
+	 *  [][] = 
+	 *  [][] = 
+	 *  [][] = 
+	 *  [][] = 
+	 * } 
+	 *  
+	 */
+	
+	/*
+	 * Ex:
+	 * 
+	 * dt="2001-05-02"		0
+	 * lp="736.00"			2
+	 * hp="755.00"			1
+	 * cp="744.00"			4
+	 * avp=""				21
+	 * tv="175321"			8
+	 * nt="305"				9
+	 * to="131232018"		10
+	 * 
+	 * ip="0.198566"		11
+	 * 
+	 * 
+	 * bp="739.00"			5
+	 * ap="744.00"			6
+	 * bdp="3.00"			7
+	 * mvav1="142.03"		32
+	 * mvav2="142.03"		33
+	 * mvav3="142.03"		34
+	 * sd="4.06"			35
+	 * hv="65.57"			36
+	 * fsto="86.25"			37
+	 * ssto="88.78"			38
+	 * tsto="76.29"			39
+	 * macd="1.66"			41
+	 * macds="0.57"			42
+	 * mt="9.73"			43
+	 * osc="2.96"			44
+	 * rsi="64.5"			45
+	 * ch="8.00"			55
+	 * chp="1.09"			56
+	 * 
+	 */
+	
+	
 	public StockData(String omxId, String shortName, String fullName, String ISIN, String market, String currency) {
 		this.omxId = omxId;
 		this.shortName = shortName;
@@ -62,22 +120,20 @@ public class StockData {
 	}
 	
 	private void makeHistoryRow(Element e, int i) {
-		histValue[0][i] = Double.valueOf(
-				new StringBuilder(e.getAttributeValue("dt"))
-				.deleteCharAt(4).deleteCharAt(6).toString());
-		
+		histValue[0][i] = Double.valueOf(new StringBuilder(
+				e.getAttributeValue("dt")).deleteCharAt(4).deleteCharAt(6).toString());
 		try {
-			String lp = (e.getAttributeValue("lp").equalsIgnoreCase("")) ? "0" : e.getAttributeValue("lp").toString();
-			String hp = (e.getAttributeValue("hp").equalsIgnoreCase("")) ? "0" : e.getAttributeValue("hp").toString();
-			String cp = (e.getAttributeValue("cp").equalsIgnoreCase("")) ? "0" : e.getAttributeValue("cp").toString();
-			String tv = (e.getAttributeValue("tv").equalsIgnoreCase("")) ? "0" : e.getAttributeValue("tv").toString();
-			String nt = (e.getAttributeValue("nt").equalsIgnoreCase("")) ? "0" : e.getAttributeValue("nt").toString();
+			String lp = e.getAttributeValue("lp");
+			String hp = e.getAttributeValue("hp");
+			String cp = e.getAttributeValue("cp");
+			String tv = e.getAttributeValue("tv");
+			String nt = e.getAttributeValue("nt");
 			
-			histValue[1][i] = Double.valueOf(lp);
-			histValue[2][i] = Double.valueOf(hp);
-			histValue[3][i] = Double.valueOf(cp);
-			histValue[4][i] = Double.valueOf(tv);
-			histValue[5][i] = Double.valueOf(nt);
+			histValue[1][i] = (lp.isEmpty()) ? Double.NaN : Double.parseDouble(lp); 
+			histValue[2][i] = (hp.isEmpty()) ? Double.NaN : Double.parseDouble(hp);
+			histValue[3][i] = (cp.isEmpty()) ? Double.NaN : Double.parseDouble(cp);
+			histValue[4][i] = (tv.isEmpty()) ? Double.NaN : Double.parseDouble(tv);
+			histValue[5][i] = (nt.isEmpty()) ? Double.NaN : Double.parseDouble(nt);
 		} catch (Exception e2) {
 			System.out.println(e);
 		}

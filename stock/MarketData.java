@@ -30,19 +30,17 @@ public class MarketData {
 	
 	public static final String proxyURL = "http://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx?";
 	
-	public static final String listURL = "SubSystem=Prices&Action=Search&inst.an=nm,fnm,isin,tp,cr&InstrumentType=S&List=";
+	public static final String listQuestion = "SubSystem=Prices&Action=Search&inst.an=nm,fnm,isin,tp,cr&InstrumentType=S&List=";
+	public static final String historyQuestion = "SubSystem=History&Action=GetDataSeries&Instrument=";
 	
-	public static final String historyURLstart = "SubSystem=History&Action=GetDataSeries&Instrument=";
 	public static final String fromDate = "&fromDate=";
 	public static final String toDate = "&toDate=";
-	
-	public static final String values = "&hi.a=0,1,2,4,5,6,7,8,9,10,11,21,32,33,34,35,36,37,38,39";
+	public static final String historyValues = "&hi.a=0,1,2,4,5,6,7,8,9,10,11,21,32,33,34,35,36,37,38,39,41,42,43,44,45,55,56"; // not sure what they all mean :/
 	
 	public static final String newsURL = "https://newsclient.omxgroup.com/cdsPublic/viewDisclosure.action?";
 	public static final String newsId = "disclosureId=";
 	public static final String newslang = "&lang=";
 	
-	public static final String historyAdjusted = "&historyadjusted=true"; // not right :(
 	public static final String realtime = "&realtime=true"; // might come in handy
 	
 	/*
@@ -55,7 +53,7 @@ public class MarketData {
 	 */
 	
 	public static final String buildListURL(String stockListOMXid) {
-		return proxyURL + listURL + stockListOMXid;
+		return proxyURL + listQuestion + stockListOMXid;
 	}
 	
 	public static final String buildListURL(int market, int cap) {
@@ -63,12 +61,10 @@ public class MarketData {
 	}
 	
 	public static final String buildHistoryURL(String omxID) {
-		return proxyURL + historyURLstart + omxID + historyAdjusted + fromDate + date(735) + toDate + date(0);
+		return proxyURL + historyQuestion + omxID + fromDate + date(735) + toDate + date(0) + historyValues;
 	}
 	
 	//---------- privates
-
-	
 	private static String date(int daysAgo) {
 		long epoch = System.currentTimeMillis() - (daysAgo * 86400000L);
 		return new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date(epoch));

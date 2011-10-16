@@ -28,7 +28,7 @@ public class StockFetcher {
 
 	public StockFetcher() {
 		System.out.println("constructor");
-		stockMap = buildMap();
+		stockMap = buildStockMap();
 	}
 
 
@@ -39,24 +39,25 @@ public class StockFetcher {
 		new StockFetcher().run();							//
 		System.out.println("done in " + ((System.currentTimeMillis() - tid) / 60000.00) + " min");
 	}														//
+															//
 	private void run() {									//
 		//print();											//
 	}														//
+															//
+	private void print() {									//
+		for (StockData s : stockMap.values())				//
+			System.out.println(s);							//
+	}														//
 	// FOR TESTING PURPOSES!! WILL BE REMOVED AT SOME POINT!
 	
-	private void print() {
-		for (StockData s : stockMap.values())
-			System.out.println(s);
-	}
-	
-	private Map<String, StockData> buildMap() {
+	private Map<String, StockData> buildStockMap() {
 		System.out.println("builder");
 		Map<String, StockData> returnMap = new HashMap<String, StockData>(620);
 		
 		int read = 0;
 		
-		for (int market=0; market<3; market++) { //market
-			for (int cap=0; cap<3; cap++) { //cap
+		for (int market=0; market<3; market++) {
+			for (int cap=0; cap<3; cap++) {
 				Source omxStockSource = null;
 				try {
 					omxStockSource = new Source(new URL(MarketData.buildListURL(market, cap)));
@@ -65,7 +66,7 @@ public class StockFetcher {
 					System.exit(1);
 				} catch (IOException e) {
 					e.printStackTrace();
-					return buildMap();
+					return buildStockMap();
 				}
 				
 				System.out.println(market + " " + cap);
