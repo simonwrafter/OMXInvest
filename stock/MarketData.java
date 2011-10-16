@@ -36,6 +36,8 @@ public class MarketData {
 	public static final String fromDate = "&fromDate=";
 	public static final String toDate = "&toDate=";
 	
+	public static final String values = "&hi.a=0,1,2,4,5,6,7,8,9,10,11,21,32,33,34,35,36,37,38,39";
+	
 	public static final String newsURL = "https://newsclient.omxgroup.com/cdsPublic/viewDisclosure.action?";
 	public static final String newsId = "disclosureId=";
 	public static final String newslang = "&lang=";
