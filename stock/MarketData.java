@@ -35,7 +35,7 @@ public class MarketData {
 	
 	public static final String fromDate = "&fromDate=";
 	public static final String toDate = "&toDate=";
-	public static final String historyValues = "&hi.a=0,1,2,4,5,6,7,8,9,10,11,21,32,33,34,35,36,37,38,39,41,42,43,44,45,55,56"; // not sure what they all mean :/
+	public static final String historyValues = "&hi.a=0,2,1,4,21,8,9,10,11"; //0,1,2,4,5,6,7,8,9,10,11,21,32,33,34,35,36,37,38,39,41,42,43,44,45,55,56"; // not sure what they all mean :/
 	
 	public static final String newsURL = "https://newsclient.omxgroup.com/cdsPublic/viewDisclosure.action?";
 	public static final String newsId = "disclosureId=";
@@ -60,13 +60,11 @@ public class MarketData {
 		return buildListURL(matrixLists[market][cap]);
 	}
 	
-	public static final String buildHistoryURL(String omxID) {
-		return proxyURL + historyQuestion + omxID + fromDate + date(735) + toDate + date(0) + historyValues;
+	public static final String buildHistoryURL(String omxID, int days) {
+		return buildHistoryURL(omxID, InvestDate.date(days));
 	}
 	
-	//---------- privates
-	private static String date(int daysAgo) {
-		long epoch = System.currentTimeMillis() - (daysAgo * 86400000L);
-		return new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date(epoch));
+	public static final String buildHistoryURL(String omxID, String date) {
+		return proxyURL + historyQuestion + omxID + fromDate + date + historyValues;
 	}
 }

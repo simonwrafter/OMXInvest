@@ -54,8 +54,6 @@ public class StockFetcher {
 		System.out.println("builder");
 		Map<String, StockData> returnMap = new HashMap<String, StockData>(620);
 		
-		int read = 0;
-		
 		for (int market=0; market<3; market++) {
 			for (int cap=0; cap<3; cap++) {
 				Source omxStockSource = null;

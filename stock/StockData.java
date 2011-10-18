@@ -34,27 +34,24 @@ public class StockData {
 	/* 
 	 * vector	meaning		key	  hi.a
 	 * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	 * {[0][] = date		dt  -  0
+	 * {
+	 *  ----- = factor		ip  - 11
+	 *  [0][] = date		dt  -  0
 	 *  [1][] = low			lp  -  2
 	 *  [2][] = high		hp  -  1
 	 *  [3][] = close		cp  -  4
-	 *  [][] = average		avp - 21
-	 *  [4][] = volume		tv  -  8
-	 *  [5][] = trades		nt  -  9
-	 *  [][] = turnover		to  - 10 
-	 *  [][] = 
-	 *  [][] = factor		ip  - 11
-	 *  [][] = 
-	 *  [][] = 
-	 *  [][] = 
-	 *  [][] = 
-	 *  [][] = 
+	 *  [4][] = average		avp - 21
+	 *  [5][] = volume		tv  -  8
+	 *  [6][] = trades		nt  -  9
+	 *  [7][] = turnover	to  - 10 
 	 * } 
 	 *  
 	 */
 	
 	/*
 	 * Ex:
+	 * 
+	 * ip="0.198566"		11
 	 * 
 	 * dt="2001-05-02"		0
 	 * lp="736.00"			2
@@ -65,30 +62,7 @@ public class StockData {
 	 * nt="305"				9
 	 * to="131232018"		10
 	 * 
-	 * ip="0.198566"		11
-	 * 
-	 * 
-	 * bp="739.00"			5
-	 * ap="744.00"			6
-	 * bdp="3.00"			7
-	 * mvav1="142.03"		32
-	 * mvav2="142.03"		33
-	 * mvav3="142.03"		34
-	 * sd="4.06"			35
-	 * hv="65.57"			36
-	 * fsto="86.25"			37
-	 * ssto="88.78"			38
-	 * tsto="76.29"			39
-	 * macd="1.66"			41
-	 * macds="0.57"			42
-	 * mt="9.73"			43
-	 * osc="2.96"			44
-	 * rsi="64.5"			45
-	 * ch="8.00"			55
-	 * chp="1.09"			56
-	 * 
 	 */
-	
 	
 	public StockData(String omxId, String shortName, String fullName, String ISIN, String market, String currency) {
 		this.omxId = omxId;
@@ -97,46 +71,95 @@ public class StockData {
 		this.ISIN = ISIN;
 		this.market = market;
 		this.currency = currency;
-		buildHistory();
+		histValue = new double[8][500];
+		rebuildHistory();
 	}
-
-	private void buildHistory() {
-		histValue = new double[6][500];
+	
+	public void updateHistory() throws MalformedURLException, IOException {
+		int lastDate = new Double(histValue[0][499]).intValue();
+		int today = new Integer(InvestDate.dateNoDash(0));
+		if (lastDate != today) {
+			Source histSource = null;
+//			try {
+				histSource = new Source(new URL(MarketData.buildHistoryURL(omxId, InvestDate.makeDateString(lastDate))));
+//			} catch (MalformedURLException e) {
+//				e.printStackTrace();
+//				System.exit(1);
+//			} catch (IOException e) {
+//				try {
+//					wait(0, 1000000000);
+//				} catch (InterruptedException e1) {
+//					e1.printStackTrace();
+//				}
+//				updateHistory();
+//				return;
+//			}
+			
+			List<Element> elist = histSource.getAllElements("hi");
+			int esize = elist.size() - 1;
+			
+			int pos;
+			for (pos=0; pos < 501-esize; pos++) {
+				histValue[pos] = histValue[pos+esize-1];
+			}
+			
+			Iterator<Element> itr = elist.iterator();
+			while (pos<500 && itr.hasNext()) {
+				makeHistoryRow(itr.next(), pos++);
+			}
+		}
+	}
+	
+	public void rebuildHistory() {
 		Source histSource = null;
+		
+		System.out.print(fullName);
 
 		try {
-			histSource = new Source(new URL(MarketData.buildHistoryURL(omxId)));
+			histSource = new Source(new URL(MarketData.buildHistoryURL(omxId, 735)));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
+			System.exit(1);
 		} catch (IOException e) {
-			e.printStackTrace();
+			try {
+				wait(0, 1000000000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			rebuildHistory();
+			return;
 		}
-		
+		System.out.print(" down");
 		Iterator<Element> itr = histSource.getAllElements("hi").iterator();
 		int j=0;
-		while(j<500 && itr.hasNext()) {
+		while (j<500 && itr.hasNext()) {
 			makeHistoryRow(itr.next(), j++);
 		}
+		System.out.println(" done");
 	}
 	
 	private void makeHistoryRow(Element e, int i) {
 		histValue[0][i] = Double.valueOf(new StringBuilder(
 				e.getAttributeValue("dt")).deleteCharAt(4).deleteCharAt(6).toString());
-		try {
-			String lp = e.getAttributeValue("lp");
-			String hp = e.getAttributeValue("hp");
-			String cp = e.getAttributeValue("cp");
-			String tv = e.getAttributeValue("tv");
-			String nt = e.getAttributeValue("nt");
-			
-			histValue[1][i] = (lp.isEmpty()) ? Double.NaN : Double.parseDouble(lp); 
-			histValue[2][i] = (hp.isEmpty()) ? Double.NaN : Double.parseDouble(hp);
-			histValue[3][i] = (cp.isEmpty()) ? Double.NaN : Double.parseDouble(cp);
-			histValue[4][i] = (tv.isEmpty()) ? Double.NaN : Double.parseDouble(tv);
-			histValue[5][i] = (nt.isEmpty()) ? Double.NaN : Double.parseDouble(nt);
-		} catch (Exception e2) {
-			System.out.println(e);
-		}
+		
+		String ip = e.getAttributeValue("ip");
+		String lp = e.getAttributeValue("lp");
+		String hp = e.getAttributeValue("hp");
+		String cp = e.getAttributeValue("cp");
+		String avp = e.getAttributeValue("avp");
+		String tv = e.getAttributeValue("tv");
+		String nt = e.getAttributeValue("nt");
+		String to = e.getAttributeValue("to");
+
+		double factor = (ip.isEmpty()) ? Double.NaN : Double.parseDouble(ip);
+
+		histValue[1][i] = (lp.isEmpty()) ? Double.NaN : Double.parseDouble(lp)*factor; 
+		histValue[2][i] = (hp.isEmpty()) ? Double.NaN : Double.parseDouble(hp)*factor;
+		histValue[3][i] = (cp.isEmpty()) ? Double.NaN : Double.parseDouble(cp)*factor;
+		histValue[4][i] = (avp.isEmpty()) ? Double.NaN : Double.parseDouble(avp)*factor;
+		histValue[5][i] = (tv.isEmpty()) ? Double.NaN : Double.parseDouble(tv);
+		histValue[6][i] = (nt.isEmpty()) ? Double.NaN : Double.parseDouble(nt);
+		histValue[7][i] = (to.isEmpty()) ? Double.NaN : Double.parseDouble(to);
 	}
 
 	public String getOmxId() {
