@@ -48,23 +48,8 @@ public class StockData {
 	 *  
 	 */
 	
-	/*
-	 * Ex:
-	 * 
-	 * ip="0.198566"		11
-	 * 
-	 * dt="2001-05-02"		0
-	 * lp="736.00"			2
-	 * hp="755.00"			1
-	 * cp="744.00"			4
-	 * avp=""				21
-	 * tv="175321"			8
-	 * nt="305"				9
-	 * to="131232018"		10
-	 * 
-	 */
-	
-	public StockData(String omxId, String shortName, String fullName, String ISIN, String market, String currency) {
+	public StockData(String omxId, String shortName, String fullName, String ISIN, String market, String currency)
+			throws MalformedURLException, IOException {
 		this.omxId = omxId;
 		this.shortName = shortName;
 		this.fullName = fullName;
@@ -75,81 +60,47 @@ public class StockData {
 		rebuildHistory();
 	}
 	
+	//TODO: Move to StockFetcher.java
 	public void updateHistory() throws MalformedURLException, IOException {
 		int lastDate = new Double(histValue[0][499]).intValue();
 		int today = new Integer(InvestDate.dateNoDash(0));
 		if (lastDate != today) {
-			Source histSource = null;
-//			try {
-				histSource = new Source(new URL(MarketData.buildHistoryURL(omxId, InvestDate.makeDateString(lastDate))));
-//			} catch (MalformedURLException e) {
-//				e.printStackTrace();
-//				System.exit(1);
-//			} catch (IOException e) {
-//				try {
-//					wait(0, 1000000000);
-//				} catch (InterruptedException e1) {
-//					e1.printStackTrace();
-//				}
-//				updateHistory();
-//				return;
-//			}
+			Source histSource = new Source(new URL(
+					MarketData.buildHistoryURL(omxId, InvestDate.makeDateString(lastDate))));
 			
 			List<Element> elist = histSource.getAllElements("hi");
 			int esize = elist.size() - 1;
 			
-			int pos;
-			for (pos=0; pos < 501-esize; pos++) {
-				histValue[pos] = histValue[pos+esize-1];
+			for (int i=0; i<8; i++) {
+				histValue[i] = Arrays.copyOf(Arrays.copyOfRange(histValue[i], esize, 500), 500);
 			}
-			
-			Iterator<Element> itr = elist.iterator();
-			while (pos<500 && itr.hasNext()) {
-				makeHistoryRow(itr.next(), pos++);
+			Iterator<Element> itr = histSource.getAllElements("hi").iterator();
+			for (int i=499-esize; i<500 && itr.hasNext();i++) {
+				makeHistoryRow(itr.next(), i);
 			}
 		}
 	}
 	
-	public void rebuildHistory() {
-		Source histSource = null;
-		
-		System.out.print(fullName);
-
-		try {
-			histSource = new Source(new URL(MarketData.buildHistoryURL(omxId, 735)));
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (IOException e) {
-			try {
-				wait(0, 1000000000);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-			rebuildHistory();
-			return;
-		}
-		System.out.print(" down");
+	public void rebuildHistory() throws MalformedURLException, IOException {
+		Source histSource = new Source(new URL(MarketData.buildHistoryURL(omxId, 735)));
 		Iterator<Element> itr = histSource.getAllElements("hi").iterator();
-		int j=0;
-		while (j<500 && itr.hasNext()) {
-			makeHistoryRow(itr.next(), j++);
+		for (int j=0; j<500 && itr.hasNext(); j++) {
+			makeHistoryRow(itr.next(), j);
 		}
-		System.out.println(" done");
 	}
 	
 	private void makeHistoryRow(Element e, int i) {
 		histValue[0][i] = Double.valueOf(new StringBuilder(
 				e.getAttributeValue("dt")).deleteCharAt(4).deleteCharAt(6).toString());
 		
-		String ip = e.getAttributeValue("ip");
-		String lp = e.getAttributeValue("lp");
-		String hp = e.getAttributeValue("hp");
-		String cp = e.getAttributeValue("cp");
-		String avp = e.getAttributeValue("avp");
-		String tv = e.getAttributeValue("tv");
-		String nt = e.getAttributeValue("nt");
-		String to = e.getAttributeValue("to");
+		String ip = e.getAttributeValue("ip"); //factor
+		String lp = e.getAttributeValue("lp"); //low price
+		String hp = e.getAttributeValue("hp"); //high price
+		String cp = e.getAttributeValue("cp"); //closing price
+		String avp = e.getAttributeValue("avp"); //average price
+		String tv = e.getAttributeValue("tv"); //volume
+		String nt = e.getAttributeValue("nt"); //trades
+		String to = e.getAttributeValue("to"); //turnover
 
 		double factor = (ip.isEmpty()) ? Double.NaN : Double.parseDouble(ip);
 
@@ -184,6 +135,14 @@ public class StockData {
 
 	public String getCurrency() {
 		return currency;
+	}
+	
+	public double[][] getHistory() {
+		return getHistory(500);
+	}
+	
+	public double[][] getHistory(int days) {
+		return Arrays.copyOfRange(histValue, 500-days, 500);
 	}
 
 	@Override

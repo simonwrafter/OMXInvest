@@ -17,16 +17,17 @@
 package stock;
 
 public class MarketData {
-//		  LC		MC		  SC		?
 	public static final String[][] matrixLists = {
-//		{"L:10214","L:10216","L:10218","L:10150"},	// nordic (EUR)
-		{"L:10220","L:10222","L:10224"},			// cop (L:3244)
-		{"L:10208","L:10210","L:10212"},			// sto (L:3236)
-		{"L:10196","L:10198","L:10200"},			// hel (L:3228)
+		//	 LC			MC		   SC		FN
+		{ "L:10220", "L:10222", "L:10224", "127" },	//CSE
+		{ "L:10208", "L:10210", "L:10212",  "27" },	//STO
+		{ "L:10196", "L:10198", "L:10200", "146" },	//HEL
+		{ "L:10238", "L:10240", "L:10242", "136" },	//ICE
 	};
-	public static final String[] arrayMarkets = {/* "Nordic", */ "Copenhagen", "Stockholm", "Helsinki"};
-	public static final String[] arrayCapital = {"Large Cap", "Medium Cap", "Small Cap" /* , "??" */};
-	
+	public static final String  NordicLCExtra = "L:10150";
+	public static final String  NordicLCExtraName = "Nordic Lage Cap Extras";
+	public static final String[] arrayMarkets = { "Copenhagen", "Stockholm", "Helsinki", "Iceland" };
+	public static final String[] arrayCapital = { "Large Cap", "Medium Cap", "Small Cap" , "First North" };
 	
 	public static final String proxyURL = "http://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx?";
 	

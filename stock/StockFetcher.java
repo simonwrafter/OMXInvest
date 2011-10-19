@@ -23,66 +23,54 @@ import java.net.*;
 import net.htmlparser.jericho.*;
 
 public class StockFetcher {
-	
-	private Map<String, StockData> stockMap;
 
-	public StockFetcher() {
-		System.out.println("constructor");
-		stockMap = buildStockMap();
-	}
-
-
-	// FOR TESTING PURPOSES!! WILL BE REMOVED AT SOME POINT!
-	public static void main(String[] args) {				//
-		System.out.println("main");							//
-		long tid = System.currentTimeMillis();				//
-		new StockFetcher().run();							//
-		System.out.println("done in " + ((System.currentTimeMillis() - tid) / 60000.00) + " min");
-	}														//
-															//
-	private void run() {									//
-		//print();											//
-	}														//
-															//
-	private void print() {									//
-		for (StockData s : stockMap.values())				//
-			System.out.println(s);							//
-	}														//
-	// FOR TESTING PURPOSES!! WILL BE REMOVED AT SOME POINT!
-	
-	private Map<String, StockData> buildStockMap() {
-		System.out.println("builder");
+	public static Map<String, StockData> buildStockMap(String market, String cap)
+			throws MalformedURLException, IOException {
+		
+		if (market.isEmpty() || cap.isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		
 		Map<String, StockData> returnMap = new HashMap<String, StockData>(620);
 		
-		for (int market=0; market<3; market++) {
-			for (int cap=0; cap<3; cap++) {
-				Source omxStockSource = null;
-				try {
-					omxStockSource = new Source(new URL(MarketData.buildListURL(market, cap)));
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-					System.exit(1);
-				} catch (IOException e) {
-					e.printStackTrace();
-					return buildStockMap();
-				}
-				
-				System.out.println(market + " " + cap);
-				for (Element e : omxStockSource.getAllElements("inst")) {
-					returnMap.put(e.getAttributeValue("id"), buildStockData(e, market, cap));
-				}
+		int mIndex = -1;
+		int cIndex = -1;
+		
+		for (int i=0; i<MarketData.arrayMarkets.length; i++) {
+			if (MarketData.arrayMarkets[i].startsWith(market)) {
+				mIndex = i;
+				break;
 			}
+		}
+		for (int i=0; i<MarketData.arrayCapital.length; i++) {
+			if (MarketData.arrayCapital[i].startsWith(market)) {
+				cIndex = i;
+				break;
+			}
+		}
+		
+		if (mIndex == -1 || cIndex == -1) {
+			throw new NoSuchElementException();
+		}
+		
+		Source omxStockSource = new Source(new URL(MarketData.buildListURL(mIndex, cIndex)));
+		
+		String listName = MarketData.arrayMarkets[mIndex] + " " + MarketData.arrayCapital[cIndex];
+		
+		for (Element e : omxStockSource.getAllElements("inst")) {
+			returnMap.put(e.getAttributeValue("id"), buildStockData(e, listName));
 		}
 		return returnMap;
 	}
 	
-	private StockData buildStockData(Element e, int market, int cap) {
+	private static StockData buildStockData(Element e, String listName)
+			throws MalformedURLException, IOException {
 		return new StockData(
 				e.getAttributeValue("id"),
 				e.getAttributeValue("nm"),
 				e.getAttributeValue("fnm"),
 				e.getAttributeValue("isin"),
-				MarketData.arrayMarkets[market] + " " + MarketData.arrayCapital[cap],
+				listName,
 				e.getAttributeValue("cr"));
 	}
 }
