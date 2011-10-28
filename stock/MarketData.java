@@ -19,39 +19,40 @@ package stock;
 import util.InvestDate;
 
 public class MarketData {
-	public static final String[][] matrixLists = {
+	protected static final String[][] matrixLists = {
 		//	 LC			MC		   SC		FN
 		{ "L:10220", "L:10222", "L:10224", "127" },	//CSE
 		{ "L:10208", "L:10210", "L:10212",  "27" },	//STO
 		{ "L:10196", "L:10198", "L:10200", "146" },	//HEL
 		{ "L:10238", "L:10240", "L:10242", "136" },	//ICE
 	};
-	public static final String  NordicLCExtra = "L:10150";
-	public static final String  NordicLCExtraName = "Nordic Lage Cap Extras";
+	protected static final String  NordicLCExtra = "L:10150";
+	protected static final String  NordicLCExtraName = "Nordic Lage Cap Extras";
+	
+	protected static final String[] arrayMarkets = { "Copenhagen", "Stockholm", "Helsinki", "Iceland" };
+	protected static final String[] arrayCapital = { "Large Cap", "Medium Cap", "Small Cap" , "First North" };
 	
 	//These could be real fun!!
-	public static final String[] nordicIndexes = { "SE0001809476", "DX0000001376", "SE0000337842", "FI0008900212", "IS0000018885" };
-	public static final String[] firstNorthIndexes = { "SE0002229377", "SE0002229385", "SE0002229393", "SE0002229401", "SE0002229419", "SE0002229427", "SE0002229435", "SE0002229443", "SE0002229450", "SE0002229468", "SE0001718719", "SE0001718727", "SE0001910944", "SE0001718701"  };
-	public static final String[] sectorIndexes = { "SE0001775834", "SE0001775859", "SE0001775867", "SE0001775883", "SE0001776196", "SE0001776212", "SE0001776238", "SE0001776253", "SE0001776279", "SE0001776295" };
-	public static final String[] morgageRates = { "SE0003077585", "SE0003077593", "SE0003077577","SE0003330687","SE0003332931" };
+	protected static final String[] nordicIndexes = { "SE0001809476", "DX0000001376", "SE0000337842", "FI0008900212", "IS0000018885" };
+	protected static final String[] firstNorthIndexes = { "SE0002229377", "SE0002229385", "SE0002229393", "SE0002229401", "SE0002229419", "SE0002229427", "SE0002229435", "SE0002229443", "SE0002229450", "SE0002229468", "SE0001718719", "SE0001718727", "SE0001910944", "SE0001718701"  };
+	protected static final String[] sectorIndexes = { "SE0001775834", "SE0001775859", "SE0001775867", "SE0001775883", "SE0001776196", "SE0001776212", "SE0001776238", "SE0001776253", "SE0001776279", "SE0001776295" };
+	protected static final String[] morgageRates = { "SE0003077585", "SE0003077593", "SE0003077577","SE0003330687","SE0003332931" };
+		
+	private static final String proxyURL = "http://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx?";
 	
-	public static final String[] arrayMarkets = { "Copenhagen", "Stockholm", "Helsinki", "Iceland" };
-	public static final String[] arrayCapital = { "Large Cap", "Medium Cap", "Small Cap" , "First North" };
+	private static final String listQuestion = "SubSystem=Prices&Action=Search&inst.an=nm,fnm,isin,tp,cr&InstrumentType=S&List=";
+	private static final String historyQuestion = "SubSystem=History&Action=GetDataSeries&Instrument=";
+	private static final String derivQuestion = "SubSystem=Prices&Action=GetDerivatives&Instrument=";
+	private static final String fromDate = "&fromDate=";
+	private static final String toDate = "&toDate=";
+	private static final String historyValues = "&hi.a=0,2,1,4,21,8,9,10,11"; //"0,1,2,4,5,6,7,8,9,10,11,21,32,33,34,35,36,37,38,39,41,42,43,44,45,55,56"; // not sure what they all mean :/
+	private static final String derivValues = "&inst.an=id,nm,isin,bp,ap,hp,lp,lsp,tv,ed";
 	
-	public static final String proxyURL = "http://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx?";
+	private static final String newsURL = "https://newsclient.omxgroup.com/cdsPublic/viewDisclosure.action?";
+	private static final String newsId = "disclosureId=";
+	private static final String newslang = "&lang=";
 	
-	public static final String listQuestion = "SubSystem=Prices&Action=Search&inst.an=nm,fnm,isin,tp,cr&InstrumentType=S&List=";
-	public static final String historyQuestion = "SubSystem=History&Action=GetDataSeries&Instrument=";
-	
-	public static final String fromDate = "&fromDate=";
-	public static final String toDate = "&toDate=";
-	public static final String historyValues = "&hi.a=0,2,1,4,21,8,9,10,11"; //"0,1,2,4,5,6,7,8,9,10,11,21,32,33,34,35,36,37,38,39,41,42,43,44,45,55,56"; // not sure what they all mean :/
-	
-	public static final String newsURL = "https://newsclient.omxgroup.com/cdsPublic/viewDisclosure.action?";
-	public static final String newsId = "disclosureId=";
-	public static final String newslang = "&lang=";
-	
-	public static final String realtime = "&realtime=true"; // might come in handy
+	private static final String realtime = "&realtime=true"; // might come in handy
 	
 	/*
 	 * Avista: 
@@ -76,5 +77,9 @@ public class MarketData {
 	
 	public static final String buildHistoryURL(String omxID, String date) {
 		return proxyURL + historyQuestion + omxID + fromDate + date + historyValues;
+	}
+	
+	public static final String buildDerivativeURL(String omxId) {
+		return proxyURL + derivQuestion + omxId + derivValues;
 	}
 }

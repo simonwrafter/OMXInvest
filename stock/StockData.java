@@ -55,7 +55,6 @@ public class StockData {
 		this.market = market;
 		this.currency = currency;
 		histValue = new double[8][500];
-		rebuildHistory();
 	}
 	
 	public void rebuildHistory() throws MalformedURLException, IOException {
