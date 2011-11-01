@@ -16,6 +16,8 @@
 
 package stock;
 
+import java.util.NoSuchElementException;
+
 import util.InvestDate;
 
 public class MarketData {
@@ -81,5 +83,31 @@ public class MarketData {
 	
 	public static final String buildDerivativeURL(String omxId) {
 		return proxyURL + derivQuestion + omxId + derivValues;
+	}
+	
+	public static final int[] marketIndex(String market, String cap) {
+		int[] index = new int[2];
+		index[0] = -1;
+		index[1] = -1;
+		
+		if (market.isEmpty() || cap.isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		for (int i=0; i<arrayMarkets.length; i++) {
+			if (arrayMarkets[i].startsWith(market)) {
+				index[0] = i;
+				break;
+			}
+		}
+		for (int i=0; i<arrayCapital.length; i++) {
+			if (arrayCapital[i].startsWith(market)) {
+				index[1] = i;
+				break;
+			}
+		}
+		if (index[0] == -1 || index[1] == -1) {
+			throw new NoSuchElementException();
+		}
+		return index;
 	}
 }

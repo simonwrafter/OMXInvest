@@ -29,31 +29,11 @@ public class StockFetcher {
 	public static Map<String, StockData> buildStockMap(String market, String cap)
 			throws MalformedURLException, IOException {
 
-		Map<String, StockData> returnMap = new HashMap<String, StockData>(620);
-		int mIndex = -1;
-		int cIndex = -1;
+		Map<String, StockData> returnMap = new HashMap<String, StockData>();
+		int[] index = MarketData.marketIndex(market, cap);
 		
-		if (market.isEmpty() || cap.isEmpty()) {
-			throw new IllegalArgumentException();
-		}
-		for (int i=0; i<MarketData.arrayMarkets.length; i++) {
-			if (MarketData.arrayMarkets[i].startsWith(market)) {
-				mIndex = i;
-				break;
-			}
-		}
-		for (int i=0; i<MarketData.arrayCapital.length; i++) {
-			if (MarketData.arrayCapital[i].startsWith(market)) {
-				cIndex = i;
-				break;
-			}
-		}
-		if (mIndex == -1 || cIndex == -1) {
-			throw new NoSuchElementException();
-		}
-		
-		Source omxStockSource = new Source(new URL(MarketData.buildListURL(mIndex, cIndex)));
-		String listName = MarketData.arrayMarkets[mIndex] + " " + MarketData.arrayCapital[cIndex];
+		Source omxStockSource = new Source(new URL(MarketData.buildListURL(index[0], index[1])));
+		String listName = MarketData.arrayMarkets[index[0]] + " " + MarketData.arrayCapital[index[1]];
 		
 		for (Element e : omxStockSource.getAllElements("inst")) {
 			returnMap.put(e.getAttributeValue("id"), buildStockData(e, listName));
@@ -72,7 +52,7 @@ public class StockFetcher {
 				e.getAttributeValue("cr"));
 	}
 	
-	protected static double[][] updateHistory(double[][] histValue, String omxId) throws MalformedURLException, IOException {
+	public static double[][] updateHistory(double[][] histValue, String omxId) throws MalformedURLException, IOException {
 		double[][] newHistValue = new double[8][500];
 		int lastDate = new Double(histValue[0][499]).intValue();
 		int today = new Integer(InvestDate.dateNoDash(0));
@@ -94,7 +74,7 @@ public class StockFetcher {
 		return newHistValue;
 	}
 
-	protected static double[][] rebuildHistory(String omxId) throws MalformedURLException, IOException {
+	public static double[][] rebuildHistory(String omxId) throws MalformedURLException, IOException {
 		Source histSource = new Source(new URL(MarketData.buildHistoryURL(omxId, 735)));
 		Iterator<Element> itr = histSource.getAllElements("hi").iterator();
 		double[][] histValue = new double[8][500];
