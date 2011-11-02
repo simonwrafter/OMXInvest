@@ -1,8 +1,8 @@
-package stock; 
+package util; 
 
 import Jama.Matrix;
 
-public class StockValues {
+public class CalcModels {
 	
 	public static double expectedValue(double[] history) {
 		double[] lH = logHist(history);

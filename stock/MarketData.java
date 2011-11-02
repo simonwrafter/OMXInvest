@@ -16,9 +16,8 @@
 
 package stock;
 
-import java.util.NoSuchElementException;
-
-import util.InvestDate;
+import java.util.*;
+import util.*;
 
 public class MarketData {
 	protected static final String[][] matrixLists = {
@@ -31,8 +30,8 @@ public class MarketData {
 	protected static final String  NordicLCExtra = "L:10150";
 	protected static final String  NordicLCExtraName = "Nordic Lage Cap Extras";
 	
-	protected static final String[] arrayMarkets = { "Copenhagen", "Stockholm", "Helsinki", "Iceland" };
-	protected static final String[] arrayCapital = { "Large Cap", "Medium Cap", "Small Cap" , "First North" };
+	public static final String[] arrayMarkets = { "Copenhagen", "Stockholm", "Helsinki", "Iceland" };
+	public static final String[] arrayCapital = { "Large Cap", "Medium Cap", "Small Cap" , "First North" };
 	
 	//These could be real fun!!
 	protected static final String[] nordicIndexes = { "SE0001809476", "DX0000001376", "SE0000337842", "FI0008900212", "IS0000018885" };
