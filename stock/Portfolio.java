@@ -1,16 +1,34 @@
-package userInterface;
+package stock;
 
 import java.util.*;
 
 public class Portfolio {
 	private SortedMap<String, Integer> stockmap;
-	double liquidAsset;
+	private double liquidAsset;
+	private String name;
 	
-	public Portfolio() {
+	public Portfolio(String name) {
+		this.name = name;
 		stockmap = new TreeMap<String, Integer>();
-		liquidAsset = 0;
+		setLiquidAsset(0);
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public double getLiquidAsset() {
+		return liquidAsset;
+	}
+	
+	public void setLiquidAsset(double liquidAsset) {
+		this.liquidAsset = liquidAsset;
+	}
+
 	public boolean add(String omxId) {
 		if (stockmap.containsKey(omxId)) {
 			return false;
