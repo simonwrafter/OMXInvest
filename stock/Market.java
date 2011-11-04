@@ -1,7 +1,5 @@
 package stock;
 
-import stock.*;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;

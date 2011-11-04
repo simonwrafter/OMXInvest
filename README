@@ -10,5 +10,6 @@ to be happy.
 Be nice and nice things happen.
 
 Requirements:
-	Java (!)
+	Java 				(!)
 	Jericho HTML Parser (http://jericho.htmlparser.net)
+	JAMA 				(http://math.nist.gov/javanumerics/jama)
