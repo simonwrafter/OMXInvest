@@ -6,16 +6,23 @@ import java.util.*;
 
 import net.htmlparser.jericho.*;
 
-public class Market {
+public class Market implements Comparable<Market> {
 	private Map<String, Stock> availableStocks;
 	private String listName;
 	
 	public Market(String market, String capital) throws MalformedURLException, IOException {
+		int[] i = MarketData.marketIndex(market, capital);
+		listName = MarketData.arrayMarkets[i[0]] + MarketData.arrayCapital[i[1]]; 
+		availableStocks = new HashMap<String, Stock>();
 		buildStockMap(market, capital);
 	}
 	
 	public String getListName() {
 		return listName;
+	}
+	
+	public boolean contains(String omxId) {
+		return availableStocks.containsKey(omxId);
 	}
 	
 	public void rebuildHistory(String omxId) throws MalformedURLException, IOException {
@@ -52,5 +59,10 @@ public class Market {
 				e.getAttributeValue("isin"),
 				listName,
 				e.getAttributeValue("cr"));
+	}
+
+	@Override
+	public int compareTo(Market o) {
+		return listName.compareTo(o.listName);
 	}
 }

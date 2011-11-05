@@ -99,7 +99,7 @@ public class MarketData {
 			}
 		}
 		for (int i=0; i<arrayCapital.length; i++) {
-			if (arrayCapital[i].startsWith(market)) {
+			if (arrayCapital[i].startsWith(cap)) {
 				index[1] = i;
 				break;
 			}

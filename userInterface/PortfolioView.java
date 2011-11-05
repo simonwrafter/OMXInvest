@@ -1,17 +1,30 @@
 package userInterface;
 
 import java.awt.*;
+import java.io.IOException;
+import java.net.MalformedURLException;
+
 import javax.swing.*;
 
 import stock.*;
 
 public class PortfolioView {
-	private Portfolio portfolio;
+	private Portfolio currentPortfolio;
 	private CommandPanel commandPanel;
-	private JMenu fractalMenu;
+	private JMenu portfolioMenu;
+	private MainPanel mainPanel;
+	private Investments investments;
 	
 	PortfolioView() {
-		portfolio = new Portfolio("default");
+		try {
+			investments = new Investments();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		currentPortfolio = investments.getDefaultPortfolio();
 		
 		JFrame frame = new JFrame("Invest");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -20,22 +33,36 @@ public class PortfolioView {
 		
 		frame.add(commandPanel, BorderLayout.SOUTH);
 		
-		fractalMenu = new JMenu("Portfolios");
-		fractalMenu.add(new JMenuItem(portfolio.getName()));
-
-		JMenuBar menuBar = new JMenuBar();
-		menuBar.add(fractalMenu);
+		portfolioMenu = new JMenu("Portfolios");
+		portfolioMenu.add(new JMenuItem(currentPortfolio.getName()));
 		
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.add(portfolioMenu);
+		
+		mainPanel = new MainPanel(this);
+		
+		frame.add(mainPanel);
 		frame.setJMenuBar(menuBar);
 		frame.pack();
 		frame.setVisible(true);
 	}
 
 	public void showHistory() {
-		// TODO Auto-generated method stub
+		
+		
+		
+		mainPanel.showHistory();
 	}
 
 	public void showOptimization() {
-		// TODO Auto-generated method stub
+		mainPanel.showOptimization();
+	}
+
+	public void showMarkets() {
+		mainPanel.showMarkets();
+	}
+
+	public void showHome() {
+		mainPanel.showHome();
 	}
 }

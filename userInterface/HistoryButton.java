@@ -10,7 +10,7 @@ public class HistoryButton extends JButton implements ActionListener {
 		super("History");
 		this.view = view;
 		addActionListener(this);
-		this.setToolTipText("Visar historik för portfölj.");
+		this.setToolTipText("Show Portfolio History");
 	}
 	
 	@Override

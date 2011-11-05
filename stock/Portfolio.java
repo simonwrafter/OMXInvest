@@ -69,6 +69,10 @@ public class Portfolio {
 		return 0;
 	}
 	
+	public int size() {
+		return stockmap.size();
+	}
+	
 	public String[] stocksInPortfolio() {
 		Set<Map.Entry<String, Integer>> ent = stockmap.entrySet();
 		String[] result = new String[ent.size()];
