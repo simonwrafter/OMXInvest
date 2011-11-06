@@ -41,16 +41,16 @@ public class Market implements Comparable<Market> {
 			throws MalformedURLException, IOException {
 		
 		int[] index = MarketData.marketIndex(market, cap);
-		
 		Source omxStockSource = new Source(new URL(MarketData.buildListURL(index[0], index[1])));
 		listName = MarketData.arrayMarkets[index[0]] + " " + MarketData.arrayCapital[index[1]];
 		
 		for (Element e : omxStockSource.getAllElements("inst")) {
-			availableStocks.put(e.getAttributeValue("id"), buildStockData(e, listName));
+			availableStocks.put(e.getAttributeValue("id"), buildStock(e, listName));
 		}
+		System.out.println(availableStocks);
 	}
 	
-	private Stock buildStockData(Element e, String listName)
+	private Stock buildStock(Element e, String listName)
 			throws MalformedURLException, IOException {
 		return new Stock(
 				e.getAttributeValue("id"),

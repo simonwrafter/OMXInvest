@@ -37,6 +37,13 @@ public class Portfolio {
 		return true;
 	}
 	
+	public double remove(String omxId) {
+		if (stockmap.containsKey(omxId)) {
+			return stockmap.remove(omxId);
+		}
+		return 0;
+	}
+	
 	public boolean buy(String omxId, int nbrOfStocks) {
 		if (stockmap.containsKey(omxId) && nbrOfStocks>0) {
 			stockmap.put(omxId, stockmap.get(omxId) + nbrOfStocks);
@@ -62,18 +69,11 @@ public class Portfolio {
 		return 0;
 	}
 	
-	public double remove(String omxId) {
-		if (stockmap.containsKey(omxId)) {
-			return stockmap.remove(omxId);
-		}
-		return 0;
-	}
-	
 	public int size() {
 		return stockmap.size();
 	}
 	
-	public String[] stocksInPortfolio() {
+	public String[] getStocksInPortfolio() {
 		Set<Map.Entry<String, Integer>> ent = stockmap.entrySet();
 		String[] result = new String[ent.size()];
 		int i = 0;
@@ -82,9 +82,9 @@ public class Portfolio {
 		return result;
 	}
 	
-	public int[] shareDistribution() {
+	public Integer[] getShareDistribution() {
 		Set<Map.Entry<String, Integer>> ent = stockmap.entrySet();
-		int[] result = new int[ent.size()];
+		Integer[] result = new Integer[ent.size()];
 		int i = 0;
 		for (Map.Entry<String, Integer> me : ent)
 			result[i++] = me.getValue();

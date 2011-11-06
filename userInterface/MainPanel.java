@@ -2,7 +2,7 @@ package userInterface;
 
 import java.awt.*;
 import javax.swing.*;
-import stock.*;
+import util.*;
 
 public class MainPanel extends JPanel {
 	private JTable dataTable;
@@ -10,20 +10,27 @@ public class MainPanel extends JPanel {
 	
 	public MainPanel(PortfolioView view) {
 		this.view = view;
-		dataTable = new JTable(20,15);
-		JScrollPane jsp = new JScrollPane();
-		add(jsp.add(dataTable));
+		dataTable = new JTable(Matrix.transpose(view.getPortfolioHistory()), 
+				InvestDate.addDateHeader(view.getCurrentPortfolio().getStocksInPortfolio()));
+        dataTable.setPreferredScrollableViewportSize(new Dimension(500, 400));
+        dataTable.setFillsViewportHeight(true);
+		JScrollPane jsp = new JScrollPane(dataTable);
+		add(jsp);
 	}
 	
 	public void showHistory() {
+		
 	}
-
+	
 	public void showOptimization() {
+		
 	}
-
+	
 	public void showMarkets() {
+		
 	}
 	
 	public void showHome() {
+		
 	}
 }

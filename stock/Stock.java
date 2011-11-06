@@ -32,7 +32,7 @@ public class Stock {
 	private String ISIN;
 	private String market;
 	private String currency;
-	private double[][] histValue; 
+	private Object[][] histValue; 
 	/* 
 	 * vector	meaning		key	  hi.a
 	 * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -58,7 +58,7 @@ public class Stock {
 		this.ISIN = ISIN;
 		this.market = market;
 		this.currency = currency;
-		histValue = new double[8][500];
+		histValue = new Object[8][500];
 	}
 
 	public String getOmxId() {
@@ -85,39 +85,48 @@ public class Stock {
 		return currency;
 	}
 	
-	public double[][] getHistory() {
+	public Object[][] getHistory() {
 		return getHistory(500);
 	}
 	
-	public double[][] getHistory(int days) {
-		return Arrays.copyOfRange(histValue, 500-days, 500);
+	public Object[][] getHistory(int days) {
+		Object[][] result = new Object[8][];
+		
+		for (int i=0; i<8; i++) {
+			result[i] = Arrays.copyOfRange(histValue[i], 500-days, 500);
+		}
+		return result;
 	}
 	
 	public void rebuildHistory() throws MalformedURLException, IOException {
 		Source histSource = new Source(new URL(MarketData.buildHistoryURL(omxId, 735)));
-		Iterator<Element> itr = histSource.getAllElements("hi").iterator();
-		histValue = new double[8][500];
-		for (int j=0; j<500 && itr.hasNext(); j++) {
-			makeHistoryRow(histValue, itr.next(), j);
+		List<Element> elist = histSource.getAllElements("hi");
+		ListIterator<Element> itr = elist.listIterator(elist.size());
+		histValue = new Object[8][500];
+		for (int j=0; j<500 && itr.hasPrevious(); j++) {
+			makeHistoryRow(histValue, itr.previous(), j);
 		}
 	}
 	
 	public void updateHistory() throws MalformedURLException, IOException {
-		double[][] newHistValue = new double[8][500];
-		int lastDate = new Double(histValue[0][499]).intValue();
+		int lastDate = (Integer) histValue[0][499];
 		int today = new Integer(InvestDate.dateNoDash(0));
 		if (lastDate != today) {
 			Source histSource = new Source(new URL(
 					MarketData.buildHistoryURL(omxId, InvestDate.makeDateString(lastDate))));
 			List<Element> elist = histSource.getAllElements("hi");
-			int esize = elist.size() - 1;
+			ListIterator<Element> itr = elist.listIterator(elist.size());
 			
-			for (int i=0; i<8; i++) {
-				newHistValue[i] = Arrays.copyOf(Arrays.copyOfRange(histValue[i], esize, 500), 500);
+			Object[][] newHistValue = new Object[8][500];
+			
+			int i=0;
+			for (i=0; i<500 && itr.hasPrevious(); i++) {
+				makeHistoryRow(newHistValue, itr.previous(), i);
 			}
-			Iterator<Element> itr = histSource.getAllElements("hi").iterator();
-			for (int i = 499-esize; i<500 && itr.hasNext();i++) {
-				makeHistoryRow(newHistValue, itr.next(), i);
+			for (int j=0; j<500 ;j++) {
+				for(int k=0; k<8; k++) {
+					newHistValue[k][j+i] = histValue[k][j];
+				}
 			}
 			histValue = newHistValue;
 		}
@@ -167,10 +176,9 @@ public class Stock {
 		return true;
 	}
 	
-	private static void makeHistoryRow(double[][] histValue, Element e, int i) {
-		histValue[0][i] = Double.valueOf(new StringBuilder(
-				e.getAttributeValue("dt")).deleteCharAt(4).deleteCharAt(6).toString());
-
+	private static void makeHistoryRow(Object[][] histValue, Element e, int i) {
+		histValue[0][i] = e.getAttributeValue("dt");
+		
 		String ip = e.getAttributeValue("ip"); //factor
 		String lp = e.getAttributeValue("lp"); //low price
 		String hp = e.getAttributeValue("hp"); //high price
@@ -179,15 +187,15 @@ public class Stock {
 		String tv = e.getAttributeValue("tv"); //volume
 		String nt = e.getAttributeValue("nt"); //trades
 		String to = e.getAttributeValue("to"); //turnover
-
+		
 		double factor = (ip.isEmpty()) ? Double.NaN : Double.parseDouble(ip);
-
+		
 		histValue[1][i] = (lp.isEmpty()) ? Double.NaN : Double.parseDouble(lp)*factor; 
 		histValue[2][i] = (hp.isEmpty()) ? Double.NaN : Double.parseDouble(hp)*factor;
 		histValue[3][i] = (cp.isEmpty()) ? Double.NaN : Double.parseDouble(cp)*factor;
 		histValue[4][i] = (avp.isEmpty()) ? Double.NaN : Double.parseDouble(avp)*factor;
-		histValue[5][i] = (tv.isEmpty()) ? Double.NaN : Double.parseDouble(tv);
-		histValue[6][i] = (nt.isEmpty()) ? Double.NaN : Double.parseDouble(nt);
-		histValue[7][i] = (to.isEmpty()) ? Double.NaN : Double.parseDouble(to);
+		histValue[5][i] = (tv.isEmpty()) ? Double.NaN : Long.parseLong(tv);
+		histValue[6][i] = (nt.isEmpty()) ? Double.NaN : Long.parseLong(nt);
+		histValue[7][i] = (to.isEmpty()) ? Double.NaN : Long.parseLong(to);
 	}
 }

@@ -1,30 +1,20 @@
 package userInterface;
 
 import java.awt.*;
-import java.io.IOException;
-import java.net.MalformedURLException;
-
+import java.io.*;
+import java.net.*;
 import javax.swing.*;
 
 import stock.*;
 
 public class PortfolioView {
-	private Portfolio currentPortfolio;
 	private CommandPanel commandPanel;
 	private JMenu portfolioMenu;
 	private MainPanel mainPanel;
 	private Investments investments;
 	
-	PortfolioView() {
-		try {
-			investments = new Investments();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		currentPortfolio = investments.getDefaultPortfolio();
+	PortfolioView() throws MalformedURLException, IOException {
+		investments = new Investments();
 		
 		JFrame frame = new JFrame("Invest");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,7 +24,7 @@ public class PortfolioView {
 		frame.add(commandPanel, BorderLayout.SOUTH);
 		
 		portfolioMenu = new JMenu("Portfolios");
-		portfolioMenu.add(new JMenuItem(currentPortfolio.getName()));
+		portfolioMenu.add(new JMenuItem(investments.getCurrentPortfolio().getName()));
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(portfolioMenu);
@@ -46,11 +36,20 @@ public class PortfolioView {
 		frame.pack();
 		frame.setVisible(true);
 	}
-
+	
+	public Portfolio getCurrentPortfolio() {
+		return investments.getCurrentPortfolio();
+	}
+	
+	public Object[][] getPortfolioHistory() {
+		return investments.getHistory(4);
+	}
+	
+	public Object[][] getPortfolioHistory(int nbrOfDays) {
+		return investments.getHistory(4, nbrOfDays);
+	}
+	
 	public void showHistory() {
-		
-		
-		
 		mainPanel.showHistory();
 	}
 

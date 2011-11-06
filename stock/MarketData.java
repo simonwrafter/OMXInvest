@@ -77,7 +77,9 @@ public class MarketData {
 	}
 	
 	public static final String buildHistoryURL(String omxID, String date) {
-		return proxyURL + historyQuestion + omxID + fromDate + date + historyValues;
+		
+		System.out.println(proxyURL + historyQuestion + omxID + fromDate + date + toDate + InvestDate.today() + historyValues);
+		return proxyURL + historyQuestion + omxID + fromDate + date + toDate + InvestDate.date(1) + historyValues;
 	}
 	
 	public static final String buildDerivativeURL(String omxId) {
