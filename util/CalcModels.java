@@ -4,26 +4,42 @@ import Jama.Matrix;
 
 public class CalcModels {
 	
-	public static double expectedValue(double[] history) {
-		double[] lH = logHist(history);
-		double sum = 0;
-		
-		for (int i=499; i >= 0; i--) {
-			sum += lH[i];
+	public static Double[] logHist(Double[] history) {
+		Double[] result = new Double[500];
+		result[0] = 499.;
+		for (int i=498; i >= 0; i--) {
+			if (Double.isNaN(history[i]))
+				result[i] = result[i+1];
+			else
+				result[i] = Math.log(history[i]/result[i+1]);
 		}
+		return result;
+	}
+	
+	public static Double expectedValue(Double[] history) {
+		Double[] lH = logHist(history);
+		double sum = 0;
+		for (int i=499; i >= 0; i--)
+			sum += lH[i];
 		return 0.5 * sum;
 	}
 	
-	public static double logExpectedValue(double[] lH) {
+	public static Double logExpectedValue(Double[] lH) {
 		double sum = 0;
-		for (int i=499; i >= 0; i--) {
+		for (int i=499; i >= 0; i--)
 			sum += lH[i];
-		}
 		return 0.5 * sum;
 	}
 	
-	public static double variance(double[] history) {
-		double[] lH = logHist(history);
+	public static Double[] portfolioExpectedValue(Double[][] histories) {
+		Double[] result = new Double[histories.length];
+		for (int i=0; i<histories.length; i++)
+			result[i] = expectedValue(histories[i]);
+		return result;
+	}
+	
+	public static Double variance(Double[] history) {
+		Double[] lH = logHist(history);
 		double expVal = logExpectedValue(lH);
 		double sum = 0;
 		for (int i=499; i >= 0; i--) {
@@ -32,29 +48,24 @@ public class CalcModels {
 		return 250/499 * sum;
 	}
 	
-	public static double[][] covariance(double[][] histories) {
-		double[][] prodMatrix = new double[histories.length][histories.length];
-		
+	public static Double[][] covariance(Double[][] histories) {
+		Double[][] prodMatrix = new Double[histories.length][histories.length];
 		for (int i=0; i < histories.length; i++) {
-			double[] lHi = logHist(histories[i]);
+			Double[] lHi = logHist(histories[i]);
 			double expVali = logExpectedValue(lHi);
-			
 			for (int j=0; j < histories.length; j++) {
-				double[] lHj = logHist(histories[j]);
+				Double[] lHj = logHist(histories[j]);
 				double expValj = logExpectedValue(lHj);
-				
 				double sum = 0;
-				for (int k=499; k >= 0; k--) {
+				for (int k=499; k >= 0; k--)
 					sum += (lHi[k] - expVali/250) * (lHj[k] - expValj/250);
-				}
-				
 				prodMatrix[i][j] = 250/499 * sum;
 			}
 		}
 		return prodMatrix;
 	}
 	
-	public static double portfolioVariance(double[] proportions, double[][] covariance) {
+	public static Double portfolioVariance(Double[] proportions, Double[][] covariance) {
 		double result = 0;
 		for (int i=0; i<proportions.length; i++) {
 			for (int j=0; j<proportions.length; j++) {
@@ -68,12 +79,12 @@ public class CalcModels {
 		return value * portVariance * rho * Math.sqrt(years);
 	}
 	
-	public static double[] optimizeLowRisk(double[][] coVariance) {
-		double[] result = new double[coVariance.length];
+	public static Double[] optimizeLowRisk(Double[][] coVariance) {
+		Double[] result = new Double[coVariance.length];
 		
-		Matrix C = new Matrix(coVariance);
+		Matrix C = new Matrix(InvestMatrix.toDoublePrimitiv(coVariance));
 		C = C.inverse();
-		double[][] coV = C.getArrayCopy();
+		Double[][] coV = InvestMatrix.toDoubleObject(C.getArrayCopy());
 		
 		double sum = 0;
 		for (int i=0; i<coV.length; i++) {
@@ -91,15 +102,15 @@ public class CalcModels {
 		return result;
 	}
 	
-	public static double[] optimizeHighGrowth(double[][] coVariance, double[] expValues) {
+	public static Double[] optimizeHighGrowth(Double[][] coVariance, Double[] expValues) {
 		int bound = expValues.length;
 		double tmp;
-		double[] arrTmp = new double[bound];
-		double[] result = new double[bound];
+		Double[] arrTmp = new Double[bound];
+		Double[] result = new Double[bound];
 		
-		Matrix C = new Matrix(coVariance);
+		Matrix C = new Matrix(InvestMatrix.toDoublePrimitiv(coVariance));
 		C = C.inverse();
-		double[][] coV = C.getArrayCopy();
+		Double[][] coV = InvestMatrix.toDoubleObject(C.getArrayCopy());
 		
 		double sum = 0;
 		for (int i=0; i<bound; i++) {
@@ -136,29 +147,14 @@ public class CalcModels {
 		return result;
 	}
 	
-	public static double[] personalPortfolio(double[] low, double[] high, double lambda) {
+	public static Double[] personalPortfolio(Double[] low, Double[] high, Double lambda) {
 		int bound = low.length;
-		double[] result = new double[bound];
+		Double[] result = new Double[bound];
 		
 		for (int i=0; i<bound; i++) {
 			result[i] = lambda * high[i] + (1-lambda) * low[i];
 		}
 		
-		return result;
-	}
-	
-	//--privates
-	
-	private static double[] logHist(double[] history) {
-		double[] result = new double[500];
-		result[0] = 499;
-		for (int i=498; i >= 0; i--) {
-			if (Double.isNaN(history[i])) {
-				result[i] = result[i+1];
-			} else {
-				result[i] = Math.log(history[i]/result[i+1]);
-			}
-		}
 		return result;
 	}
 	

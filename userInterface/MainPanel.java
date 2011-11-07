@@ -5,36 +5,31 @@ import javax.swing.*;
 
 public class MainPanel extends JPanel {
 	private static final long serialVersionUID = 9193463064365388089L;
-	private HistoryTable historyTable;
-	private OptimizedTable optimizedTable;
-	private MarketTable marketTable;
-	private HomeTable homeTable;
+	private Tables tables;
 	private JScrollPane scrollPane;
 	
 	public MainPanel(PortfolioView view) {
 		super(new GridLayout(1,0));
-		historyTable = new HistoryTable(view);
-		optimizedTable = new OptimizedTable(view);
-		marketTable = new MarketTable(view);
-		homeTable = new HomeTable(view);
+		tables = new Tables(view);
+		
 		scrollPane = new JScrollPane();
 		showHistory();
 		add(scrollPane);
 	}
 	
 	public void showHistory() {
-		scrollPane.setViewportView(historyTable.getTable());
+		scrollPane.setViewportView(tables.getHistoryTable());
 	}
 	
 	public void showOptimization() {
-		scrollPane.setViewportView(optimizedTable.getTable());
+		scrollPane.setViewportView(tables.getOptimizationTable());
 	}
 	
 	public void showMarkets() {
-		scrollPane.setViewportView(marketTable.getTable());
+		scrollPane.setViewportView(tables.getMarketTable());
 	}
 	
 	public void showHome() {
-		scrollPane.setViewportView(homeTable.getTable());
+		scrollPane.setViewportView(tables.getHomeTable());
 	}
 }
