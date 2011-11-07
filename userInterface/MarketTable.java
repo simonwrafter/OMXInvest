@@ -3,6 +3,7 @@ package userInterface;
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.table.*;
 
 import stock.*;
 
@@ -42,8 +43,19 @@ public class MarketTable {
 		}
 		
 		JTable table = new JTable(data, header);
-		table.setMinimumSize(new Dimension(x*50, y*15));
 		
+		for (int i = 0; i < header.length; i++) {
+			TableColumn column = table.getColumnModel().getColumn(i);
+			if (i%3 == 0) {
+				column.setPreferredWidth(175);
+			} else {
+				column.setPreferredWidth(75);
+			}
+		}
+		
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+
 		return table;
 	}
 }

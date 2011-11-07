@@ -1,5 +1,6 @@
 package userInterface;
 
+import java.awt.*;
 import javax.swing.*;
 
 public class MainPanel extends JPanel {
@@ -11,6 +12,7 @@ public class MainPanel extends JPanel {
 	private JScrollPane scrollPane;
 	
 	public MainPanel(PortfolioView view) {
+		super(new GridLayout(1,0));
 		historyTable = new HistoryTable(view);
 		optimizedTable = new OptimizedTable(view);
 		marketTable = new MarketTable(view);
