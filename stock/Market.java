@@ -7,18 +7,22 @@ import java.util.*;
 import net.htmlparser.jericho.*;
 
 public class Market implements Comparable<Market> {
-	private Map<String, Stock> availableStocks;
+	private SortedMap<String, Stock> availableStocks;
 	private String listName;
 	
 	public Market(String market, String capital) throws MalformedURLException, IOException {
 		int[] i = MarketData.marketIndex(market, capital);
 		listName = MarketData.arrayMarkets[i[0]] + MarketData.arrayCapital[i[1]]; 
-		availableStocks = new HashMap<String, Stock>();
+		availableStocks = new TreeMap<String, Stock>();
 		buildStockMap(market, capital);
 	}
 	
 	public String getListName() {
 		return listName;
+	}
+	
+	public SortedMap<String, Stock> getMarketMap() {
+		return availableStocks;
 	}
 	
 	public boolean contains(String omxId) {

@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 
 public class HomeButton extends JButton implements ActionListener {
+	private static final long serialVersionUID = -5183164298807301905L;
 	private PortfolioView view;
 
 	public HomeButton(PortfolioView view) {

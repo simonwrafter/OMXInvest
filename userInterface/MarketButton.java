@@ -1,10 +1,10 @@
 package userInterface;
 
 import java.awt.event.*;
-
-import javax.swing.JButton;
+import javax.swing.*;
 
 public class MarketButton extends JButton implements ActionListener {
+	private static final long serialVersionUID = 8890635804371213914L;
 	private PortfolioView view;
 	
 	public MarketButton(PortfolioView view) {

@@ -3,6 +3,8 @@ package userInterface;
 import java.awt.*;
 import java.io.*;
 import java.net.*;
+import java.util.*;
+
 import javax.swing.*;
 
 import stock.*;
@@ -11,16 +13,16 @@ public class PortfolioView {
 	private CommandPanel commandPanel;
 	private JMenu portfolioMenu;
 	private MainPanel mainPanel;
+	private JFrame frame;
 	private Investments investments;
 	
 	PortfolioView() throws MalformedURLException, IOException {
 		investments = new Investments();
 		
-		JFrame frame = new JFrame("Invest");
+		frame = new JFrame("Invest");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		commandPanel = new CommandPanel(this);
-		
 		frame.add(commandPanel, BorderLayout.SOUTH);
 		
 		portfolioMenu = new JMenu("Portfolios");
@@ -35,6 +37,10 @@ public class PortfolioView {
 		frame.setJMenuBar(menuBar);
 		frame.pack();
 		frame.setVisible(true);
+	}
+	
+	public SortedSet<Market> getMarketSet() {
+		return investments.getMarketSet();
 	}
 	
 	public Portfolio getCurrentPortfolio() {

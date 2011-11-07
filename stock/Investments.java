@@ -23,6 +23,10 @@ public class Investments {
 		buildDefaultPortfolio();
 		portfolios.add(defaultPortfolio);
 	}
+	
+	public SortedSet<Market> getMarketSet() {
+		return markets;
+	}
 
 	public Portfolio getDefaultPortfolio() {
 		return defaultPortfolio;

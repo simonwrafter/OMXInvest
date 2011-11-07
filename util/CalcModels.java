@@ -8,7 +8,7 @@ public class CalcModels {
 		double[] lH = logHist(history);
 		double sum = 0;
 		
-		for (int i=0; i < 500; i++) {
+		for (int i=499; i >= 0; i--) {
 			sum += lH[i];
 		}
 		return 0.5 * sum;
@@ -16,7 +16,7 @@ public class CalcModels {
 	
 	public static double logExpectedValue(double[] lH) {
 		double sum = 0;
-		for (int i=0; i < 500; i++) {
+		for (int i=499; i >= 0; i--) {
 			sum += lH[i];
 		}
 		return 0.5 * sum;
@@ -26,7 +26,7 @@ public class CalcModels {
 		double[] lH = logHist(history);
 		double expVal = logExpectedValue(lH);
 		double sum = 0;
-		for (int i=0; i<500; i++) {
+		for (int i=499; i >= 0; i--) {
 			sum += square(lH[i] - expVal/250);
 		}
 		return 250/499 * sum;
@@ -44,7 +44,7 @@ public class CalcModels {
 				double expValj = logExpectedValue(lHj);
 				
 				double sum = 0;
-				for (int k=0; k<500; k++) {
+				for (int k=499; k >= 0; k--) {
 					sum += (lHi[k] - expVali/250) * (lHj[k] - expValj/250);
 				}
 				
@@ -151,12 +151,12 @@ public class CalcModels {
 	
 	private static double[] logHist(double[] history) {
 		double[] result = new double[500];
-		result[0] = 1;
-		for (int i=1; i < 500; i++) {
+		result[0] = 499;
+		for (int i=498; i >= 0; i--) {
 			if (Double.isNaN(history[i])) {
-				result[i] = result[i-1];
+				result[i] = result[i+1];
 			} else {
-				result[i] = Math.log(history[i]/result[i-1]);
+				result[i] = Math.log(history[i]/result[i+1]);
 			}
 		}
 		return result;

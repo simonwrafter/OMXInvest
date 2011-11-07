@@ -123,7 +123,7 @@ public class Stock {
 			for (i=0; i<500 && itr.hasPrevious(); i++) {
 				makeHistoryRow(newHistValue, itr.previous(), i);
 			}
-			for (int j=0; j<500 ;j++) {
+			for (int j=0; j<500; j++) {
 				for(int k=0; k<8; k++) {
 					newHistValue[k][j+i] = histValue[k][j];
 				}

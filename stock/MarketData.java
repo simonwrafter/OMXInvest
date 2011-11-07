@@ -49,10 +49,14 @@ public class MarketData {
 	private static final String historyValues = "&hi.a=0,2,1,4,21,8,9,10,11"; //"0,1,2,4,5,6,7,8,9,10,11,21,32,33,34,35,36,37,38,39,41,42,43,44,45,55,56"; // not sure what they all mean :/
 	private static final String derivValues = "&inst.an=id,nm,isin,bp,ap,hp,lp,lsp,tv,ed";
 	
+	@SuppressWarnings("unused")
 	private static final String newsURL = "https://newsclient.omxgroup.com/cdsPublic/viewDisclosure.action?";
+	@SuppressWarnings("unused")
 	private static final String newsId = "disclosureId=";
+	@SuppressWarnings("unused")
 	private static final String newslang = "&lang=";
 	
+	@SuppressWarnings("unused")
 	private static final String realtime = "&realtime=true"; // might come in handy
 	
 	/*
