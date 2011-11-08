@@ -148,4 +148,32 @@ public class Investments {
 	public void setPortfolioLiquid(double value) {
 		currentPortfolio.setLiquidAsset(value);
 	}
+	
+	public String[] getStockNames() {
+		String[] stocks = currentPortfolio.getStocksInPortfolio();
+		String[] result = new String[stocks.length];
+		for (int i=0; i<stocks.length; i++) {
+			for (Market m : markets) {
+				if (m.contains(stocks[i])) {
+					result[i] = m.getStock(stocks[i]).getFullName();
+					break;
+				}
+			}
+		}
+		return result;
+	}
+	
+	public String[] getShortNames() {
+		String[] stocks = currentPortfolio.getStocksInPortfolio();
+		String[] result = new String[stocks.length];
+		for (int i=0; i<stocks.length; i++) {
+			for (Market m : markets) {
+				if (m.contains(stocks[i])) {
+					result[i] = m.getStock(stocks[i]).getShortName();
+					break;
+				}
+			}
+		}
+		return result;
+	}
 }

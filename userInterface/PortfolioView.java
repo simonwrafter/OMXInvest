@@ -98,4 +98,12 @@ public class PortfolioView {
 	public void setPortfolioLiquid(double value) {
 		investments.setPortfolioLiquid(value);
 	}
+	
+	public String[] getStockNames() {
+		return investments.getStockNames();
+	}
+	
+	public String[] getShortNames() {
+		return investments.getShortNames();
+	}
 }

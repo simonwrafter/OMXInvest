@@ -13,7 +13,7 @@ public class MainPanel extends JPanel {
 		tables = new Tables(view);
 		
 		scrollPane = new JScrollPane();
-		showHistory();
+		showHome();
 		add(scrollPane);
 	}
 	

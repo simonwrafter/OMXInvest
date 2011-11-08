@@ -16,7 +16,7 @@ public class Tables {
 	}
 	
 	public Component getHistoryTable() {
-		Object[] header = InvestDate.addDateHeader(view.getCurrentPortfolio().getStocksInPortfolio());
+		Object[] header = InvestDate.addDateHeader(view.getShortNames());
 		Object[][] data = InvestMatrix.transpose(view.getPortfolioHistory());
 		
 		for(Object[] o : data) {
@@ -38,7 +38,8 @@ public class Tables {
 		}
 		
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		table.setCellSelectionEnabled(true);
 		return table;
 	}
 	
@@ -82,16 +83,17 @@ public class Tables {
 		}
 		
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		table.setCellSelectionEnabled(true);
 
 		return table;
 	}
 
 	public Component getOptimizationTable() {
 		Portfolio portfolio = view.getCurrentPortfolio();
-		String[] stocks = portfolio.getStocksInPortfolio();
+		String[] stocks = view.getShortNames();
 		int width = 6;
-		int height = stocks.length;
+		int height = Math.max(stocks.length, 6);
 		
 		Object[] header = {"name", "min risk", "personal", "max growth", "", ""};//new Object[width];
 		Object[][] data = new Object[height][width];
@@ -111,7 +113,7 @@ public class Tables {
 		Double[] personal = CalcModels.personalPortfolio(minRisk, maxGrowth, portfolio.getLambda());
 		Double variance = CalcModels.portfolioVariance(personal, coV);
 		
-		for (int i=0; i<height; i++) {
+		for (int i=0; i<stocks.length; i++) {
 			data[i][0] = stocks[i];
 			data[i][1] = new Integer((int) Math.round(minRisk[i] * (portfolioValue + portfolioLiquid) / histories[i+1][0]));
 			data[i][2] = new Integer((int) Math.round(personal[i] * (portfolioValue + portfolioLiquid) / histories[i+1][0]));
@@ -135,14 +137,59 @@ public class Tables {
 		}
 		
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		table.setCellSelectionEnabled(true);
 
 		return table;
 	}
 
 	public Component getHomeTable() {
-		// TODO Auto-generated method stub
-		return null;
+		Portfolio portfolio = view.getCurrentPortfolio();
+		
+		String[] stocks = view.getStockNames();
+		String[] shortName = view.getShortNames();
+		Integer[] nbrOf = portfolio.getShareDistribution();
+		Double[][] history = view.getPortfolioHistory(1);
+		
+		int height = Math.max(stocks.length, 5);
+		int width = 6;
+		
+		Object[] header = {"stocks", "short name", "nbrOf", "last value", "total", ""};
+		Object[][] data = new Object[height][width];
+		
+		for (Object[] o : data) {
+			Arrays.fill(o, "");
+		}
+		
+		for (int i=0; i<stocks.length; i++) {
+			data[i][0] = stocks[i];
+			data[i][1] = shortName[i];
+			data[i][2] = nbrOf[i];
+			data[i][3] = history[i+1][0];
+			data[i][4] = nbrOf[i]*history[i+1][0];
+			data[i][5] = "";
+		}
+		
+		data[0][5] = "lambda";
+		data[1][5] = portfolio.getLambda();
+		data[2][5] = "liquid";
+		data[3][5] = portfolio.getLiquidAsset();
+		
+		JTable table = new JTable(data, header);
+		
+		for (int i = 0; i < header.length; i++) {
+			TableColumn column = table.getColumnModel().getColumn(i);
+			if (i == 0) {
+				column.setPreferredWidth(90);
+			} else {
+				column.setPreferredWidth(75);
+			}
+		}
+		
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		table.setCellSelectionEnabled(true);
+		return table;
 	}
 	
 }
