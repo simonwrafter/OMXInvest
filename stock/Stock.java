@@ -32,7 +32,7 @@ public class Stock {
 	private String ISIN;
 	private String market;
 	private String currency;
-	private Object[][] histValue; 
+	private Double[][] histValue; 
 	/* 
 	 * vector	meaning		key	  hi.a
 	 * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -58,7 +58,7 @@ public class Stock {
 		this.ISIN = ISIN;
 		this.market = market;
 		this.currency = currency;
-		histValue = new Object[8][500];
+		histValue = new Double[8][500];
 	}
 
 	public String getOmxId() {
@@ -85,12 +85,12 @@ public class Stock {
 		return currency;
 	}
 	
-	public Object[][] getHistory() {
+	public Double[][] getHistory() {
 		return getHistory(500);
 	}
 	
-	public Object[][] getHistory(int days) {
-		Object[][] result = new Object[8][];
+	public Double[][] getHistory(int days) {
+		Double[][] result = new Double[8][];
 		
 		for (int i=0; i<8; i++) {
 			result[i] = Arrays.copyOfRange(histValue[i], 500-days, 500);
@@ -102,14 +102,14 @@ public class Stock {
 		Source histSource = new Source(new URL(MarketData.buildHistoryURL(omxId, 735)));
 		List<Element> elist = histSource.getAllElements("hi");
 		ListIterator<Element> itr = elist.listIterator(elist.size());
-		histValue = new Object[8][500];
+		histValue = new Double[8][500];
 		for (int j=0; j<500 && itr.hasPrevious(); j++) {
 			makeHistoryRow(histValue, itr.previous(), j);
 		}
 	}
 	
 	public void updateHistory() throws MalformedURLException, IOException {
-		int lastDate = (Integer) histValue[0][499];
+		int lastDate = histValue[0][0].intValue();
 		int today = new Integer(InvestDate.dateNoDash(0));
 		if (lastDate != today) {
 			Source histSource = new Source(new URL(
@@ -117,7 +117,7 @@ public class Stock {
 			List<Element> elist = histSource.getAllElements("hi");
 			ListIterator<Element> itr = elist.listIterator(elist.size());
 			
-			Object[][] newHistValue = new Object[8][500];
+			Double[][] newHistValue = new Double[8][500];
 			
 			int i=0;
 			for (i=0; i<500 && itr.hasPrevious(); i++) {
@@ -176,8 +176,8 @@ public class Stock {
 		return true;
 	}
 	
-	private static void makeHistoryRow(Object[][] histValue, Element e, int i) {
-		histValue[0][i] = e.getAttributeValue("dt");
+	private static void makeHistoryRow(Double[][] histValue, Element e, int i) {
+		histValue[0][i] = (double) InvestDate.makeDateInt(e.getAttributeValue("dt"));
 		
 		String ip = e.getAttributeValue("ip"); //factor
 		String lp = e.getAttributeValue("lp"); //low price

@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2011, Simon Wrafter <simon.wrafter@gmail.com>
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
 package util; 
 
 import Jama.Matrix;
@@ -6,7 +22,7 @@ public class CalcModels {
 	
 	public static Double[] logHist(Double[] history) {
 		Double[] result = new Double[500];
-		result[0] = 499.;
+		result[499] = Math.log(history[499]);
 		for (int i=498; i >= 0; i--) {
 			if (Double.isNaN(history[i]))
 				result[i] = result[i+1];
@@ -32,9 +48,9 @@ public class CalcModels {
 	}
 	
 	public static Double[] portfolioExpectedValue(Double[][] histories) {
-		Double[] result = new Double[histories.length];
-		for (int i=0; i<histories.length; i++)
-			result[i] = expectedValue(histories[i]);
+		Double[] result = new Double[histories.length-1];
+		for (int i=1; i<histories.length; i++)
+			result[i-1] = expectedValue(histories[i]);
 		return result;
 	}
 	
@@ -49,17 +65,17 @@ public class CalcModels {
 	}
 	
 	public static Double[][] covariance(Double[][] histories) {
-		Double[][] prodMatrix = new Double[histories.length][histories.length];
-		for (int i=0; i < histories.length; i++) {
+		Double[][] prodMatrix = new Double[histories.length-1][histories.length-1];
+		for (int i=1; i < histories.length; i++) {
 			Double[] lHi = logHist(histories[i]);
 			double expVali = logExpectedValue(lHi);
-			for (int j=0; j < histories.length; j++) {
+			for (int j=1; j < histories.length; j++) {
 				Double[] lHj = logHist(histories[j]);
 				double expValj = logExpectedValue(lHj);
 				double sum = 0;
 				for (int k=499; k >= 0; k--)
 					sum += (lHi[k] - expVali/250) * (lHj[k] - expValj/250);
-				prodMatrix[i][j] = 250/499 * sum;
+				prodMatrix[i-1][j-1] = 250.0/499 * sum;
 			}
 		}
 		return prodMatrix;

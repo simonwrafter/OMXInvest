@@ -87,26 +87,26 @@ public class Tables {
 		int height = stocks.length;
 		
 		Object[] header = {"name", "min risk", "personal", "max growth", "", ""};//new Object[width];
-		Object[][] data = new Object[width][height];
+		Object[][] data = new Object[height][width];
 		
 		//Arrays.fill(header, "");
 		for (Object[] o : data) {
 			Arrays.fill(o, "");
 		}
 		
-		Object[][] histories = view.getPortfolioHistory();
-		
-		Double[] minRisk = CalcModels.optimizeLowRisk(CalcModels.covariance((Double[][]) histories));
-		Double[] maxGrowth = CalcModels.optimizeHighGrowth(CalcModels.covariance((Double[][]) histories), 
-					CalcModels.portfolioExpectedValue((Double[][]) histories));
+		Double[][] histories = view.getPortfolioHistory();
+		Double[][] coV = CalcModels.covariance(histories);
+		Double[] minRisk = CalcModels.optimizeLowRisk(coV);
+		Double[] maxGrowth = CalcModels.optimizeHighGrowth(coV, 
+					CalcModels.portfolioExpectedValue(histories));
 		
 		for (int i=0; i<height; i++) {
-			data[0][i] = stocks[i];
-			data[1][i] = minRisk[i];
-			data[2][i] = "";
-			data[3][i] = maxGrowth[i];
-			data[4][i] = "";
-			data[5][i] = "";
+			data[i][0] = stocks[i];
+			data[i][1] = minRisk[i];
+			data[i][2] = "";
+			data[i][3] = maxGrowth[i];
+			data[i][4] = "";
+			data[i][5] = "";
 		}
 		
 		
