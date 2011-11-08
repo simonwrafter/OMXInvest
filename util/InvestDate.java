@@ -45,7 +45,7 @@ public class InvestDate {
 	
 	public static String makeDateString(int dateNoDash) {
 		int di = (int) dateNoDash;
-		return String.format("%d-%d-%d", di/10000, (di/100)%100, di%100);
+		return String.format("%04d-%02d-%02d", di/10000, (di/100)%100, di%100);
 	}
 	
 	public static int makeDateInt(String dateWithDash) {

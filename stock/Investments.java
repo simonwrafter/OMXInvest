@@ -119,7 +119,7 @@ public class Investments {
 	}
 	
 	private Portfolio buildDefaultPortfolio() throws MalformedURLException, IOException {
-		Portfolio result = new Portfolio("default");
+		Portfolio result = new Portfolio("default", 10000);
 		defaultPortfolio = currentPortfolio = result;
 		addStockToPortfolio("SSE3966");
 		addStockToPortfolio("SSE18634");
@@ -127,5 +127,25 @@ public class Investments {
 		addStockToPortfolio("SSE3524");
 		addStockToPortfolio("SSE101");
 		return result;
+	}
+
+	public double getPortfolioValue() {
+		double result=0;
+		Double[][] values = getHistory(4, 1);
+		Integer[] nbrOf = currentPortfolio.getShareDistribution();
+		
+		for(int i=0; i<nbrOf.length; i++) {
+			result += nbrOf[i] * values[i+1][0];
+		}
+		
+		return result;
+	}
+	
+	public double getPortfolioLiquid() {
+		return currentPortfolio.getLiquidAsset();
+	}
+	
+	public void setPortfolioLiquid(double value) {
+		currentPortfolio.setLiquidAsset(value);
 	}
 }

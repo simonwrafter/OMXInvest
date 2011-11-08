@@ -86,4 +86,16 @@ public class PortfolioView {
 	public void showHome() {
 		mainPanel.showHome();
 	}
+
+	public double portfolioValue() {
+		return investments.getPortfolioValue();
+	}
+	
+	public double getPortfolioLiquid() {
+		return investments.getPortfolioLiquid();
+	}
+	
+	public void setPortfolioLiquid(double value) {
+		investments.setPortfolioLiquid(value);
+	}
 }

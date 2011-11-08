@@ -6,11 +6,17 @@ public class Portfolio {
 	private SortedMap<String, Integer> stockmap;
 	private double liquidAsset;
 	private String name;
+	private double lambda;
 	
 	public Portfolio(String name) {
+		this(name, 0);
+	}
+	
+	public Portfolio(String name, double liquid) {
 		this.name = name;
 		stockmap = new TreeMap<String, Integer>();
-		setLiquidAsset(0);
+		setLiquidAsset(liquid);
+		setLambda(0.3);
 	}
 	
 	public String getName() {
@@ -27,6 +33,14 @@ public class Portfolio {
 	
 	public void setLiquidAsset(double liquidAsset) {
 		this.liquidAsset = liquidAsset;
+	}
+
+	public double getLambda() {
+		return lambda;
+	}
+
+	public void setLambda(double lambda) {
+		this.lambda = lambda;
 	}
 
 	public boolean add(String omxId) {

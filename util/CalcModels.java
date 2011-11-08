@@ -120,7 +120,7 @@ public class CalcModels {
 	
 	public static Double[] optimizeHighGrowth(Double[][] coVariance, Double[] expValues) {
 		int bound = expValues.length;
-		double tmp;
+		double tmp = 0, sum = 0;
 		Double[] arrTmp = new Double[bound];
 		Double[] result = new Double[bound];
 		
@@ -128,7 +128,6 @@ public class CalcModels {
 		C = C.inverse();
 		Double[][] coV = InvestMatrix.toDoubleObject(C.getArrayCopy());
 		
-		double sum = 0;
 		for (int i=0; i<bound; i++) {
 			for (int j=0; j<bound; j++) {
 				sum += coV[i][j];
@@ -136,21 +135,19 @@ public class CalcModels {
 		}
 		
 		for (int i=0; i<bound; i++) {
-			tmp = 0;
 			for (int j=0; j<bound; j++) {
 				tmp += coV[i][j];
 			}
 			arrTmp[i] = tmp;
+			tmp=0;
 		}
 		
-		tmp = 0;
 		for (int i=0; i<bound; i++) {
 			tmp += arrTmp[i] * expValues[i];
 		}
-		tmp = (tmp - 1) / sum;
 		
 		for (int i=0; i<bound; i++) {
-			arrTmp[i] = expValues[i] - tmp;
+			arrTmp[i] = expValues[i] - (tmp - 1) / sum;
 		}
 		
 		for (int i=0; i<bound; i++) {

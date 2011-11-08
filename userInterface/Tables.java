@@ -15,9 +15,16 @@ public class Tables {
 		this.view = view;
 	}
 	
-	public JTable getHistoryTable() {
+	public Component getHistoryTable() {
 		Object[] header = InvestDate.addDateHeader(view.getCurrentPortfolio().getStocksInPortfolio());
 		Object[][] data = InvestMatrix.transpose(view.getPortfolioHistory());
+		
+		for(Object[] o : data) {
+			o[0] = InvestDate.makeDateString(((Double) o[0]).intValue());
+			for(int i=1;i<o.length;i++) {
+				o[i] = String.format("%.02f", o[i]);
+			}
+		}
 		
 		JTable table = new JTable(data, header);
 		
@@ -35,7 +42,7 @@ public class Tables {
 		return table;
 	}
 	
-	public JTable getMarketTable() {
+	public Component getMarketTable() {
 		SortedSet<Market> set = view.getMarketSet();
 		int x = set.size()*3;
 		int y = 0;
@@ -94,27 +101,41 @@ public class Tables {
 			Arrays.fill(o, "");
 		}
 		
+		Double portfolioValue = view.portfolioValue();
+		Double portfolioLiquid = view.getPortfolioLiquid();
 		Double[][] histories = view.getPortfolioHistory();
 		Double[][] coV = CalcModels.covariance(histories);
 		Double[] minRisk = CalcModels.optimizeLowRisk(coV);
 		Double[] maxGrowth = CalcModels.optimizeHighGrowth(coV, 
 					CalcModels.portfolioExpectedValue(histories));
+		Double[] personal = CalcModels.personalPortfolio(minRisk, maxGrowth, portfolio.getLambda());
+		Double variance = CalcModels.portfolioVariance(personal, coV);
 		
 		for (int i=0; i<height; i++) {
 			data[i][0] = stocks[i];
-			data[i][1] = minRisk[i];
-			data[i][2] = "";
-			data[i][3] = maxGrowth[i];
+			data[i][1] = new Integer((int) Math.round(minRisk[i] * (portfolioValue + portfolioLiquid) / histories[i+1][0]));
+			data[i][2] = new Integer((int) Math.round(personal[i] * (portfolioValue + portfolioLiquid) / histories[i+1][0]));
+			data[i][3] = new Integer((int) Math.round(maxGrowth[i] * (portfolioValue + portfolioLiquid) / histories[i+1][0]));
 			data[i][4] = "";
 			data[i][5] = "";
 		}
 		
-		
+		data[2][5] = "VaR";
+		data[3][5] = CalcModels.valueAtRisk(portfolioValue, variance, 1, .1);
 		
 		JTable table = new JTable(data, header);
 		
+		for (int i = 0; i < header.length; i++) {
+			TableColumn column = table.getColumnModel().getColumn(i);
+			if (i == 0) {
+				column.setPreferredWidth(75);
+			} else {
+				column.setPreferredWidth(80);
+			}
+		}
+		
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		return table;
 	}
