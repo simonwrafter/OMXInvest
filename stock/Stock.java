@@ -16,12 +16,19 @@
 
 package stock;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Arrays;
 
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.Source;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import util.InvestDate;
 
 public class Stock {
@@ -50,8 +57,7 @@ public class Stock {
 	 *  
 	 */
 	
-	public Stock(String omxId, String shortName, String fullName, String ISIN, String market, String currency)
-			throws MalformedURLException, IOException {
+	public Stock(String omxId, String shortName, String fullName, String ISIN, String market, String currency) {
 		this.omxId = omxId;
 		this.shortName = shortName;
 		this.fullName = fullName;
@@ -98,32 +104,31 @@ public class Stock {
 		return result;
 	}
 	
-	public void rebuildHistory() throws MalformedURLException, IOException {
-		Source histSource = new Source(new URL(MarketData.buildHistoryURL(omxId, 735)));
-		List<Element> elist = histSource.getAllElements("hi");
-		ListIterator<Element> itr = elist.listIterator(elist.size());
+	public void rebuildHistory() throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		Document doc = db.parse(MarketData.buildHistoryURL(omxId, 735));
+		NodeList nl = doc.getElementsByTagName("hi");
 		histValue = new Double[8][500];
-		for (int j=0; j<500 && itr.hasPrevious(); j++) {
-			makeHistoryRow(histValue, itr.previous(), j);
+		int len = nl.getLength()-1;
+		for (int i=0; i<500; i++, len--) {
+			makeHistoryRow(histValue, nl.item(len), i);
 		}
 	}
 	
-	public void updateHistory() throws MalformedURLException, IOException {
+	public void updateHistory() throws IOException, ParserConfigurationException, SAXException {
 		int lastDate = histValue[0][0].intValue();
 		int today = new Integer(InvestDate.dateNoDash(0));
 		if (lastDate != today) {
-			Source histSource = new Source(new URL(
-					MarketData.buildHistoryURL(omxId, InvestDate.makeDateString(lastDate))));
-			List<Element> elist = histSource.getAllElements("hi");
-			ListIterator<Element> itr = elist.listIterator(elist.size());
-			
+			DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = db.parse(MarketData.buildHistoryURL(omxId, InvestDate.makeDateString(lastDate)));
+			NodeList nl = doc.getElementsByTagName("hi");
 			Double[][] newHistValue = new Double[8][500];
 			
-			int i=0;
-			for (i=0; i<500 && itr.hasPrevious(); i++) {
-				makeHistoryRow(newHistValue, itr.previous(), i);
+			int i=nl.getLength()-1;
+			for (int j = i; j>0; j--) {
+				makeHistoryRow(newHistValue, nl.item(j), i-j);
 			}
-			for (int j=0; j<500; j++) {
+			for (int j=0; j+i<500; j++) {
 				for(int k=0; k<8; k++) {
 					newHistValue[k][j+i] = histValue[k][j];
 				}
@@ -176,17 +181,19 @@ public class Stock {
 		return true;
 	}
 	
-	private static void makeHistoryRow(Double[][] histValue, Element e, int i) {
-		histValue[0][i] = (double) InvestDate.makeDateInt(e.getAttributeValue("dt"));
+	private static void makeHistoryRow(Double[][] histValue, Node n, int i) {
 		
-		String ip = e.getAttributeValue("ip"); //factor
-		String lp = e.getAttributeValue("lp"); //low price
-		String hp = e.getAttributeValue("hp"); //high price
-		String cp = e.getAttributeValue("cp"); //closing price
-		String avp = e.getAttributeValue("avp"); //average price
-		String tv = e.getAttributeValue("tv"); //volume
-		String nt = e.getAttributeValue("nt"); //trades
-		String to = e.getAttributeValue("to"); //turnover
+		Element e = (Element) n;
+		histValue[0][i] = (double) InvestDate.makeDateInt(e.getAttribute("dt"));
+		
+		String ip = e.getAttribute("ip"); //factor
+		String lp = e.getAttribute("lp"); //low price
+		String hp = e.getAttribute("hp"); //high price
+		String cp = e.getAttribute("cp"); //closing price
+		String avp = e.getAttribute("avp"); //average price
+		String tv = e.getAttribute("tv"); //volume
+		String nt = e.getAttribute("nt"); //trades
+		String to = e.getAttribute("to"); //turnover
 		
 		double factor = (ip.isEmpty()) ? Double.NaN : Double.parseDouble(ip);
 		

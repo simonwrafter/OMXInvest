@@ -1,12 +1,35 @@
+/*
+ * Copyright © 2011, Simon Wrafter <simon.wrafter@gmail.com>
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
 package userInterface;
 
-import java.awt.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.table.*;
+import java.awt.Component;
+import java.util.SortedSet;
+import java.util.Arrays;
+import java.util.Map;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.TableColumn;
 
-import stock.*;
-import util.*;
+import stock.Market;
+import stock.Stock;
+import stock.Portfolio;
+import util.InvestDate;
+import util.InvestMatrix;
+import util.CalcModels;;
 
 public class Tables {
 	private PortfolioView view;
@@ -93,7 +116,7 @@ public class Tables {
 		Portfolio portfolio = view.getCurrentPortfolio();
 		String[] stocks = view.getShortNames();
 		int width = 6;
-		int height = Math.max(stocks.length, 6);
+		int height = Math.max(stocks.length, 5);
 		
 		Object[] header = {"name", "min risk", "personal", "max growth", "", ""};//new Object[width];
 		Object[][] data = new Object[height][width];

@@ -16,10 +16,13 @@
 
 package stock;
 
+import java.io.IOException;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 public class Investments {
 	private SortedSet<Portfolio> portfolios;
@@ -27,7 +30,8 @@ public class Investments {
 	private Portfolio defaultPortfolio;
 	private Portfolio currentPortfolio;
 
-	public Investments() throws MalformedURLException, IOException {
+	public Investments()
+			throws ParserConfigurationException, SAXException, IOException {
 		portfolios = new TreeSet<Portfolio>();
 		markets = new TreeSet<Market>();
 
@@ -63,18 +67,21 @@ public class Investments {
 		this.currentPortfolio = portfolio;
 	}
 	
-	public void addStockToPortfolio(String omxId) throws MalformedURLException, IOException {
+	public void addStockToPortfolio(String omxId)
+			throws IOException, ParserConfigurationException, SAXException {
 		currentPortfolio.add(omxId);
 		rebuildHistory(omxId);
 	}
 
-	public void updateHistory() throws MalformedURLException, IOException {
+	public void updateHistory()
+			throws IOException, ParserConfigurationException, SAXException {
 		for (String s : currentPortfolio.getStocksInPortfolio()) {
 			rebuildHistory(s);
 		}
 	}
 	
-	public void updateHistory(String omxId) throws MalformedURLException, IOException {
+	public void updateHistory(String omxId)
+			throws IOException, ParserConfigurationException, SAXException {
 		for (Market m : markets) {
 			if (m.contains(omxId)) {
 				m.updateHistory(omxId);
@@ -83,13 +90,15 @@ public class Investments {
 		}
 	}
 
-	public void rebuildHistory() throws MalformedURLException, IOException {
+	public void rebuildHistory()
+			throws IOException, ParserConfigurationException, SAXException {
 		for (String s : currentPortfolio.getStocksInPortfolio()) {
 			rebuildHistory(s);
 		}
 	}
 	
-	public void rebuildHistory(String omxId) throws MalformedURLException, IOException {
+	public void rebuildHistory(String omxId)
+			throws IOException, ParserConfigurationException, SAXException {
 		for (Market m : markets) {
 			if (m.contains(omxId)) {
 				m.rebuildHistory(omxId);
@@ -118,7 +127,8 @@ public class Investments {
 		return result;
 	}
 	
-	private Portfolio buildDefaultPortfolio() throws MalformedURLException, IOException {
+	private Portfolio buildDefaultPortfolio()
+			throws IOException, ParserConfigurationException, SAXException {
 		Portfolio result = new Portfolio("default", 10000);
 		defaultPortfolio = currentPortfolio = result;
 		addStockToPortfolio("SSE3966");

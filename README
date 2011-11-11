@@ -3,7 +3,7 @@ For License see LICENSE.TXT
 
 This is the source folder, Fantastic!
 
-You are free to use this if you find it usefull, 
+You are free to use this if you find it useful, 
 to take part in the development of this software and
 to be happy.
 
@@ -11,5 +11,4 @@ Be nice and nice things happen.
 
 Requirements:
 	Java 				(!)
-	Jericho HTML Parser (http://jericho.htmlparser.net)
 	JAMA 				(http://math.nist.gov/javanumerics/jama)

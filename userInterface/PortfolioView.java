@@ -16,14 +16,21 @@
 
 package userInterface;
 
-import java.awt.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.io.IOException;
+import java.util.SortedSet;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.xml.parsers.ParserConfigurationException;
 
-import stock.*;
+import org.xml.sax.SAXException;
+
+import stock.Investments;
+import stock.Market;
+import stock.Portfolio;
 
 public class PortfolioView {
 	private CommandPanel commandPanel;
@@ -32,7 +39,8 @@ public class PortfolioView {
 	private JFrame frame;
 	private Investments investments;
 	
-	PortfolioView() throws MalformedURLException, IOException {
+	public PortfolioView()
+			throws IOException, ParserConfigurationException, SAXException {
 		investments = new Investments();
 		
 		frame = new JFrame("Invest");
