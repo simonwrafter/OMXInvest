@@ -37,6 +37,15 @@ public class InvestMatrix {
 		return result;
 	}
 
+	public static double[] toDoublePrimitiv(Double[] original) {
+		double[] result = new double[original.length];
+		
+		for (int i=0; i<original.length; i++)
+			result[i] = original[i].doubleValue();
+		
+		return result;
+	}
+	
 	public static Double[][] toDoubleObject(double[][] original) {
 		Double[][] result = new Double[original.length][original[0].length];
 		
@@ -44,6 +53,31 @@ public class InvestMatrix {
 			for (int j=0; j<original[i].length; j++)
 				result[i][j] = original[i][j];
 		
+		return result;
+	}
+	
+	public static Double[] toDoubleObject(double[] original) {
+		Double[] result = new Double[original.length];
+		
+		for (int i=0; i<original.length; i++)
+			result[i] = original[i];
+		
+		return result;
+	}
+	
+	public static double[][] arrayToMatrixTransposed(Double[] original) {
+		double[][] result = new double[original.length][1];
+		for (int i=0; i<original.length; i++) {
+			result[i][0] = original[i];
+		}
+		return result;
+	}
+	
+	public static Double[] MatrixToArrayTransposed(double[][] original) {
+		Double[] result = new Double[original.length];
+		for (int i=0; i<original.length; i++) {
+			result[i] = original[i][0];
+		}
 		return result;
 	}
 }

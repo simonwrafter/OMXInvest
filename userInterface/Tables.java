@@ -138,9 +138,14 @@ public class Tables {
 		
 		for (int i=0; i<stocks.length; i++) {
 			data[i][0] = stocks[i];
+			
 			data[i][1] = new Integer((int) Math.round(minRisk[i] * (portfolioValue + portfolioLiquid) / histories[i+1][0]));
 			data[i][2] = new Integer((int) Math.round(personal[i] * (portfolioValue + portfolioLiquid) / histories[i+1][0]));
 			data[i][3] = new Integer((int) Math.round(maxGrowth[i] * (portfolioValue + portfolioLiquid) / histories[i+1][0]));
+			
+//			data[i][1] = minRisk[i];
+//			data[i][2] = personal[i];
+//			data[i][3] = maxGrowth[i];
 			data[i][4] = "";
 			data[i][5] = "";
 		}
