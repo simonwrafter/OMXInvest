@@ -99,7 +99,7 @@ public class Stock {
 		Double[][] result = new Double[8][];
 		
 		for (int i=0; i<8; i++) {
-			result[i] = Arrays.copyOfRange(histValue[i], 500-days, 500);
+			result[i] = Arrays.copyOfRange(histValue[i], 0, days);
 		}
 		return result;
 	}

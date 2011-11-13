@@ -155,38 +155,13 @@ public class CalcModels {
 	public static Double[] personalPortfolio(Double[] low, Double[] high, Double lambda) {
 		int bound = low.length;
 		Double[] result = new Double[bound];
-		
 		for (int i=0; i<bound; i++) {
-			result[i] = lambda * high[i] + (1-lambda) * low[i];
+			result[i] = lambda * high[i] + (1.0 - lambda) * low[i];
 		}
-		
 		return result;
 	}
 	
 	private static double square(double a) {
 		return a*a;
-	}
-	
-	public static Double[] optLow(Double[][] coVariance) {
-		Matrix one = new Matrix(coVariance.length, 1, 1);
-		Matrix C = new Matrix(InvestMatrix.toDoublePrimitiv(coVariance));
-		
-		Matrix numerator = C.inverse().times(one);
-		double denominator = one.transpose().times(C).times(one).get(0, 0);
-		
-		return InvestMatrix.MatrixToArrayTransposed(numerator.times(1/denominator).getArray());
-	}
-	
-	public static Double[] optHigh(Double[][] coVariance, Double[] expValues) {
-		Matrix one = new Matrix(coVariance.length, 1, 1);
-		Matrix C = new Matrix(InvestMatrix.toDoublePrimitiv(coVariance));
-		Matrix exp = new Matrix(InvestMatrix.arrayToMatrixTransposed(expValues));
-		
-		double numerator = one.transpose().times(C.inverse()).times(exp).minus(new Matrix(1,1,1)).get(0, 0);
-		double denominator = one.transpose().times(C.inverse()).times(one).get(0, 0);
-		
-		return InvestMatrix.toDoubleObject(C.transpose().times(exp.minus(
-				new Matrix(coVariance.length, 1, numerator/denominator)))
-				.transpose().getArray()[0]);
 	}
 }

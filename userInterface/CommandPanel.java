@@ -23,10 +23,11 @@ public class CommandPanel extends JPanel {
 	private static final long serialVersionUID = -7610361891529600959L;
 
 	public CommandPanel(PortfolioView view) {
-		setLayout(new FlowLayout(FlowLayout.LEFT));
-		add(new HomeButton(view));
-		add(new HistoryButton(view));
-		add(new OptimizeButton(view));
-		add(new MarketButton(view));
+		setLayout(new FlowLayout());
+		add(new Button(Panel.HOME, "Home", "Show portfolio info", view));
+		add(new Button(Panel.HISTORY, "History", "Show history", view));
+		add(new Button(Panel.OPTIMAL, "Optimization", "Show optimal portfolio",view));
+		add(new Button(Panel.MARKET, "Markets and Stocks", "Show all markets and their list of stocks", view));
+		add(new Button(Panel.NEWS, "News", "Show latest news", view));
 	}
 }

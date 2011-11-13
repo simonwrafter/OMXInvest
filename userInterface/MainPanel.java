@@ -18,35 +18,60 @@ package userInterface;
 
 import java.awt.GridLayout;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 
 public class MainPanel extends JPanel {
 	private static final long serialVersionUID = 9193463064365388089L;
 	private Tables tables;
-	private JScrollPane scrollPane;
+	private PortfolioView view;
 	
 	public MainPanel(PortfolioView view) {
 		super(new GridLayout(1,0));
+		this.view = view;
 		tables = new Tables(view);
-		
-		scrollPane = new JScrollPane();
-		showHome();
-		add(scrollPane);
-	}
-	
-	public void showHistory() {
-		scrollPane.setViewportView(tables.getHistoryTable());
-	}
-	
-	public void showOptimization() {
-		scrollPane.setViewportView(tables.getOptimizationTable());
-	}
-	
-	public void showMarkets() {
-		scrollPane.setViewportView(tables.getMarketTable());
+		add(tables.getHomeTable());
 	}
 	
 	public void showHome() {
-		scrollPane.setViewportView(tables.getHomeTable());
+		remove(0);
+		add(tables.getHomeTable());
+		updateUI();
+	}
+	
+	public void showHistory() {
+		remove(0);
+		add(tables.getHistoryTable());
+		updateUI();
+	}
+	
+	public void showOptimization() {
+		remove(0);
+		add(tables.getOptimizationTable());
+		updateUI();
+	}
+	
+	public void showMarkets() {
+		remove(0);
+		add(tables.getMarketTable());
+		updateUI();
+	}
+
+	public void showNews() {
+		remove(0);
+		add(tables.getNewsTable());
+		updateUI();
+	}
+	
+	public void updateOptimization() {
+		Double[] personal = tables.getPersonal();
+		Double value = view.portfolioValue() + view.getPortfolioLiquid();
+		JTable table = (JTable) ((JViewport) ((JScrollPane) ((JPanel) getComponent(0)).getComponent(0)).getComponent(0)).getComponent(0);
+		Double[][] histories = view.getPortfolioHistory(1);
+		for (int i=0; i<personal.length; i++) {
+			table.setValueAt(new Integer((int) Math.round(personal[i] * value / histories[i+1][0])), i, 2);
+		}
+		table.setValueAt(view.getCurrentPortfolio().getLambda(), 1, 5);
 	}
 }

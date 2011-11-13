@@ -69,9 +69,7 @@ public class Market implements Comparable<Market> {
 	
 	private void buildStockMap(String market, String cap)
 			throws ParserConfigurationException, SAXException, IOException {
-		
 		int[] index = MarketData.marketIndex(market, cap);
-		
 		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document doc = db.parse(MarketData.buildListURL(index[0], index[1]));
 		NodeList nl = doc.getElementsByTagName("inst");

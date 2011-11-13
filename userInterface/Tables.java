@@ -16,10 +16,14 @@
 
 package userInterface;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.util.SortedSet;
 import java.util.Arrays;
 import java.util.Map;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumn;
@@ -33,6 +37,8 @@ import util.CalcModels;;
 
 public class Tables {
 	private PortfolioView view;
+	private Double[] minRisk;
+	private Double[] maxGrowth;
 	
 	public Tables(PortfolioView view) { 
 		this.view = view;
@@ -63,7 +69,7 @@ public class Tables {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setCellSelectionEnabled(true);
-		return table;
+		return new JScrollPane(table);
 	}
 	
 	public Component getMarketTable() {
@@ -109,11 +115,10 @@ public class Tables {
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setCellSelectionEnabled(true);
 
-		return table;
+		return new JScrollPane(table);
 	}
 
 	public Component getOptimizationTable() {
-		Portfolio portfolio = view.getCurrentPortfolio();
 		String[] stocks = view.getShortNames();
 		int width = 6;
 		int height = Math.max(stocks.length, 5);
@@ -130,10 +135,10 @@ public class Tables {
 		Double portfolioLiquid = view.getPortfolioLiquid();
 		Double[][] histories = view.getPortfolioHistory();
 		Double[][] coV = CalcModels.covariance(histories);
-		Double[] minRisk = CalcModels.optimizeLowRisk(coV);
-		Double[] maxGrowth = CalcModels.optimizeHighGrowth(coV, 
+		minRisk = CalcModels.optimizeLowRisk(coV);
+		maxGrowth = CalcModels.optimizeHighGrowth(coV, 
 					CalcModels.portfolioExpectedValue(histories));
-		Double[] personal = CalcModels.personalPortfolio(minRisk, maxGrowth, portfolio.getLambda());
+		Double[] personal = getPersonal();
 		Double variance = CalcModels.portfolioVariance(personal, coV);
 		
 		for (int i=0; i<stocks.length; i++) {
@@ -146,12 +151,15 @@ public class Tables {
 //			data[i][1] = minRisk[i];
 //			data[i][2] = personal[i];
 //			data[i][3] = maxGrowth[i];
+			
 			data[i][4] = "";
 			data[i][5] = "";
 		}
 		
+		data[0][5] = "Lambda";
+		data[1][5] = view.getCurrentPortfolio().getLambda();
 		data[2][5] = "VaR";
-		data[3][5] = CalcModels.valueAtRisk(portfolioValue, variance, 1, .1);
+		data[3][5] = CalcModels.valueAtRisk(portfolioValue, variance, 1, 1);
 		
 		JTable table = new JTable(data, header);
 		
@@ -167,8 +175,15 @@ public class Tables {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setCellSelectionEnabled(true);
-
-		return table;
+		
+		JPanel ip = new JPanel(new BorderLayout());
+		ip.add(new JScrollPane(table), BorderLayout.CENTER);
+		ip.add(new LambdaSlider(view), BorderLayout.SOUTH);
+		return ip;
+	}
+	
+	public Double[] getPersonal() {
+		return CalcModels.personalPortfolio(minRisk, maxGrowth, view.getCurrentPortfolio().getLambda());
 	}
 
 	public Component getHomeTable() {
@@ -217,7 +232,12 @@ public class Tables {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setCellSelectionEnabled(true);
-		return table;
+		return new JScrollPane(table);
+	}
+
+	public Component getNewsTable() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

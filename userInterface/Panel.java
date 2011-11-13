@@ -16,23 +16,6 @@
 
 package userInterface;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JButton;
-
-public class HistoryButton extends JButton implements ActionListener {
-	private static final long serialVersionUID = 8137126945691612645L;
-	private PortfolioView view;
-
-	public HistoryButton(PortfolioView view) {
-		super("History");
-		this.view = view;
-		addActionListener(this);
-		this.setToolTipText("Show Portfolio History");
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		view.showHistory();
-	}
+public enum Panel {
+	HOME, HISTORY, OPTIMAL, MARKET, NEWS;
 }

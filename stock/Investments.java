@@ -113,12 +113,12 @@ public class Investments {
 	
 	public Double[][] getHistory(int historyType, int nbrOfDays) {
 		Double[][] result = new Double[currentPortfolio.size()+1][];
-
 		int i=1;
 		for (String s : currentPortfolio.getStocksInPortfolio()) { 
 			for (Market m : markets) {
 				if (m.contains(s)) {
-					result[0] = m.getStock(s).getHistory(nbrOfDays)[0];
+					if (result[0] == null)
+						result[0] = m.getStock(s).getHistory(nbrOfDays)[0];
 					result[i++] = m.getStock(s).getHistory(nbrOfDays)[historyType];
 					break;
 				}

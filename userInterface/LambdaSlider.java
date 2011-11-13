@@ -16,24 +16,29 @@
 
 package userInterface;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JButton;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-public class OptimizeButton extends JButton implements ActionListener {
-	private static final long serialVersionUID = 8232892584777619000L;
+public class LambdaSlider extends JSlider {
+	private static final long serialVersionUID = 3962195519446513896L;
 	private PortfolioView view;
 	
-	public OptimizeButton(PortfolioView view) {
-		super("Optimization");
+	public LambdaSlider(PortfolioView view) {
+		super(0,100);
 		this.view = view;
-		addActionListener(this);
-		this.setToolTipText("Visar optimal portfölj.");
+		setValue((int) Math.round(view.getCurrentPortfolio().getLambda()*100));
+		setMajorTickSpacing(20);
+		setMinorTickSpacing(5);
+		setPaintTicks(true);
+		addChangeListener(new SL());
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		view.showOptimization();
+	private class SL implements ChangeListener {
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			view.getCurrentPortfolio().setLambda(getValue() / 100.0);
+			view.updateOptimization();
+		}
 	}
-	
 }

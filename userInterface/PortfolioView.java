@@ -79,22 +79,26 @@ public class PortfolioView {
 		return investments.getHistory(4, nbrOfDays);
 	}
 	
-	public void showHistory() {
-		mainPanel.showHistory();
+	public void showPanel(Panel panel) {
+		switch (panel) {
+		case HOME:
+			mainPanel.showHome();
+			break;
+		case HISTORY:
+			mainPanel.showHistory();
+			break;
+		case OPTIMAL:
+			mainPanel.showOptimization();
+			break;
+		case MARKET:
+			mainPanel.showMarkets();
+			break;
+		case NEWS:
+			mainPanel.showNews();
+			break;
+		}
 	}
-
-	public void showOptimization() {
-		mainPanel.showOptimization();
-	}
-
-	public void showMarkets() {
-		mainPanel.showMarkets();
-	}
-
-	public void showHome() {
-		mainPanel.showHome();
-	}
-
+	
 	public double portfolioValue() {
 		return investments.getPortfolioValue();
 	}
@@ -113,5 +117,9 @@ public class PortfolioView {
 	
 	public String[] getShortNames() {
 		return investments.getShortNames();
+	}
+	
+	public void updateOptimization() {
+		mainPanel.updateOptimization();
 	}
 }
