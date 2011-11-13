@@ -1,14 +1,15 @@
 
+All source code in this project (except JamaPart) is released under the ICS Licence.
+
+package JamaPart is based on the JAMA package released under
+public-domain by The MathWorks and National Institute of Standards.
+
 For License see LICENSE.TXT
 
-This is the source folder, Fantastic!
-
-You are free to use this if you find it useful, 
-to take part in the development of this software and
-to be happy.
-
-Be nice and nice things happen.
+More info:
+http://www.isc.org/software/license
+http://opensource.org/licenses/isc-license.txt
+http://en.wikipedia.org/wiki/ISC_license
 
 Requirements:
 	Java 				(!)
-	JAMA 				(http://math.nist.gov/javanumerics/jama)
