@@ -18,7 +18,7 @@ package util;
 
 import java.util.Arrays;
 
-import Jama.Matrix;
+import JamaPart.Matrix;
 
 public class CalcModels {
 	
@@ -96,8 +96,7 @@ public class CalcModels {
 		Double[] result = new Double[coVariance.length];
 		Arrays.fill(result, new Double(0.0));
 		
-		double[][] coV = (new Matrix(InvestMatrix.toDoublePrimitiv(coVariance)))
-				.inverse().getArrayCopy();
+		Double[][] coV = new Matrix(coVariance).inverse().getArrayCopy();
 		
 		for (int i=0; i<coV.length; i++) {
 			for (int j=0; j<coV.length; j++) {
@@ -124,9 +123,7 @@ public class CalcModels {
 		Arrays.fill(arrTmp, new Double(0.0));
 		Arrays.fill(result, new Double(0.0));
 		
-		Matrix C = new Matrix(InvestMatrix.toDoublePrimitiv(coVariance));
-		C = C.inverse();
-		Double[][] coV = InvestMatrix.toDoubleObject(C.getArrayCopy());
+		Double[][] coV = new Matrix(coVariance).inverse().getArrayCopy();
 		
 		for (int i=0; i<bound; i++) {
 			for (int j=0; j<coV.length; j++) {
