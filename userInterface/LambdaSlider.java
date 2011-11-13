@@ -16,6 +16,10 @@
 
 package userInterface;
 
+import java.util.Hashtable;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -30,7 +34,13 @@ public class LambdaSlider extends JSlider {
 		setValue((int) Math.round(view.getCurrentPortfolio().getLambda()*100));
 		setMajorTickSpacing(20);
 		setMinorTickSpacing(5);
+		
+		Hashtable<Integer, JComponent> dict = new Hashtable<Integer, JComponent>();
+		dict.put(0, new JLabel("Minimal Risk"));
+		dict.put(100, new JLabel("Maximum Growth"));
+		setLabelTable(dict);
 		setPaintTicks(true);
+		setPaintLabels(true);
 		addChangeListener(new SL());
 	}
 	
