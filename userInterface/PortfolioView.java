@@ -19,13 +19,16 @@ package userInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
+import javax.naming.NamingException;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
@@ -42,20 +45,19 @@ public class PortfolioView {
 	private Investments investments;
 	
 	public PortfolioView()
-			throws IOException, ParserConfigurationException, SAXException {
+			throws IOException, ParserConfigurationException, SAXException, NamingException {
 		frame = new JFrame("Invest");
 		JLabel label = new JLabel("Starting...", JLabel.CENTER);
-		label.setPreferredSize(new Dimension(160, 100));
+		label.setPreferredSize(new Dimension(480, 300));
 		frame.add(label);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setVisible(true);
 		
-		investments = new Investments();
+		investments = new Investments(label);
 		
 		frame.setVisible(false);
 		frame.remove(label);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		mainCommandPanel = new MainCommandPanel(this);
 		frame.add(mainCommandPanel, BorderLayout.SOUTH);
@@ -72,6 +74,7 @@ public class PortfolioView {
 		frame.setJMenuBar(menuBar);
 		frame.pack();
 		frame.setVisible(true);
+		System.out.println("Done!");
 	}
 	
 	public SortedSet<Market> getMarketSet() {
@@ -88,46 +91,6 @@ public class PortfolioView {
 	
 	public Double[][] getPortfolioHistory(int nbrOfDays) {
 		return investments.getHistory(4, nbrOfDays);
-	}
-	
-	public void actionHandler(Actions actions) {
-		switch (actions) {
-		case HOME:
-			mainPanel.showHome();
-			break;
-		case HISTORY:
-			mainPanel.showHistory();
-			break;
-		case OPTIMAL:
-			mainPanel.showOptimization();
-			break;
-		case MARKET:
-			mainPanel.showMarkets();
-			break;
-		case NEWS:
-			mainPanel.showNews();
-			break;
-		case ADD:
-			//TODO popup to add stock to portfolio
-			mainPanel.showHome();
-			break;
-		case REMOVE:
-			//TODO popup to remove stock from portfolio
-			mainPanel.showHome();
-			break;
-		case BUY:
-			//TODO popup to buy shares to portfolio
-			mainPanel.showHome();
-			break;
-		case SELL:
-			//TODO popup to sell shares from portfolio
-			mainPanel.showHome();
-			break;
-		case LIQUID:
-			//TODO popup to set liquid asset in portfolio
-			mainPanel.showHome();
-			break;
-		}
 	}
 	
 	public void updateOptimization() {
@@ -152,5 +115,102 @@ public class PortfolioView {
 	
 	public String[] getShortNames() {
 		return investments.getShortNames();
+	}
+	
+	public void actionHandler(Actions actions) {
+		switch (actions) {
+		case HOME:
+			mainPanel.showHome();
+			break;
+		case HISTORY:
+			mainPanel.showHistory();
+			break;
+		case OPTIMAL:
+			mainPanel.showOptimization();
+			break;
+		case MARKET:
+			mainPanel.showMarkets();
+			break;
+		case NEWS:
+			mainPanel.showNews();
+			break;
+		case ADD:
+			final String omxId_add = JOptionPane.showInputDialog("Type omxId of stock to add to portfolio:");
+			if (omxId_add == null) {
+				break;
+			}
+			Thread thread = new Thread() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Fetching history for " + omxId_add, "OMXInvest", JOptionPane.INFORMATION_MESSAGE);
+				}
+			};
+			try {
+				thread.start();
+				investments.addStockToPortfolio(omxId_add);
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(null, "Likely an input error, please try again",
+						"OMXInvest", JOptionPane.ERROR_MESSAGE);
+			} catch (NoSuchElementException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage(),
+						"OMXInvest", JOptionPane.ERROR_MESSAGE);
+			} catch (NamingException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage(),
+						"OMXInvest", JOptionPane.ERROR_MESSAGE);
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			} catch (SAXException e) {
+				e.printStackTrace();
+			}
+			thread.interrupt();
+			mainPanel.showHome();
+			break;
+		case REMOVE:
+			String omxId_remove = JOptionPane.showInputDialog("Type omxId of stock to remove from portfolio:");
+			if (omxId_remove == null) {
+				break;
+			}
+			try {
+				investments.removeStockfromPortfolio(omxId_remove);
+			} catch (NoSuchElementException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage(),
+						"OMXInvest", JOptionPane.ERROR_MESSAGE);
+			}
+			mainPanel.showHome();
+			break;
+		case BUY:
+			String omxId_buy = JOptionPane.showInputDialog("Type omxId of stock to buy shares in:");
+			if (omxId_buy == null) {
+				break;
+			}
+			if (!getCurrentPortfolio().contains(omxId_buy)) {
+				break;
+			}
+			int nbrToBuy = new Integer(JOptionPane.showInputDialog("How many shares do you wish to buy?"));
+			getCurrentPortfolio().buy(omxId_buy, nbrToBuy, investments.getLastValue(omxId_buy));
+			mainPanel.showHome();
+			break;
+		case SELL:
+			String omxId_sell = JOptionPane.showInputDialog("Type omxId of stock to sell shares of:");
+			if (omxId_sell == null) {
+				break;
+			}
+			if (!getCurrentPortfolio().contains(omxId_sell)) {
+				break;
+			}
+			int nbrToSell = new Integer(JOptionPane.showInputDialog("How many shares do you wish to sell?"));
+			getCurrentPortfolio().sell(omxId_sell, nbrToSell, investments.getLastValue(omxId_sell));
+			mainPanel.showHome();
+			mainPanel.showHome();
+			break;
+		case LIQUID:
+			String asset = JOptionPane.showInputDialog("Set liquid asset to:");
+			if (asset == null) {
+				break;
+			}
+			getCurrentPortfolio().setLiquidAsset(new Double(asset));
+			mainPanel.showHome();
+			break;
+		}
 	}
 }

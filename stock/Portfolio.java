@@ -26,13 +26,15 @@ public class Portfolio {
 	private double liquidAsset;
 	private String name;
 	private double lambda;
+	private Currency currency;
 	
-	public Portfolio(String name) {
-		this(name, 0);
+	public Portfolio(String name, Currency currency) {
+		this(name, currency,  0);
 	}
 	
-	public Portfolio(String name, double liquid) {
+	public Portfolio(String name, Currency currency, double liquid) {
 		this.name = name;
+		this.currency = currency;
 		stockmap = new TreeMap<String, Integer>();
 		setLiquidAsset(liquid);
 		setLambda(0.3);
@@ -44,6 +46,10 @@ public class Portfolio {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public Currency getCurrency() {
+		return currency;
 	}
 	
 	public double getLiquidAsset() {
@@ -77,17 +83,19 @@ public class Portfolio {
 		return 0;
 	}
 	
-	public boolean buy(String omxId, int nbrOfStocks) {
+	public boolean buy(String omxId, int nbrOfStocks, double price) {
 		if (stockmap.containsKey(omxId) && nbrOfStocks>0) {
 			stockmap.put(omxId, stockmap.get(omxId) + nbrOfStocks);
+			liquidAsset -= nbrOfStocks * price;
 			return true;
 		}
 		return false;
 	}
 	
-	public boolean sell(String omxId, int nbrOfStocks) {
-		if (stockmap.containsKey(omxId) && nbrOfStocks<0) {
+	public boolean sell(String omxId, int nbrOfStocks, double price) {
+		if (stockmap.containsKey(omxId) && nbrOfStocks>0) {
 			stockmap.put(omxId, stockmap.get(omxId) - nbrOfStocks);
+			liquidAsset += nbrOfStocks * price;
 			return true;
 		}
 		return false;
@@ -122,5 +130,9 @@ public class Portfolio {
 		for (Map.Entry<String, Integer> me : ent)
 			result[i++] = me.getValue();
 		return result;
+	}
+
+	public boolean contains(String omxId) {
+		return stockmap.containsKey(omxId);
 	}
 }

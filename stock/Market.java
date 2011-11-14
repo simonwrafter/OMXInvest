@@ -88,7 +88,7 @@ public class Market implements Comparable<Market> {
 				e.getAttribute("fnm"),
 				e.getAttribute("isin"),
 				listName,
-				e.getAttribute("cr"));
+				Currency.getCurrency(e.getAttribute("cr")));
 	}
 
 	@Override

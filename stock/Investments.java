@@ -17,9 +17,12 @@
 package stock;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.naming.NamingException;
+import javax.swing.JLabel;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
@@ -30,17 +33,18 @@ public class Investments {
 	private Portfolio defaultPortfolio;
 	private Portfolio currentPortfolio;
 
-	public Investments()
-			throws ParserConfigurationException, SAXException, IOException {
+	public Investments(JLabel label)
+			throws ParserConfigurationException, SAXException, IOException, NamingException {
 		portfolios = new TreeSet<Portfolio>();
 		markets = new TreeSet<Market>();
 
 		for (String s : MarketData.arrayMarkets) {
 			for (String t : MarketData.arrayCapital) {
+				label.setText(s + " " + t);
 				markets.add(new Market(s, t));
 			}
 		}
-
+		label.setText("Fetching History");
 		buildDefaultPortfolio();
 		portfolios.add(defaultPortfolio);
 	}
@@ -68,9 +72,30 @@ public class Investments {
 	}
 	
 	public void addStockToPortfolio(String omxId)
-			throws IOException, ParserConfigurationException, SAXException {
-		currentPortfolio.add(omxId);
-		rebuildHistory(omxId);
+			throws IOException, ParserConfigurationException, SAXException, NamingException {
+		if (getCurrency(omxId).equals(currentPortfolio.getCurrency())) {
+			rebuildHistory(omxId);
+			currentPortfolio.add(omxId);
+		} else {
+			throw new NamingException(omxId + " does not match portfolio currency");
+		}
+	}
+
+	private Currency getCurrency(String omxId) {
+		for (Market m : markets) {
+			if (m.contains(omxId)) {
+				return m.getStock(omxId).getCurrency();
+			}
+		}
+		throw new NoSuchElementException(omxId + " is not a known stock.");
+	}
+
+	public void removeStockfromPortfolio(String omxId) {
+		if (!currentPortfolio.contains(omxId)) {
+			throw new NoSuchElementException(omxId + " is not a registered stock.");
+		}
+		double value = currentPortfolio.remove(omxId);
+		currentPortfolio.setLiquidAsset(value * getLastValue(omxId) + currentPortfolio.getLiquidAsset());
 	}
 
 	public void updateHistory()
@@ -85,9 +110,10 @@ public class Investments {
 		for (Market m : markets) {
 			if (m.contains(omxId)) {
 				m.updateHistory(omxId);
-				break;
+				return;
 			}
 		}
+		throw new NoSuchElementException(omxId + " is not a known stock.");
 	}
 
 	public void rebuildHistory()
@@ -102,9 +128,10 @@ public class Investments {
 		for (Market m : markets) {
 			if (m.contains(omxId)) {
 				m.rebuildHistory(omxId);
-				break;
+				return;
 			}
 		}
+		throw new NoSuchElementException(omxId + " is not a known stock.");
 	}
 	
 	public Double[][] getHistory(int historyType) {
@@ -128,8 +155,8 @@ public class Investments {
 	}
 	
 	private Portfolio buildDefaultPortfolio()
-			throws IOException, ParserConfigurationException, SAXException {
-		Portfolio result = new Portfolio("default", 10000);
+			throws IOException, ParserConfigurationException, SAXException, NamingException {
+		Portfolio result = new Portfolio("default", Currency.SEK, 10000);
 		defaultPortfolio = currentPortfolio = result;
 		addStockToPortfolio("SSE3966");
 		addStockToPortfolio("SSE18634");
@@ -137,6 +164,15 @@ public class Investments {
 		addStockToPortfolio("SSE3524");
 		addStockToPortfolio("SSE101");
 		return result;
+	}
+	
+	public double getLastValue(String omxId) {
+		for (Market m : markets) {
+			if (m.contains(omxId)) {
+				return m.getStock(omxId).getHistory(1)[4][0];
+			}
+		}
+		return 0;
 	}
 
 	public double getPortfolioValue() {

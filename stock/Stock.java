@@ -38,7 +38,7 @@ public class Stock {
 	private String fullName;
 	private String ISIN;
 	private String market;
-	private String currency;
+	private Currency currency;
 	private Double[][] histValue; 
 	/* 
 	 * vector	meaning		key	  hi.a
@@ -57,7 +57,7 @@ public class Stock {
 	 *  
 	 */
 	
-	public Stock(String omxId, String shortName, String fullName, String ISIN, String market, String currency) {
+	public Stock(String omxId, String shortName, String fullName, String ISIN, String market, Currency currency) {
 		this.omxId = omxId;
 		this.shortName = shortName;
 		this.fullName = fullName;
@@ -87,7 +87,7 @@ public class Stock {
 		return market;
 	}
 
-	public String getCurrency() {
+	public Currency getCurrency() {
 		return currency;
 	}
 	
@@ -111,7 +111,8 @@ public class Stock {
 		histValue = new Double[8][500];
 		int len = nl.getLength()-1;
 		for (int i=0; i<500; i++, len--) {
-			makeHistoryRow(histValue, nl.item(len), i);
+			if(!makeHistoryRow(histValue, nl.item(len), i))
+				i--;
 		}
 	}
 	
@@ -126,7 +127,8 @@ public class Stock {
 			
 			int i=nl.getLength()-1;
 			for (int j = i; j>0; j--) {
-				makeHistoryRow(newHistValue, nl.item(j), i-j);
+				if(!makeHistoryRow(newHistValue, nl.item(j), i-j))
+					i++;
 			}
 			for (int j=0; j+i<500; j++) {
 				for(int k=0; k<8; k++) {
@@ -181,7 +183,7 @@ public class Stock {
 		return true;
 	}
 	
-	private static void makeHistoryRow(Double[][] histValue, Node n, int i) {
+	private static boolean makeHistoryRow(Double[][] histValue, Node n, int i) {
 		
 		Element e = (Element) n;
 		histValue[0][i] = (double) InvestDate.makeDateInt(e.getAttribute("dt"));
@@ -195,14 +197,19 @@ public class Stock {
 		String nt = e.getAttribute("nt"); //trades
 		String to = e.getAttribute("to"); //turnover
 		
-		double factor = (ip.isEmpty()) ? Double.NaN : Double.parseDouble(ip);
+		if (ip.isEmpty() || lp.isEmpty() || cp.isEmpty() || avp.isEmpty() || tv.isEmpty() || nt.isEmpty() || to.isEmpty())
+			return false;
 		
-		histValue[1][i] = (lp.isEmpty()) ? Double.NaN : Double.parseDouble(lp)*factor; 
-		histValue[2][i] = (hp.isEmpty()) ? Double.NaN : Double.parseDouble(hp)*factor;
-		histValue[3][i] = (cp.isEmpty()) ? Double.NaN : Double.parseDouble(cp)*factor;
-		histValue[4][i] = (avp.isEmpty()) ? Double.NaN : Double.parseDouble(avp)*factor;
-		histValue[5][i] = (tv.isEmpty()) ? Double.NaN : Long.parseLong(tv);
-		histValue[6][i] = (nt.isEmpty()) ? Double.NaN : Long.parseLong(nt);
-		histValue[7][i] = (to.isEmpty()) ? Double.NaN : Long.parseLong(to);
+		double factor = Double.parseDouble(ip);
+		
+		histValue[1][i] = Double.parseDouble(lp)*factor; 
+		histValue[2][i] = Double.parseDouble(hp)*factor;
+		histValue[3][i] = Double.parseDouble(cp)*factor;
+		histValue[4][i] = Double.parseDouble(avp)*factor;
+		histValue[5][i] = Double.parseDouble(tv);
+		histValue[6][i] = Double.parseDouble(nt);
+		histValue[7][i] = Double.parseDouble(to);
+		
+		return true;
 	}
 }
