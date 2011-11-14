@@ -16,26 +16,7 @@
 
 package userInterface;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-
-public class Button extends JButton implements ActionListener {
-	private static final long serialVersionUID = 6296920004478842871L;
-	private PortfolioView view;
-	private Actions action;
-	
-	public Button (Actions action, String text, String toolTip, PortfolioView view) {
-		super(text);
-		this.action = action;
-		setToolTipText(toolTip);
-		this.view = view;
-		addActionListener(this);
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		view.actionHandler(action);
-	}
+public enum Actions {
+	HOME, HISTORY, OPTIMAL, MARKET, NEWS,	// main panel content
+	ADD, REMOVE, BUY, SELL, LIQUID;			// portfolio actions
 }

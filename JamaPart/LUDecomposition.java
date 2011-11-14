@@ -6,6 +6,11 @@
  * or implied, about its quality, reliability, or any other characteristic. 
  */
 
+/*
+ * Simon Wrafter <simon.wrafter@gmail.com>
+ * As part of OMXInvest, this class has been minimised and stripped of unused code.
+ */
+
 package JamaPart;
 
 public class LUDecomposition {

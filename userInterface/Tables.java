@@ -232,12 +232,15 @@ public class Tables {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setCellSelectionEnabled(true);
-		return new JScrollPane(table);
+		
+		JPanel ip = new JPanel(new BorderLayout());
+		ip.add(new JScrollPane(table), BorderLayout.CENTER);
+		ip.add(new HomeCommandPanel(view), BorderLayout.SOUTH);
+		return ip;
 	}
 
 	public Component getNewsTable() {
-		// TODO Auto-generated method stub
-		return null;
+		return new JScrollPane();
 	}
 	
 }

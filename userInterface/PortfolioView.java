@@ -17,10 +17,12 @@
 package userInterface;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.io.IOException;
 import java.util.SortedSet;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -33,7 +35,7 @@ import stock.Market;
 import stock.Portfolio;
 
 public class PortfolioView {
-	private CommandPanel commandPanel;
+	private MainCommandPanel mainCommandPanel;
 	private JMenu portfolioMenu;
 	private MainPanel mainPanel;
 	private JFrame frame;
@@ -41,13 +43,22 @@ public class PortfolioView {
 	
 	public PortfolioView()
 			throws IOException, ParserConfigurationException, SAXException {
+		frame = new JFrame("Invest");
+		JLabel label = new JLabel("Starting...", JLabel.CENTER);
+		label.setPreferredSize(new Dimension(160, 100));
+		frame.add(label);
+		frame.pack();
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.setVisible(true);
+		
 		investments = new Investments();
 		
-		frame = new JFrame("Invest");
+		frame.setVisible(false);
+		frame.remove(label);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		commandPanel = new CommandPanel(this);
-		frame.add(commandPanel, BorderLayout.SOUTH);
+		mainCommandPanel = new MainCommandPanel(this);
+		frame.add(mainCommandPanel, BorderLayout.SOUTH);
 		
 		portfolioMenu = new JMenu("Portfolios");
 		portfolioMenu.add(new JMenuItem(investments.getCurrentPortfolio().getName()));
@@ -79,8 +90,8 @@ public class PortfolioView {
 		return investments.getHistory(4, nbrOfDays);
 	}
 	
-	public void showPanel(Panel panel) {
-		switch (panel) {
+	public void actionHandler(Actions actions) {
+		switch (actions) {
 		case HOME:
 			mainPanel.showHome();
 			break;
@@ -96,7 +107,31 @@ public class PortfolioView {
 		case NEWS:
 			mainPanel.showNews();
 			break;
+		case ADD:
+			//TODO popup to add stock to portfolio
+			mainPanel.showHome();
+			break;
+		case REMOVE:
+			//TODO popup to remove stock from portfolio
+			mainPanel.showHome();
+			break;
+		case BUY:
+			//TODO popup to buy shares to portfolio
+			mainPanel.showHome();
+			break;
+		case SELL:
+			//TODO popup to sell shares from portfolio
+			mainPanel.showHome();
+			break;
+		case LIQUID:
+			//TODO popup to set liquid asset in portfolio
+			mainPanel.showHome();
+			break;
 		}
+	}
+	
+	public void updateOptimization() {
+		mainPanel.updateOptimization();
 	}
 	
 	public double portfolioValue() {
@@ -117,9 +152,5 @@ public class PortfolioView {
 	
 	public String[] getShortNames() {
 		return investments.getShortNames();
-	}
-	
-	public void updateOptimization() {
-		mainPanel.updateOptimization();
 	}
 }

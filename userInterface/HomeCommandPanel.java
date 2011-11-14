@@ -19,15 +19,15 @@ package userInterface;
 import java.awt.FlowLayout;
 import javax.swing.JPanel;
 
-public class CommandPanel extends JPanel {
-	private static final long serialVersionUID = -7610361891529600959L;
+public class HomeCommandPanel extends JPanel {
+	private static final long serialVersionUID = 7558744166697327417L;
 
-	public CommandPanel(PortfolioView view) {
+	public HomeCommandPanel(PortfolioView view) {
 		setLayout(new FlowLayout());
-		add(new Button(Panel.HOME, "Home", "Show portfolio info", view));
-		add(new Button(Panel.HISTORY, "History", "Show history", view));
-		add(new Button(Panel.OPTIMAL, "Optimization", "Show optimal portfolio",view));
-		add(new Button(Panel.MARKET, "Markets and Stocks", "Show all markets and their list of stocks", view));
-		add(new Button(Panel.NEWS, "News", "Show latest news", view));
+		add(new Button(Actions.ADD, "Add Stock", "Add company to portfolio", view));
+		add(new Button(Actions.REMOVE, "Remove Stock", "Remove company from portfolio", view));
+		add(new Button(Actions.BUY, "Buy Shares", "Buy Shares", view));
+		add(new Button(Actions.SELL, "Sell Shares", "Sell Shares", view));
+		add(new Button(Actions.LIQUID, "Liquid Assets", "Edit Liquid Assets", view));
 	}
 }

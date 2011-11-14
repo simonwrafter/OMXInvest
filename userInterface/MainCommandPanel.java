@@ -16,6 +16,18 @@
 
 package userInterface;
 
-public enum Panel {
-	HOME, HISTORY, OPTIMAL, MARKET, NEWS;
+import java.awt.FlowLayout;
+import javax.swing.JPanel;
+
+public class MainCommandPanel extends JPanel {
+	private static final long serialVersionUID = -7610361891529600959L;
+
+	public MainCommandPanel(PortfolioView view) {
+		setLayout(new FlowLayout());
+		add(new Button(Actions.HOME, "Home", "Show portfolio info", view));
+		add(new Button(Actions.HISTORY, "History", "Show history", view));
+		add(new Button(Actions.OPTIMAL, "Optimization", "Show optimal portfolio",view));
+		add(new Button(Actions.MARKET, "Markets and Stocks", "Show all markets and their list of stocks", view));
+		add(new Button(Actions.NEWS, "News", "Show latest news", view));
+	}
 }
