@@ -73,6 +73,7 @@ public class PortfolioView {
 		frame.add(mainPanel);
 		frame.setJMenuBar(menuBar);
 		frame.pack();
+		frame.setLocationRelativeTo(frame.getOwner());
 		frame.setVisible(true);
 		System.out.println("Done!");
 	}
