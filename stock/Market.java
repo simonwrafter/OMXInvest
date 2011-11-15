@@ -73,13 +73,15 @@ public class Market implements Comparable<Market> {
 		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		boolean success = false;
 		Document doc = null;
-		while (!success) {
+		int times = 0;
+		while (!success && i <= 5) {
 			try {
 				doc = db.parse(MarketData.buildListURL(index[0], index[1]));
 				success = true;
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
+			i += 1;
 		}
 		NodeList nl = doc.getElementsByTagName("inst");
 		
