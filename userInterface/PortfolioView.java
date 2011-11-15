@@ -141,9 +141,6 @@ public class PortfolioView {
 		case MARKET:
 			mainPanel.showMarkets();
 			break;
-		case NEWS:
-			mainPanel.showNews();
-			break;
 		case ADD:
 			final String omxId_add = JOptionPane.showInputDialog("Type omxId of stock to add to portfolio:");
 			if (omxId_add == null) {

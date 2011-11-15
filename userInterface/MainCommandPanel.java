@@ -28,6 +28,5 @@ public class MainCommandPanel extends JPanel {
 		add(new Button(Actions.HISTORY, "History", "Show history", view));
 		add(new Button(Actions.OPTIMAL, "Optimization", "Show optimal portfolio",view));
 		add(new Button(Actions.MARKET, "Markets and Stocks", "Show all markets and their list of stocks", view));
-		add(new Button(Actions.NEWS, "News", "Show latest news", view));
 	}
 }

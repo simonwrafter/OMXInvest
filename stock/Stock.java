@@ -109,15 +109,15 @@ public class Stock {
 		
 		boolean success = false;
 		Document doc = null;
-		int i = 0;
-		while (!success && i <= 5) {
+		int times = 0;
+		while (!success && times <= 5) {
 			try {
 				doc = db.parse(MarketData.buildHistoryURL(omxId, 735));
 				success = true;
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
-			i += 1;
+			times += 1;
 		}
 		
 		NodeList nl = doc.getElementsByTagName("hi");

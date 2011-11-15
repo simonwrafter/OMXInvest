@@ -244,9 +244,4 @@ public class Tables {
 		ip.add(new HomeCommandPanel(view), BorderLayout.SOUTH);
 		return ip;
 	}
-
-	public Component getNewsTable() {
-		return new JScrollPane();
-	}
-	
 }
