@@ -142,7 +142,7 @@ public class PortfolioView {
 			mainPanel.showMarkets();
 			break;
 		case ADD:
-			final String omxId_add = JOptionPane.showInputDialog("Type omxId of stock to add to portfolio:");
+			final String omxId_add = JOptionPane.showInputDialog("Type omxId of stock to add to portfolio:").toUpperCase();
 			if (omxId_add == null) {
 				break;
 			}
@@ -165,7 +165,7 @@ public class PortfolioView {
 			mainPanel.showHome();
 			break;
 		case REMOVE:
-			String omxId_remove = JOptionPane.showInputDialog("Type omxId of stock to remove from portfolio:");
+			String omxId_remove = JOptionPane.showInputDialog("Type omxId of stock to remove from portfolio:").toUpperCase();
 			if (omxId_remove == null) {
 				break;
 			}
@@ -178,7 +178,7 @@ public class PortfolioView {
 			mainPanel.showHome();
 			break;
 		case BUY:
-			String omxId_buy = JOptionPane.showInputDialog("Type omxId of stock to buy shares in:");
+			String omxId_buy = JOptionPane.showInputDialog("Type omxId of stock to buy shares in:").toUpperCase();
 			if (omxId_buy == null) {
 				break;
 			}
@@ -190,7 +190,7 @@ public class PortfolioView {
 			mainPanel.showHome();
 			break;
 		case SELL:
-			String omxId_sell = JOptionPane.showInputDialog("Type omxId of stock to sell shares of:");
+			String omxId_sell = JOptionPane.showInputDialog("Type omxId of stock to sell shares of:").toUpperCase();
 			if (omxId_sell == null) {
 				break;
 			}
