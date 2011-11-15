@@ -71,7 +71,16 @@ public class Market implements Comparable<Market> {
 			throws ParserConfigurationException, SAXException, IOException {
 		int[] index = MarketData.marketIndex(market, cap);
 		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		Document doc = db.parse(MarketData.buildListURL(index[0], index[1]));
+		boolean success = false;
+		Document doc = null;
+		while (!success) {
+			try {
+				doc = db.parse(MarketData.buildListURL(index[0], index[1]));
+				success = true;
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
 		NodeList nl = doc.getElementsByTagName("inst");
 		
 		for (int i=0; i<nl.getLength(); i++) {

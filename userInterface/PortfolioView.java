@@ -46,7 +46,7 @@ public class PortfolioView {
 	
 	public PortfolioView()
 			throws IOException, ParserConfigurationException, SAXException, NamingException {
-		frame = new JFrame("Invest");
+		frame = new JFrame("OMXInvest");
 		JLabel label = new JLabel("Starting...", JLabel.CENTER);
 		label.setPreferredSize(new Dimension(480, 300));
 		frame.add(label);

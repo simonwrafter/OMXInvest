@@ -228,7 +228,7 @@ public class Tables {
 		
 		for (int i = 0; i < header.length; i++) {
 			TableColumn column = table.getColumnModel().getColumn(i);
-			if (i == 0) {
+			if (i == 1) {
 				column.setPreferredWidth(90);
 			} else {
 				column.setPreferredWidth(75);
