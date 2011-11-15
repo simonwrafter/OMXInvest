@@ -174,17 +174,34 @@ public class Investments {
 		}
 		return 0;
 	}
-
-	public double getPortfolioValue() {
-		double result=0;
+	
+	public Double[] getPortfolioValueDistributed() {
 		Double[][] values = getHistory(4, 1);
 		Integer[] nbrOf = currentPortfolio.getShareDistribution();
-		
+		Double result[] = new Double[currentPortfolio.size()];
 		for(int i=0; i<nbrOf.length; i++) {
-			result += nbrOf[i] * values[i+1][0];
+			result[i] = nbrOf[i] * values[i+1][0];
 		}
-		
 		return result;
+	}
+
+	public double getPortfolioValueSum() {
+		double result=0;
+		Double[] values = getPortfolioValueDistributed();
+		Integer[] nbrOf = currentPortfolio.getShareDistribution();
+		for(int i=0; i<nbrOf.length; i++) {
+			result += nbrOf[i] * values[i];
+		}
+		return result;
+	}
+	
+	public Double[] getPortfolioDistribution() {
+		Double[] dist = getPortfolioValueDistributed();
+		double sum = getPortfolioValueSum();
+		for (int i=0; i<currentPortfolio.size();i++) {
+			dist[i] /= sum;
+		}
+		return dist;
 	}
 	
 	public double getPortfolioLiquid() {

@@ -139,7 +139,6 @@ public class Tables {
 		maxGrowth = CalcModels.optimizeHighGrowth(coV, 
 					CalcModels.portfolioExpectedValue(histories));
 		Double[] personal = getPersonal();
-		Double variance = CalcModels.portfolioVariance(personal, coV);
 		
 		for (int i=0; i<stocks.length; i++) {
 			data[i][0] = stocks[i];
@@ -158,8 +157,6 @@ public class Tables {
 		
 		data[0][5] = "Lambda";
 		data[1][5] = view.getCurrentPortfolio().getLambda();
-		data[2][5] = "VaR";
-		data[3][5] = CalcModels.valueAtRisk(portfolioValue, variance, 1, 1);
 		
 		JTable table = new JTable(data, header);
 		
@@ -195,10 +192,10 @@ public class Tables {
 		Integer[] nbrOf = portfolio.getShareDistribution();
 		Double[][] history = view.getPortfolioHistory(1);
 		
-		int height = Math.max(stocks.length, 6);
+		int height = Math.max(stocks.length, 8);
 		int width = 7;
 		
-		Object[] header = {"stocks", "short name", "nbrOf", "last value", "total", ""};
+		Object[] header = {"omxId", "name", "short name", "nbrOf", "last value", "total", ""};
 		Object[][] data = new Object[height][width];
 		
 		for (Object[] o : data) {
@@ -215,12 +212,17 @@ public class Tables {
 			data[i][6] = "";
 		}
 		
-		data[0][5] = "currency";
-		data[1][5] = portfolio.getCurrency();
-		data[2][5] = "lambda";
-		data[3][5] = portfolio.getLambda();
-		data[4][5] = "liquid";
-		data[5][5] = portfolio.getLiquidAsset();
+		Double portvariance = CalcModels.portfolioVariance(view.getPortfolioDistribution(), CalcModels.covariance(view.getPortfolioHistory()));
+		double value = view.portfolioValue();
+		
+		data[0][6] = "currency";
+		data[1][6] = portfolio.getCurrency();
+		data[2][6] = "lambda";
+		data[3][6] = portfolio.getLambda();
+		data[4][6] = "liquid";
+		data[5][6] = portfolio.getLiquidAsset();
+		data[6][6] = "VaR";
+		data[7][6] = value != 0 ? CalcModels.valueAtRisk(value, portvariance, 0.05, 0.02) * value : 0;
 		
 		JTable table = new JTable(data, header);
 		

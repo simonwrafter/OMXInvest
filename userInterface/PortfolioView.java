@@ -51,6 +51,7 @@ public class PortfolioView {
 		label.setPreferredSize(new Dimension(480, 300));
 		frame.add(label);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(frame.getOwner());
 		frame.pack();
 		frame.setVisible(true);
 		
@@ -99,7 +100,11 @@ public class PortfolioView {
 	}
 	
 	public double portfolioValue() {
-		return investments.getPortfolioValue();
+		return investments.getPortfolioValueSum();
+	}
+	
+	public Double[] getPortfolioDistribution() {
+		return investments.getPortfolioDistribution();
 	}
 	
 	public double getPortfolioLiquid() {

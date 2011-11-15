@@ -67,7 +67,7 @@ public class Portfolio {
 	public void setLambda(double lambda) {
 		this.lambda = lambda;
 	}
-
+	
 	public boolean add(String omxId) {
 		if (stockmap.containsKey(omxId)) {
 			return false;
