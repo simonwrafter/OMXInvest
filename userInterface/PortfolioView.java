@@ -51,8 +51,8 @@ public class PortfolioView {
 		label.setPreferredSize(new Dimension(480, 300));
 		frame.add(label);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLocationRelativeTo(frame.getOwner());
 		frame.pack();
+		frame.setLocationRelativeTo(frame.getOwner());
 		frame.setVisible(true);
 		
 		investments = new Investments(label);
