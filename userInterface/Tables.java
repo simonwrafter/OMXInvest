@@ -189,13 +189,14 @@ public class Tables {
 	public Component getHomeTable() {
 		Portfolio portfolio = view.getCurrentPortfolio();
 		
+		String[] omxIds = view.getStockIds();
 		String[] stocks = view.getStockNames();
 		String[] shortName = view.getShortNames();
 		Integer[] nbrOf = portfolio.getShareDistribution();
 		Double[][] history = view.getPortfolioHistory(1);
 		
-		int height = Math.max(stocks.length, 5);
-		int width = 6;
+		int height = Math.max(stocks.length, 6);
+		int width = 7;
 		
 		Object[] header = {"stocks", "short name", "nbrOf", "last value", "total", ""};
 		Object[][] data = new Object[height][width];
@@ -205,18 +206,21 @@ public class Tables {
 		}
 		
 		for (int i=0; i<stocks.length; i++) {
-			data[i][0] = stocks[i];
-			data[i][1] = shortName[i];
-			data[i][2] = nbrOf[i];
-			data[i][3] = history[i+1][0];
-			data[i][4] = nbrOf[i]*history[i+1][0];
-			data[i][5] = "";
+			data[i][0] = omxIds[i];
+			data[i][1] = stocks[i];
+			data[i][2] = shortName[i];
+			data[i][3] = nbrOf[i];
+			data[i][4] = history[i+1][0];
+			data[i][5] = nbrOf[i]*history[i+1][0];
+			data[i][6] = "";
 		}
 		
-		data[0][5] = "lambda";
-		data[1][5] = portfolio.getLambda();
-		data[2][5] = "liquid";
-		data[3][5] = portfolio.getLiquidAsset();
+		data[0][5] = "currency";
+		data[1][5] = portfolio.getCurrency();
+		data[2][5] = "lambda";
+		data[3][5] = portfolio.getLambda();
+		data[4][5] = "liquid";
+		data[5][5] = portfolio.getLiquidAsset();
 		
 		JTable table = new JTable(data, header);
 		

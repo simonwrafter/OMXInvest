@@ -222,4 +222,8 @@ public class Investments {
 		}
 		return result;
 	}
+
+	public String[] getStockIds() {
+		return currentPortfolio.getStocksInPortfolio();
+	}
 }

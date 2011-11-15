@@ -108,6 +108,10 @@ public class PortfolioView {
 	public void setPortfolioLiquid(double value) {
 		investments.setPortfolioLiquid(value);
 	}
+
+	public String[] getStockIds() {
+		return investments.getStockIds();
+	}
 	
 	public String[] getStockNames() {
 		return investments.getStockNames();
@@ -139,14 +143,7 @@ public class PortfolioView {
 			if (omxId_add == null) {
 				break;
 			}
-			Thread thread = new Thread() {
-				@Override
-				public void run() {
-					JOptionPane.showMessageDialog(null, "Fetching history for " + omxId_add, "OMXInvest", JOptionPane.INFORMATION_MESSAGE);
-				}
-			};
 			try {
-				thread.start();
 				investments.addStockToPortfolio(omxId_add);
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(null, "Likely an input error, please try again",
@@ -162,7 +159,6 @@ public class PortfolioView {
 			} catch (SAXException e) {
 				e.printStackTrace();
 			}
-			thread.interrupt();
 			mainPanel.showHome();
 			break;
 		case REMOVE:
