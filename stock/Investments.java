@@ -36,7 +36,7 @@ import org.xml.sax.SAXException;
 
 public class Investments {
 	private final String portfolioSaveFile = "portfolios.pfo";
-	private final String marketSaveFileEnding = ".mkt";
+	private final String marketSaveFile= "markets.mkt";
 	private SortedSet<Portfolio> portfolios;
 	private SortedMap<String, Market> markets;
 	private Portfolio defaultPortfolio;
@@ -47,37 +47,33 @@ public class Investments {
 		portfolios = new TreeSet<Portfolio>();
 		markets = new TreeMap<String, Market>();
 
-		buildAllMarkets(false, label);
+		buildMarkets(false, label);
 		buildPortfolios();
 		label.setText("Fetching History");
-		
 	}
 	
-	public void buildAllMarkets(boolean force, JLabel label)
-			throws ParserConfigurationException, SAXException, IOException {
-		for (String s : MarketData.arrayMarkets) {
-			for (String t : MarketData.arrayCapital) {
-				buildMarket(s, t, force, label);
+	@SuppressWarnings("unchecked")
+	public void buildMarkets(boolean forceWeb, JLabel label) throws ParserConfigurationException, SAXException, IOException {
+		if (forceWeb) {
+			buildMarketsInternet(label);
+		} else {
+			try {
+				ObjectInputStream in = new ObjectInputStream(new FileInputStream(marketSaveFile));
+				markets = (TreeMap<String, Market>) in.readObject();
+				System.out.println("built markets from file");
+			} catch (Exception e) {
+				buildMarketsInternet(label);
 			}
 		}
 	}
 	
-	public void buildMarket(String market, String cap, boolean forceWeb, JLabel label)
-			throws ParserConfigurationException, SAXException, IOException {
-		String marketName = market + " " + cap;
-		label.setText(marketName);
-		String filename = marketName + marketSaveFileEnding;
-		if (forceWeb || filename.equals(marketSaveFileEnding)) {
-			markets.put(marketName, new Market(market, cap));
-			System.out.println("build market from web");
-		} else {
-			try {
-				ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
-				markets.put(marketName, (Market) in.readObject());
-				System.out.println("build market from file");
-			} catch (Exception e) {
-				markets.put(marketName, new Market(market, cap));
-				System.out.println("build market from web");
+	public void buildMarketsInternet(JLabel label) throws ParserConfigurationException, SAXException, IOException {
+		for (String m : MarketData.arrayMarkets) {
+			for (String c : MarketData.arrayCapital) {
+				String marketName = m + " " + c;
+				label.setText(marketName);
+				markets.put(marketName, new Market(m, c));
+				System.out.println("build " + marketName + " from web");
 			}
 		}
 	}
@@ -87,7 +83,7 @@ public class Investments {
 			throws IOException, ParserConfigurationException, SAXException, NamingException {
 		try {
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream(portfolioSaveFile));
-			portfolios = (SortedSet<Portfolio>) in.readObject();
+			portfolios = (TreeSet<Portfolio>) in.readObject();
 			for (Portfolio p : portfolios) {
 				if (p.isDefaultPortfolio()) {
 					currentPortfolio = defaultPortfolio = p;
@@ -303,9 +299,7 @@ public class Investments {
 		try {
 			new ObjectOutputStream(new FileOutputStream(portfolioSaveFile)).writeObject(portfolios);
 			System.out.println("saved portfolio");
-			for (Market m : markets.values()) {
-				new ObjectOutputStream(new FileOutputStream(m.getListName() + marketSaveFileEnding)).writeObject(m);
-			}
+			new ObjectOutputStream(new FileOutputStream(marketSaveFile)).writeObject(markets);
 			System.out.println("save successful");
 		} catch (Exception e) {
 			System.out.println("save failed");

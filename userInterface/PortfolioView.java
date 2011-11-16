@@ -40,6 +40,7 @@ import stock.Market;
 import stock.Portfolio;
 
 public class PortfolioView extends JFrame implements WindowListener {
+	private static final long serialVersionUID = -7129233116646387153L;
 	private MainCommandPanel mainCommandPanel;
 	private JMenu portfolioMenu;
 	private MainPanel mainPanel;
@@ -223,12 +224,12 @@ public class PortfolioView extends JFrame implements WindowListener {
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub
+		investments.save();
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
-		investments.save();
+		// TODO Auto-generated method stub
 	}
 
 	@Override

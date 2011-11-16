@@ -16,14 +16,12 @@
 
 package stock;
 
-import java.io.Serializable;
 import java.util.SortedMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class Portfolio implements Serializable {
-	private static final long serialVersionUID = 1050104017484089108L;
+public class Portfolio implements Comparable<Portfolio> {
 	private SortedMap<String, Integer> stockmap;
 	private double liquidAsset;
 	private String name;
@@ -145,5 +143,10 @@ public class Portfolio implements Serializable {
 		for (Map.Entry<String, Integer> me : ent)
 			result[i++] = me.getValue();
 		return result;
+	}
+
+	@Override
+	public int compareTo(Portfolio o) {
+		return name.compareTo(o.name);
 	}
 }
