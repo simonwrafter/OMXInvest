@@ -89,7 +89,6 @@ public class Market implements Comparable<Market> {
 			Element e = (Element) nl.item(i);
 			availableStocks.put(e.getAttribute("id"), buildStock(e));
 		}
-		System.out.println(availableStocks);
 	}
 	
 	private Stock buildStock(Element e) {

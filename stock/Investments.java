@@ -88,13 +88,14 @@ public class Investments {
 			for (Portfolio p : portfolios) {
 				if (p.isDefaultPortfolio()) {
 					currentPortfolio = defaultPortfolio = p;
-					break;
 				}
 			}
+			updateHistory();
 			System.out.println("rebuild portfolios from file");
 		} catch (Exception e) {
 			buildDefaultPortfolio();
 			portfolios.add(defaultPortfolio);
+			System.out.println("rebuild portfolios from web");
 		}
 	}
 	
