@@ -106,7 +106,20 @@ public class Stock {
 	
 	public void rebuildHistory() throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		Document doc = db.parse(MarketData.buildHistoryURL(omxId, 735));
+		
+		boolean success = false;
+		Document doc = null;
+		int times = 0;
+		while (!success && times <= 5) {
+			try {
+				doc = db.parse(MarketData.buildHistoryURL(omxId, 735));
+				success = true;
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+			times += 1;
+		}
+		
 		NodeList nl = doc.getElementsByTagName("hi");
 		histValue = new Double[8][500];
 		int len = nl.getLength()-1;

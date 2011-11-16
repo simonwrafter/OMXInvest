@@ -17,6 +17,6 @@
 package userInterface;
 
 public enum Actions {
-	HOME, HISTORY, OPTIMAL, MARKET, NEWS,	// main panel content
+	HOME, HISTORY, OPTIMAL, MARKET,			// main panel content
 	ADD, REMOVE, BUY, SELL, LIQUID;			// portfolio actions
 }

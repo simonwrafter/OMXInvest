@@ -57,12 +57,6 @@ public class MainPanel extends JPanel {
 		add(tables.getMarketTable());
 		updateUI();
 	}
-
-	public void showNews() {
-		remove(0);
-		add(tables.getNewsTable());
-		updateUI();
-	}
 	
 	public void updateOptimization() {
 		Double[] personal = tables.getPersonal();
