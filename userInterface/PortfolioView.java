@@ -19,8 +19,8 @@ package userInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.NoSuchElementException;
-import java.util.SortedSet;
 
 import javax.naming.NamingException;
 import javax.swing.JFrame;
@@ -79,7 +79,7 @@ public class PortfolioView {
 		System.out.println("Done!");
 	}
 	
-	public SortedSet<Market> getMarketSet() {
+	public Collection<Market> getMarketSet() {
 		return investments.getMarketSet();
 	}
 	

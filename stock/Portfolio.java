@@ -27,6 +27,7 @@ public class Portfolio {
 	private String name;
 	private double lambda;
 	private Currency currency;
+	private boolean defaultPortfolio;
 	
 	public Portfolio(String name, Currency currency) {
 		this(name, currency,  0);
@@ -66,6 +67,18 @@ public class Portfolio {
 
 	public void setLambda(double lambda) {
 		this.lambda = lambda;
+	}
+	
+	public boolean contains(String omxId) {
+		return stockmap.containsKey(omxId);
+	}
+	
+	public boolean isDefaultPortfolio() {
+		return defaultPortfolio;
+	}
+	
+	public void setDefaultPortfolio(boolean defaultPortfolio) {
+		this.defaultPortfolio = defaultPortfolio;
 	}
 	
 	public boolean add(String omxId) {
@@ -130,9 +143,5 @@ public class Portfolio {
 		for (Map.Entry<String, Integer> me : ent)
 			result[i++] = me.getValue();
 		return result;
-	}
-
-	public boolean contains(String omxId) {
-		return stockmap.containsKey(omxId);
 	}
 }

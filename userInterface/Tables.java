@@ -18,7 +18,7 @@ package userInterface;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.util.SortedSet;
+import java.util.Collection;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -73,7 +73,7 @@ public class Tables {
 	}
 	
 	public Component getMarketTable() {
-		SortedSet<Market> set = view.getMarketSet();
+		Collection<Market> set = view.getMarketSet();
 		int x = set.size()*3;
 		int y = 0;
 		for(Market m : set) {

@@ -16,9 +16,14 @@
 
 package stock;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.Collection;
 import java.util.NoSuchElementException;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.naming.NamingException;
@@ -29,28 +34,72 @@ import org.xml.sax.SAXException;
 
 public class Investments {
 	private SortedSet<Portfolio> portfolios;
-	private SortedSet<Market> markets;
+	private SortedMap<String, Market> markets;
 	private Portfolio defaultPortfolio;
 	private Portfolio currentPortfolio;
 
 	public Investments(JLabel label)
 			throws ParserConfigurationException, SAXException, IOException, NamingException {
 		portfolios = new TreeSet<Portfolio>();
-		markets = new TreeSet<Market>();
+		markets = new TreeMap<String, Market>();
 
-		for (String s : MarketData.arrayMarkets) {
-			for (String t : MarketData.arrayCapital) {
-				label.setText(s + " " + t);
-				markets.add(new Market(s, t));
-			}
-		}
+		buildAllMarkets(false, label);
+		buildPortfolios();
 		label.setText("Fetching History");
-		buildDefaultPortfolio();
-		portfolios.add(defaultPortfolio);
+		
 	}
 	
-	public SortedSet<Market> getMarketSet() {
-		return markets;
+	public void buildAllMarkets(boolean force, JLabel label)
+			throws ParserConfigurationException, SAXException, IOException {
+		for (String s : MarketData.arrayMarkets) {
+			for (String t : MarketData.arrayCapital) {
+				buildMarket(s, t, force, label);
+			}
+		}
+	}
+	
+	public void buildMarket(String market, String cap, boolean forceWeb, JLabel label)
+			throws ParserConfigurationException, SAXException, IOException {
+		String marketName = market + " " + cap;
+		label.setText(marketName);
+		String filename = marketName + ".mkt";
+		if (forceWeb || filename.equals(".mkt")) {
+			markets.put(marketName, new Market(market, cap));
+			System.out.println("rebuild market from web");
+		} else {
+			try {
+				ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
+				markets.put(marketName, (Market) in.readObject());
+				System.out.println("rebuild market from file");
+			} catch (Exception e) {
+				markets.put(marketName, new Market(market, cap));
+				System.out.println("rebuild market from web");
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void buildPortfolios()
+			throws IOException, ParserConfigurationException, SAXException, NamingException {
+		String filename = "portfolios.pfo";
+		try {
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
+			portfolios = (SortedSet<Portfolio>) in.readObject();
+			for (Portfolio p : portfolios) {
+				if (p.isDefaultPortfolio()) {
+					currentPortfolio = defaultPortfolio = p;
+					break;
+				}
+			}
+			System.out.println("rebuild portfolios from file");
+		} catch (Exception e) {
+			buildDefaultPortfolio();
+			portfolios.add(defaultPortfolio);
+		}
+	}
+	
+	public Collection<Market> getMarketSet() {
+		return markets.values();
 	}
 
 	public Portfolio getDefaultPortfolio() {
@@ -60,6 +109,8 @@ public class Investments {
 	public Portfolio setDefaultPortfolio(Portfolio portfolio) {
 		Portfolio p = defaultPortfolio;
 		defaultPortfolio = portfolio;
+		p.setDefaultPortfolio(false);
+		defaultPortfolio.setDefaultPortfolio(true);
 		return p;
 	} 
 
@@ -82,7 +133,7 @@ public class Investments {
 	}
 
 	private Currency getCurrency(String omxId) {
-		for (Market m : markets) {
+		for (Market m : markets.values()) {
 			if (m.contains(omxId)) {
 				return m.getStock(omxId).getCurrency();
 			}
@@ -107,7 +158,7 @@ public class Investments {
 	
 	public void updateHistory(String omxId)
 			throws IOException, ParserConfigurationException, SAXException {
-		for (Market m : markets) {
+		for (Market m : markets.values()) {
 			if (m.contains(omxId)) {
 				m.updateHistory(omxId);
 				return;
@@ -125,7 +176,7 @@ public class Investments {
 	
 	public void rebuildHistory(String omxId)
 			throws IOException, ParserConfigurationException, SAXException {
-		for (Market m : markets) {
+		for (Market m : markets.values()) {
 			if (m.contains(omxId)) {
 				m.rebuildHistory(omxId);
 				return;
@@ -142,7 +193,7 @@ public class Investments {
 		Double[][] result = new Double[currentPortfolio.size()+1][];
 		int i=1;
 		for (String s : currentPortfolio.getStocksInPortfolio()) { 
-			for (Market m : markets) {
+			for (Market m : markets.values()) {
 				if (m.contains(s)) {
 					if (result[0] == null)
 						result[0] = m.getStock(s).getHistory(nbrOfDays)[0];
@@ -167,7 +218,7 @@ public class Investments {
 	}
 	
 	public double getLastValue(String omxId) {
-		for (Market m : markets) {
+		for (Market m : markets.values()) {
 			if (m.contains(omxId)) {
 				return m.getStock(omxId).getHistory(1)[4][0];
 			}
@@ -216,7 +267,7 @@ public class Investments {
 		String[] stocks = currentPortfolio.getStocksInPortfolio();
 		String[] result = new String[stocks.length];
 		for (int i=0; i<stocks.length; i++) {
-			for (Market m : markets) {
+			for (Market m : markets.values()) {
 				if (m.contains(stocks[i])) {
 					result[i] = m.getStock(stocks[i]).getFullName();
 					break;
@@ -230,7 +281,7 @@ public class Investments {
 		String[] stocks = currentPortfolio.getStocksInPortfolio();
 		String[] result = new String[stocks.length];
 		for (int i=0; i<stocks.length; i++) {
-			for (Market m : markets) {
+			for (Market m : markets.values()) {
 				if (m.contains(stocks[i])) {
 					result[i] = m.getStock(stocks[i]).getShortName();
 					break;
