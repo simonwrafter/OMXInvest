@@ -63,17 +63,17 @@ public class Investments {
 		String marketName = market + " " + cap;
 		label.setText(marketName);
 		String filename = marketName + ".mkt";
-		if (forceWeb || filename.equals(".mkt")) {
+		if (forceWeb) {
 			markets.put(marketName, new Market(market, cap));
-			System.out.println("rebuild market from web");
+			System.out.println("build " + marketName + " from web");
 		} else {
 			try {
 				ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
 				markets.put(marketName, (Market) in.readObject());
-				System.out.println("rebuild market from file");
+				System.out.println("build " + marketName + " from file");
 			} catch (Exception e) {
 				markets.put(marketName, new Market(market, cap));
-				System.out.println("rebuild market from web");
+				System.out.println("build " + marketName + " from web");
 			}
 		}
 	}
@@ -95,7 +95,7 @@ public class Investments {
 		} catch (Exception e) {
 			buildDefaultPortfolio();
 			portfolios.add(defaultPortfolio);
-			System.out.println("rebuild portfolios from web");
+			System.out.println("build new portfolio");
 		}
 	}
 	

@@ -16,12 +16,14 @@
 
 package stock;
 
+import java.io.Serializable;
 import java.util.SortedMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class Portfolio {
+public class Portfolio implements Serializable {
+	private static final long serialVersionUID = 1050104017484089108L;
 	private SortedMap<String, Integer> stockmap;
 	private double liquidAsset;
 	private String name;
