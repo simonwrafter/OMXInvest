@@ -18,6 +18,8 @@ package userInterface;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.NoSuchElementException;
@@ -37,31 +39,30 @@ import stock.Investments;
 import stock.Market;
 import stock.Portfolio;
 
-public class PortfolioView {
+public class PortfolioView extends JFrame implements WindowListener {
 	private MainCommandPanel mainCommandPanel;
 	private JMenu portfolioMenu;
 	private MainPanel mainPanel;
-	private JFrame frame;
 	private Investments investments;
 	
 	public PortfolioView()
 			throws IOException, ParserConfigurationException, SAXException, NamingException {
-		frame = new JFrame("OMXInvest");
+		super("OMXInvest");
 		JLabel label = new JLabel("Starting...", JLabel.CENTER);
 		label.setPreferredSize(new Dimension(480, 300));
-		frame.add(label);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
-		frame.setLocationRelativeTo(frame.getOwner());
-		frame.setVisible(true);
+		this.add(label);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.pack();
+		this.setLocationRelativeTo(this.getOwner());
+		this.setVisible(true);
 		
 		investments = new Investments(label);
 		
-		frame.setVisible(false);
-		frame.remove(label);
+		this.setVisible(false);
+		this.remove(label);
 		
 		mainCommandPanel = new MainCommandPanel(this);
-		frame.add(mainCommandPanel, BorderLayout.SOUTH);
+		this.add(mainCommandPanel, BorderLayout.SOUTH);
 		
 		portfolioMenu = new JMenu("Portfolios");
 		portfolioMenu.add(new JMenuItem(investments.getCurrentPortfolio().getName()));
@@ -71,11 +72,11 @@ public class PortfolioView {
 		
 		mainPanel = new MainPanel(this);
 		
-		frame.add(mainPanel);
-		frame.setJMenuBar(menuBar);
-		frame.pack();
-		frame.setLocationRelativeTo(frame.getOwner());
-		frame.setVisible(true);
+		this.add(mainPanel);
+		this.setJMenuBar(menuBar);
+		this.pack();
+		this.setLocationRelativeTo(this.getOwner());
+		this.setVisible(true);
 		System.out.println("Done!");
 	}
 	
@@ -211,5 +212,40 @@ public class PortfolioView {
 			mainPanel.showHome();
 			break;
 		}
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		investments.save();
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
 	}
 }

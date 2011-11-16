@@ -17,8 +17,10 @@
 package stock;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.SortedMap;
@@ -33,6 +35,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 public class Investments {
+	private final String portfolioSaveFile = "portfolios.pfo";
+	private final String marketSaveFileEnding = ".mkt";
 	private SortedSet<Portfolio> portfolios;
 	private SortedMap<String, Market> markets;
 	private Portfolio defaultPortfolio;
@@ -62,18 +66,18 @@ public class Investments {
 			throws ParserConfigurationException, SAXException, IOException {
 		String marketName = market + " " + cap;
 		label.setText(marketName);
-		String filename = marketName + ".mkt";
-		if (forceWeb || filename.equals(".mkt")) {
+		String filename = marketName + marketSaveFileEnding;
+		if (forceWeb || filename.equals(marketSaveFileEnding)) {
 			markets.put(marketName, new Market(market, cap));
-			System.out.println("rebuild market from web");
+			System.out.println("build market from web");
 		} else {
 			try {
 				ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
 				markets.put(marketName, (Market) in.readObject());
-				System.out.println("rebuild market from file");
+				System.out.println("build market from file");
 			} catch (Exception e) {
 				markets.put(marketName, new Market(market, cap));
-				System.out.println("rebuild market from web");
+				System.out.println("build market from web");
 			}
 		}
 	}
@@ -81,9 +85,8 @@ public class Investments {
 	@SuppressWarnings("unchecked")
 	public void buildPortfolios()
 			throws IOException, ParserConfigurationException, SAXException, NamingException {
-		String filename = "portfolios.pfo";
 		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(portfolioSaveFile));
 			portfolios = (SortedSet<Portfolio>) in.readObject();
 			for (Portfolio p : portfolios) {
 				if (p.isDefaultPortfolio()) {
@@ -91,11 +94,11 @@ public class Investments {
 				}
 			}
 			updateHistory();
-			System.out.println("rebuild portfolios from file");
+			System.out.println("build portfolios from file");
 		} catch (Exception e) {
 			buildDefaultPortfolio();
 			portfolios.add(defaultPortfolio);
-			System.out.println("rebuild portfolios from web");
+			System.out.println("build new portfolio");
 		}
 	}
 	
@@ -294,5 +297,18 @@ public class Investments {
 
 	public String[] getStockIds() {
 		return currentPortfolio.getStocksInPortfolio();
+	}
+
+	public void save() {
+		try {
+			new ObjectOutputStream(new FileOutputStream(portfolioSaveFile)).writeObject(portfolios);
+			System.out.println("saved portfolio");
+			for (Market m : markets.values()) {
+				new ObjectOutputStream(new FileOutputStream(m.getListName() + marketSaveFileEnding)).writeObject(m);
+			}
+			System.out.println("save successful");
+		} catch (Exception e) {
+			System.out.println("save failed");
+		}
 	}
 }
