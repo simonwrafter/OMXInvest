@@ -74,6 +74,8 @@ public class PortfolioView extends JFrame implements WindowListener {
 		
 		this.add(mainPanel);
 		this.setJMenuBar(menuBar);
+		
+		this.addWindowListener(this);
 		this.pack();
 		this.setLocationRelativeTo(this.getOwner());
 		this.setVisible(true);
