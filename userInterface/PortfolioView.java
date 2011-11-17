@@ -27,9 +27,6 @@ import java.util.NoSuchElementException;
 import javax.naming.NamingException;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -42,7 +39,7 @@ import stock.Portfolio;
 public class PortfolioView extends JFrame implements WindowListener {
 	private static final long serialVersionUID = -7129233116646387153L;
 	private MainCommandPanel mainCommandPanel;
-	private JMenu portfolioMenu;
+	private MainMenuBar mainMenuBar;
 	private MainPanel mainPanel;
 	private Investments investments;
 	
@@ -65,16 +62,11 @@ public class PortfolioView extends JFrame implements WindowListener {
 		mainCommandPanel = new MainCommandPanel(this);
 		this.add(mainCommandPanel, BorderLayout.SOUTH);
 		
-		portfolioMenu = new JMenu("Portfolios");
-		portfolioMenu.add(new JMenuItem(investments.getCurrentPortfolio().getName()));
-		
-		JMenuBar menuBar = new JMenuBar();
-		menuBar.add(portfolioMenu);
-		
 		mainPanel = new MainPanel(this);
+		this.add(mainPanel, BorderLayout.CENTER);
 		
-		this.add(mainPanel);
-		this.setJMenuBar(menuBar);
+		mainMenuBar = new MainMenuBar(this);
+		this.setJMenuBar(mainMenuBar);
 		
 		this.addWindowListener(this);
 		this.pack();
@@ -146,33 +138,19 @@ public class PortfolioView extends JFrame implements WindowListener {
 			mainPanel.showMarkets();
 			break;
 		case ADD:
-			final String omxId_add = JOptionPane.showInputDialog("Type omxId of stock to add to portfolio:").toUpperCase();
-			if (omxId_add == null) {
-				break;
-			}
+			String omxId_add = getString("Type omxId of stock to add to portfolio:");
+			if (omxId_add == null) { break; }
 			try {
 				investments.addStockToPortfolio(omxId_add);
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, "Likely an input error, please try again",
-						"OMXInvest", JOptionPane.ERROR_MESSAGE);
-			} catch (NoSuchElementException e) {
+			} catch (Exception e) {
 				JOptionPane.showMessageDialog(null, e.getMessage(),
 						"OMXInvest", JOptionPane.ERROR_MESSAGE);
-			} catch (NamingException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage(),
-						"OMXInvest", JOptionPane.ERROR_MESSAGE);
-			} catch (ParserConfigurationException e) {
-				e.printStackTrace();
-			} catch (SAXException e) {
-				e.printStackTrace();
 			}
 			mainPanel.showHome();
 			break;
 		case REMOVE:
-			String omxId_remove = JOptionPane.showInputDialog("Type omxId of stock to remove from portfolio:").toUpperCase();
-			if (omxId_remove == null) {
-				break;
-			}
+			String omxId_remove = getString("Type omxId of stock to remove from portfolio:");
+			if (omxId_remove == null) { break; }
 			try {
 				investments.removeStockfromPortfolio(omxId_remove);
 			} catch (NoSuchElementException e) {
@@ -182,39 +160,52 @@ public class PortfolioView extends JFrame implements WindowListener {
 			mainPanel.showHome();
 			break;
 		case BUY:
-			String omxId_buy = JOptionPane.showInputDialog("Type omxId of stock to buy shares in:").toUpperCase();
-			if (omxId_buy == null) {
-				break;
-			}
-			if (!getCurrentPortfolio().contains(omxId_buy)) {
-				break;
-			}
-			int nbrToBuy = new Integer(JOptionPane.showInputDialog("How many shares do you wish to buy?"));
-			getCurrentPortfolio().buy(omxId_buy, nbrToBuy, investments.getLastValue(omxId_buy));
+			String omxId_buy = getString("Type omxId of stock to buy shares in:");
+			if (omxId_buy == null || !getCurrentPortfolio().contains(omxId_buy)) { break; }
+			getCurrentPortfolio().buy(omxId_buy, 
+					getInteger("How many shares do you wish to buy?"),
+					investments.getLastValue(omxId_buy));
 			mainPanel.showHome();
 			break;
 		case SELL:
-			String omxId_sell = JOptionPane.showInputDialog("Type omxId of stock to sell shares of:").toUpperCase();
-			if (omxId_sell == null) {
-				break;
-			}
-			if (!getCurrentPortfolio().contains(omxId_sell)) {
-				break;
-			}
-			int nbrToSell = new Integer(JOptionPane.showInputDialog("How many shares do you wish to sell?"));
-			getCurrentPortfolio().sell(omxId_sell, nbrToSell, investments.getLastValue(omxId_sell));
-			mainPanel.showHome();
+			String omxId_sell = getString("Type omxId of stock to sell shares of:");
+			if (omxId_sell == null || !getCurrentPortfolio().contains(omxId_sell)) { break; }
+			getCurrentPortfolio().sell(omxId_sell,
+					getInteger("How many shares do you wish to sell?"),
+					investments.getLastValue(omxId_sell));
 			mainPanel.showHome();
 			break;
 		case LIQUID:
-			String asset = JOptionPane.showInputDialog("Set liquid asset to:");
-			if (asset == null) {
-				break;
-			}
-			getCurrentPortfolio().setLiquidAsset(new Double(asset));
+			Double asset = getDouble("Set liquid asset to:");
+			if (asset == null) { break; }
+			getCurrentPortfolio().setLiquidAsset(asset);
 			mainPanel.showHome();
 			break;
 		}
+	}
+	
+	private String getString(String question) {
+		return JOptionPane.showInputDialog(question).toUpperCase();
+	}
+	
+	private Integer getInteger(String question) {
+		try {
+			return new Integer(getString(question));
+		} catch (NumberFormatException nfe) {
+			JOptionPane.showMessageDialog(null, "Please try again with a valid number",
+					"OMXInvest", JOptionPane.ERROR_MESSAGE);
+		}
+		return null;
+	}
+	
+	private Double getDouble(String question) {
+		try {
+			return new Double(getString(question));
+		} catch (NumberFormatException nfe) {
+			JOptionPane.showMessageDialog(null, "Please try again with a valid number",
+					"OMXInvest", JOptionPane.ERROR_MESSAGE);
+		}
+		return null;
 	}
 
 	@Override
