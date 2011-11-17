@@ -17,6 +17,7 @@
 package stock;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -29,7 +30,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class Market implements Comparable<Market> {
+public class Market implements Comparable<Market>, Serializable {
+	private static final long serialVersionUID = 1283431577549478467L;
 	private SortedMap<String, Stock> availableStocks;
 	private String listName;
 	

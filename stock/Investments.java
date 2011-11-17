@@ -48,8 +48,7 @@ public class Investments {
 		markets = new TreeMap<String, Market>();
 
 		buildMarkets(false, label);
-		buildPortfolios();
-		label.setText("Fetching History");
+		buildPortfolios(label);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -58,6 +57,7 @@ public class Investments {
 			buildMarketsInternet(label);
 		} else {
 			try {
+				label.setText("Rebuilding markets from file...");
 				ObjectInputStream in = new ObjectInputStream(new FileInputStream(marketSaveFile));
 				markets = (TreeMap<String, Market>) in.readObject();
 				System.out.println("built markets from file");
@@ -79,21 +79,21 @@ public class Investments {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void buildPortfolios()
+	public void buildPortfolios(JLabel label)
 			throws IOException, ParserConfigurationException, SAXException, NamingException {
 		try {
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream(portfolioSaveFile));
+			label.setText("Rebuilding portfolios from file...");
 			portfolios = (TreeSet<Portfolio>) in.readObject();
 			for (Portfolio p : portfolios) {
 				if (p.isDefaultPortfolio()) {
 					currentPortfolio = defaultPortfolio = p;
 				}
 			}
-			updateHistory();
 			System.out.println("build portfolios from file");
 		} catch (Exception e) {
-			buildDefaultPortfolio();
-			portfolios.add(defaultPortfolio);
+			label.setText("Building a firstrun portfolio");
+			portfolios.add(buildDefaultPortfolio());
 			System.out.println("build new portfolio");
 		}
 	}
@@ -109,7 +109,8 @@ public class Investments {
 	public Portfolio setDefaultPortfolio(Portfolio portfolio) {
 		Portfolio p = defaultPortfolio;
 		defaultPortfolio = portfolio;
-		p.setDefaultPortfolio(false);
+		if (p!=null)
+			p.setDefaultPortfolio(false);
 		defaultPortfolio.setDefaultPortfolio(true);
 		return p;
 	} 
@@ -208,7 +209,8 @@ public class Investments {
 	private Portfolio buildDefaultPortfolio()
 			throws IOException, ParserConfigurationException, SAXException, NamingException {
 		Portfolio result = new Portfolio("default", Currency.SEK, 10000);
-		defaultPortfolio = currentPortfolio = result;
+		setDefaultPortfolio(result);
+		setCurrentPortfolio(result);
 		addStockToPortfolio("SSE3966");
 		addStockToPortfolio("SSE18634");
 		addStockToPortfolio("SSE402");
@@ -302,6 +304,7 @@ public class Investments {
 			new ObjectOutputStream(new FileOutputStream(marketSaveFile)).writeObject(markets);
 			System.out.println("save successful");
 		} catch (Exception e) {
+			e.getStackTrace();
 			System.out.println("save failed");
 		}
 	}

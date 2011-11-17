@@ -17,6 +17,7 @@
 package stock;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -31,8 +32,8 @@ import org.xml.sax.SAXException;
 
 import util.InvestDate;
 
-public class Stock {
-
+public class Stock implements Serializable {
+	private static final long serialVersionUID = -206098643689779796L;
 	private String omxId;
 	private String shortName;
 	private String fullName;
