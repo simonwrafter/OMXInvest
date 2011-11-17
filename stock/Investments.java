@@ -52,7 +52,7 @@ public class Investments {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void buildMarkets(boolean forceWeb, JLabel label) throws ParserConfigurationException, SAXException, IOException {
+	private void buildMarkets(boolean forceWeb, JLabel label) throws ParserConfigurationException, SAXException, IOException {
 		if (forceWeb) {
 			buildMarketsInternet(label);
 		} else {
@@ -67,7 +67,7 @@ public class Investments {
 		}
 	}
 	
-	public void buildMarketsInternet(JLabel label) throws ParserConfigurationException, SAXException, IOException {
+	private void buildMarketsInternet(JLabel label) throws ParserConfigurationException, SAXException, IOException {
 		for (String m : MarketData.arrayMarkets) {
 			for (String c : MarketData.arrayCapital) {
 				String marketName = m + " " + c;
@@ -79,7 +79,7 @@ public class Investments {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void buildPortfolios(JLabel label)
+	private void buildPortfolios(JLabel label)
 			throws IOException, ParserConfigurationException, SAXException, NamingException {
 		try {
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream(portfolioSaveFile));
@@ -101,7 +101,20 @@ public class Investments {
 	public Collection<Market> getMarketSet() {
 		return markets.values();
 	}
-
+	
+	private Portfolio buildDefaultPortfolio()
+			throws IOException, ParserConfigurationException, SAXException, NamingException {
+		Portfolio result = new Portfolio("default", Currency.SEK, 10000);
+		setDefaultPortfolio(result);
+		setCurrentPortfolio(result);
+		addStockToPortfolio("SSE3966");
+		addStockToPortfolio("SSE18634");
+		addStockToPortfolio("SSE402");
+		addStockToPortfolio("SSE3524");
+		addStockToPortfolio("SSE101");
+		return result;
+	}
+	
 	public Portfolio getDefaultPortfolio() {
 		return defaultPortfolio;
 	}
@@ -119,13 +132,15 @@ public class Investments {
 		return currentPortfolio;
 	}
 
-	public void setCurrentPortfolio(Portfolio portfolio) {
-		this.currentPortfolio = portfolio;
+	public Portfolio setCurrentPortfolio(Portfolio portfolio) {
+		Portfolio p = currentPortfolio;
+		currentPortfolio = portfolio;
+		return p;
 	}
 	
 	public void addStockToPortfolio(String omxId)
 			throws IOException, ParserConfigurationException, SAXException, NamingException {
-		if (getCurrency(omxId).equals(currentPortfolio.getCurrency())) {
+		if (getCurrencyOfStock(omxId).equals(currentPortfolio.getCurrency())) {
 			rebuildHistory(omxId);
 			currentPortfolio.add(omxId);
 		} else {
@@ -133,7 +148,7 @@ public class Investments {
 		}
 	}
 
-	private Currency getCurrency(String omxId) {
+	public Currency getCurrencyOfStock(String omxId) {
 		for (Market m : markets.values()) {
 			if (m.contains(omxId)) {
 				return m.getStock(omxId).getCurrency();
@@ -206,19 +221,6 @@ public class Investments {
 		return result;
 	}
 	
-	private Portfolio buildDefaultPortfolio()
-			throws IOException, ParserConfigurationException, SAXException, NamingException {
-		Portfolio result = new Portfolio("default", Currency.SEK, 10000);
-		setDefaultPortfolio(result);
-		setCurrentPortfolio(result);
-		addStockToPortfolio("SSE3966");
-		addStockToPortfolio("SSE18634");
-		addStockToPortfolio("SSE402");
-		addStockToPortfolio("SSE3524");
-		addStockToPortfolio("SSE101");
-		return result;
-	}
-	
 	public double getLastValue(String omxId) {
 		for (Market m : markets.values()) {
 			if (m.contains(omxId)) {
@@ -226,6 +228,15 @@ public class Investments {
 			}
 		}
 		return 0;
+	}
+	
+	public Double[] getPortfolioDistribution() {
+		Double[] dist = getPortfolioValueDistributed();
+		double sum = getPortfolioValueSum();
+		for (int i=0; i<currentPortfolio.size();i++) {
+			dist[i] /= sum;
+		}
+		return dist;
 	}
 	
 	public Double[] getPortfolioValueDistributed() {
@@ -246,15 +257,6 @@ public class Investments {
 			result += nbrOf[i] * values[i];
 		}
 		return result;
-	}
-	
-	public Double[] getPortfolioDistribution() {
-		Double[] dist = getPortfolioValueDistributed();
-		double sum = getPortfolioValueSum();
-		for (int i=0; i<currentPortfolio.size();i++) {
-			dist[i] /= sum;
-		}
-		return dist;
 	}
 	
 	public double getPortfolioLiquid() {
