@@ -232,6 +232,30 @@ public class PortfolioView extends JFrame implements WindowListener {
 			investments.setCurrentPortfolio(additionalInfo);
 			actionHandler(currentView);
 			break;
+		case ABOUT:
+			MainOptionPane.infoPopUp(
+				"This program, OMXInvest is being developed by me, Simon,\n" +
+				"because it is good fun. Also it might come in hand, if not for\n" +
+				"me, maybe for you or your friend.\n\n" +
+				"If you find it use full or just like java programming or any\n" +
+				"other valid reason, feel free to participate in what way you can.\n" +
+				"Or just send me an e mail with a happy smiley.\n\n" +
+				"OMXInvest is mainley licensed under the ICS license, it can be\n" +
+				"found under 'License' in the 'More' menu.\n");
+			break;
+		case LICENSE:
+			MainOptionPane.infoPopUp("Copyright (c) 2011, Simon Wrafter <simon.wrafter@gmail.com>\n\n" +
+					"Permission to use, copy, modify, and/or distribute this software for any\n" +
+					"purpose with or without fee is hereby granted, provided that the above\n" +
+					"copyright notice and this permission notice appear in all copies.\n\n" +
+					"THE SOFTWARE IS PROVIDED \"AS IS\" AND THE AUTHOR DISCLAIMS ALL WARRANTIES\n" +
+					"WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF\n" +
+					"MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR\n" +
+					"ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES\n" +
+					"WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN\n" +
+					"ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF\n" +
+					"OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.");
+			break;
 		}
 	}
 
