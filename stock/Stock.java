@@ -132,10 +132,10 @@ public class Stock implements Serializable {
 	
 	public void updateHistory() throws IOException, ParserConfigurationException, SAXException {
 		int lastDate = histValue[0][0].intValue();
-		int today = new Integer(InvestDate.dateNoDash(0));
+		int today = new Integer(InvestDate.todayNoDash());
 		if (lastDate != today) {
 			DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document doc = db.parse(MarketData.buildHistoryURL(omxId, InvestDate.makeDateString(lastDate)));
+			Document doc = db.parse(MarketData.buildHistoryURL(omxId, InvestDate.dateWithDash(lastDate)));
 			NodeList nl = doc.getElementsByTagName("hi");
 			Double[][] newHistValue = new Double[8][500];
 			

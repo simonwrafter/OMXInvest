@@ -24,13 +24,13 @@ public class InvestDate {
 		return date(0);
 	}
 	
+	public static String todayNoDash() {
+		return dateNoDash(0);
+	}
+	
 	public static String date(int daysAgo) {
 		long epoch = System.currentTimeMillis() - (daysAgo * 86400000L);;
 		return new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date(epoch));
-	}
-	
-	public static String todayNoDash(int daysAgo) {
-		return dateNoDash(0);
 	}
 	
 	public static String dateNoDash(int daysAgo) {
@@ -38,14 +38,18 @@ public class InvestDate {
 		return new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date(epoch));
 	}
 	
+	public static String dateNoDash(String date) {
+		return new StringBuilder(date).deleteCharAt(4).deleteCharAt(6).toString();
+	}
+	
+	public static String dateWithDash(int dateNoDash) {
+		int di = (int) dateNoDash;
+		return String.format("%04d-%02d-%02d", di/10000, (di/100)%100, di%100);
+	}
+	
 	public static int nbrOfPastDays(String dateWithDash) throws ParseException {
 		long time = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(dateWithDash).getTime();
 		return (int) (System.currentTimeMillis() - time) / (1000*60*60*24);
-	}
-	
-	public static String makeDateString(int dateNoDash) {
-		int di = (int) dateNoDash;
-		return String.format("%04d-%02d-%02d", di/10000, (di/100)%100, di%100);
 	}
 	
 	public static int makeDateInt(String dateWithDash) {
@@ -59,9 +63,5 @@ public class InvestDate {
 			result[i+1] = array[i]; 
 		}
 		return result;
-	}
-	
-	public static String removeDash(String date) {
-		return new StringBuilder(date).deleteCharAt(4).deleteCharAt(6).toString();
 	}
 }

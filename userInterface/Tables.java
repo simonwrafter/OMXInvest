@@ -49,7 +49,7 @@ public class Tables {
 		Object[][] data = InvestMatrix.transpose(view.getPortfolioHistory());
 		
 		for(Object[] o : data) {
-			o[0] = InvestDate.makeDateString(((Double) o[0]).intValue());
+			o[0] = InvestDate.dateWithDash(((Double) o[0]).intValue());
 			for(int i=1;i<o.length;i++) {
 				o[i] = String.format("%.02f", o[i]);
 			}
@@ -192,7 +192,7 @@ public class Tables {
 		Integer[] nbrOf = portfolio.getShareDistribution();
 		Double[][] history = view.getPortfolioHistory(1);
 		
-		int height = Math.max(stocks.length, 8);
+		int height = Math.max(stocks.length, 6); // 8);
 		int width = 7;
 		
 		Object[] header = {"omxId", "name", "short name", "nbrOf", "last value", "total", ""};
@@ -212,8 +212,8 @@ public class Tables {
 			data[i][6] = "";
 		}
 		
-		Double portvariance = CalcModels.portfolioVariance(view.getPortfolioDistribution(), CalcModels.covariance(view.getPortfolioHistory()));
-		double value = view.portfolioValue();
+//		Double portvariance = CalcModels.portfolioVariance(view.getPortfolioDistribution(), CalcModels.covariance(view.getPortfolioHistory()));
+//		double value = view.portfolioValue();
 		
 		data[0][6] = "currency";
 		data[1][6] = portfolio.getCurrency();
@@ -221,8 +221,8 @@ public class Tables {
 		data[3][6] = portfolio.getLambda();
 		data[4][6] = "liquid";
 		data[5][6] = portfolio.getLiquidAsset();
-		data[6][6] = "VaR";
-		data[7][6] = value != 0 ? CalcModels.valueAtRisk(value, portvariance, 0.05, 0.02) * value : 0;
+//		data[6][6] = "VaR";
+//		data[7][6] = value != 0 ? CalcModels.valueAtRisk(value, portvariance, 0.01, 0.01) * value : 0;
 		
 		JTable table = new JTable(data, header);
 		

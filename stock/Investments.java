@@ -89,6 +89,9 @@ public class Investments {
 				if (p.isDefaultPortfolio()) {
 					currentPortfolio = defaultPortfolio = p;
 				}
+				for (String id : p.getStocksInPortfolio()) {
+					updateHistory(id);
+				}
 			}
 			System.out.println("built portfolios from file");
 		} catch (Exception e) {
@@ -261,11 +264,11 @@ public class Investments {
 	}
 	
 	public Double[] getPortfolioValueDistributed() {
-		Double[][] values = getHistory(4, 1);
+		Double[][] latest = getHistory(4, 1);
 		Integer[] nbrOf = currentPortfolio.getShareDistribution();
 		Double result[] = new Double[currentPortfolio.size()];
 		for(int i=0; i<nbrOf.length; i++) {
-			result[i] = nbrOf[i] * values[i+1][0];
+			result[i] = nbrOf[i] * latest[i+1][0];
 		}
 		return result;
 	}
@@ -273,9 +276,8 @@ public class Investments {
 	public double getPortfolioValueSum() {
 		double result=0;
 		Double[] values = getPortfolioValueDistributed();
-		Integer[] nbrOf = currentPortfolio.getShareDistribution();
-		for(int i=0; i<nbrOf.length; i++) {
-			result += nbrOf[i] * values[i];
+		for(int i=0; i<values.length; i++) {
+			result += values[i];
 		}
 		return result;
 	}

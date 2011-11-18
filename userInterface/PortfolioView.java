@@ -244,8 +244,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 	@Override
 	public void windowClosing(WindowEvent e) {
 		this.setVisible(false);
-		investments.save();
-		System.exit(0);
+		//investments.save();
 	}
 
 	@Override
