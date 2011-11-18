@@ -192,7 +192,7 @@ public class Tables {
 		Integer[] nbrOf = portfolio.getShareDistribution();
 		Double[][] history = view.getPortfolioHistory(1);
 		
-		int height = Math.max(stocks.length, 6); // 8);
+		int height = Math.max(stocks.length, 6); //8);
 		int width = 7;
 		
 		Object[] header = {"omxId", "name", "short name", "nbrOf", "last value", "total", ""};
@@ -222,7 +222,7 @@ public class Tables {
 		data[4][6] = "liquid";
 		data[5][6] = portfolio.getLiquidAsset();
 //		data[6][6] = "VaR";
-//		data[7][6] = value != 0 ? CalcModels.valueAtRisk(value, portvariance, 0.01, 0.01) * value : 0;
+//		data[7][6] = value != 0 ? CalcModels.valueAtRisk(value, portvariance, 0.05, 0.019) : 0;
 		
 		JTable table = new JTable(data, header);
 		

@@ -32,7 +32,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import stock.Currency;
 import stock.Investments;
 import stock.Market;
 import stock.Portfolio;
@@ -244,7 +243,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 	@Override
 	public void windowClosing(WindowEvent e) {
 		this.setVisible(false);
-		//investments.save();
+		investments.save();
 	}
 
 	@Override
