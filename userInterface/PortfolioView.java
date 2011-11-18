@@ -155,6 +155,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 		case ADD:
 			String omxId_add = MainOptionPane.getString("Type omxId of stock to add to portfolio:");
 			if (omxId_add == null) { break; }
+			omxId_add = omxId_add.toUpperCase();
 			try {
 				investments.addStockToPortfolio(omxId_add);
 			} catch (Exception e) {
@@ -167,6 +168,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 		case REMOVE:
 			String omxId_remove = MainOptionPane.getString("Type omxId of stock to remove from portfolio:");
 			if (omxId_remove == null) { break; }
+			omxId_remove = omxId_remove.toUpperCase();
 			try {
 				investments.removeStockfromPortfolio(omxId_remove);
 			} catch (NoSuchElementException e) {
@@ -178,8 +180,10 @@ public class PortfolioView extends JFrame implements WindowListener {
 			break;
 		case BUY:
 			String omxId_buy = MainOptionPane.getString("Type omxId of stock to buy shares in:");
-			if (omxId_buy == null || !getCurrentPortfolio().contains(omxId_buy)) { break; }
-			getCurrentPortfolio().buy(omxId_buy, 
+			if (omxId_buy == null) { break; }
+			omxId_buy = omxId_buy.toUpperCase();
+			if (!getCurrentPortfolio().contains(omxId_buy)) { break; }
+			getCurrentPortfolio().buy(omxId_buy,
 					MainOptionPane.getInteger("How many shares do you wish to buy?"),
 					investments.getLastValue(omxId_buy));
 			mainPanel.showHome();
@@ -187,7 +191,9 @@ public class PortfolioView extends JFrame implements WindowListener {
 			break;
 		case SELL:
 			String omxId_sell = MainOptionPane.getString("Type omxId of stock to sell shares of:");
-			if (omxId_sell == null || !getCurrentPortfolio().contains(omxId_sell)) { break; }
+			if (omxId_sell == null) { break; }
+			omxId_sell = omxId_sell.toUpperCase();
+			if (!getCurrentPortfolio().contains(omxId_sell)) { break; }
 			getCurrentPortfolio().sell(omxId_sell,
 					MainOptionPane.getInteger("How many shares do you wish to sell?"),
 					investments.getLastValue(omxId_sell));
@@ -210,12 +216,22 @@ public class PortfolioView extends JFrame implements WindowListener {
 			}
 			break;
 		case DELETE:
+			String name = MainOptionPane.getString("Name of portfolio to remove");
+			if (name == null) { break; }
+			if (investments.getPortfolios().size() > 1 && investments.removePortfolio(name)) {
+				mainMenuBar.removePortfolio(name);
+				actionHandler(Actions.SWITCH, "");
+			}
 			break;
 		case EDIT:
+			String oldName = getCurrentPortfolio().getName();
+			MainOptionPane.editPortfolioName(getCurrentPortfolio());
+			mainMenuBar.removePortfolio(oldName);
+			mainMenuBar.addPortfolio(getCurrentPortfolio());
 			break;
 		case SWITCH:
 			investments.setCurrentPortfolio(additionalInfo);
-			actionHandler(currentView, "");
+			actionHandler(currentView);
 			break;
 		}
 	}

@@ -110,6 +110,10 @@ public class Investments {
 		return portfolios.add(portfolio);
 	}
 	
+	public boolean removePortfolio(String name) {
+		return portfolios.remove(new Portfolio(name, null));
+	}
+	
 	private Portfolio buildDefaultPortfolio()
 			throws IOException, ParserConfigurationException, SAXException, NamingException {
 		Portfolio result = new Portfolio("default", Currency.SEK, 10000);
@@ -152,7 +156,7 @@ public class Investments {
 				return setCurrentPortfolio(p);
 			}
 		}
-		return null;
+		return setCurrentPortfolio(defaultPortfolio);
 	}
 	
 	public void addStockToPortfolio(String omxId)
