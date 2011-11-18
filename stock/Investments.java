@@ -73,7 +73,7 @@ public class Investments {
 				String marketName = m + " " + c;
 				label.setText(marketName);
 				markets.put(marketName, new Market(m, c));
-				System.out.println("build " + marketName + " from web");
+				System.out.println("built " + marketName + " from web");
 			}
 		}
 	}
@@ -90,16 +90,24 @@ public class Investments {
 					currentPortfolio = defaultPortfolio = p;
 				}
 			}
-			System.out.println("build portfolios from file");
+			System.out.println("built portfolios from file");
 		} catch (Exception e) {
 			label.setText("Building a firstrun portfolio");
-			portfolios.add(buildDefaultPortfolio());
-			System.out.println("build new portfolio");
+			addNewPortfolio(buildDefaultPortfolio());
+			System.out.println("built new portfolio");
 		}
 	}
 	
 	public Collection<Market> getMarketSet() {
 		return markets.values();
+	}
+	
+	public SortedSet<Portfolio> getPortfolios() {
+		return new TreeSet<Portfolio>(portfolios);
+	}
+	
+	public boolean addNewPortfolio(Portfolio portfolio) {
+		return portfolios.add(portfolio);
 	}
 	
 	private Portfolio buildDefaultPortfolio()
@@ -136,6 +144,15 @@ public class Investments {
 		Portfolio p = currentPortfolio;
 		currentPortfolio = portfolio;
 		return p;
+	}
+	
+	public Portfolio setCurrentPortfolio(String portfolio) {
+		for (Portfolio p : portfolios) {
+			if (p.getName().equals(portfolio)) {
+				return setCurrentPortfolio(p);
+			}
+		}
+		return null;
 	}
 	
 	public void addStockToPortfolio(String omxId)

@@ -32,6 +32,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import stock.Currency;
 import stock.Investments;
 import stock.Market;
 import stock.Portfolio;
@@ -42,6 +43,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 	private MainMenuBar mainMenuBar;
 	private MainPanel mainPanel;
 	private Investments investments;
+	private Actions	currentView;
 	
 	public PortfolioView()
 			throws IOException, ParserConfigurationException, SAXException, NamingException {
@@ -64,6 +66,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 		
 		mainPanel = new MainPanel(this);
 		this.add(mainPanel, BorderLayout.CENTER);
+		currentView = Actions.HOME;
 		
 		mainMenuBar = new MainMenuBar(this);
 		this.setJMenuBar(mainMenuBar);
@@ -77,6 +80,10 @@ public class PortfolioView extends JFrame implements WindowListener {
 	
 	public Collection<Market> getMarketSet() {
 		return investments.getMarketSet();
+	}
+	
+	public Collection<Portfolio> getPortfolios() {
+		return investments.getPortfolios();
 	}
 	
 	public Portfolio getCurrentPortfolio() {
@@ -124,21 +131,29 @@ public class PortfolioView extends JFrame implements WindowListener {
 	}
 	
 	public void actionHandler(Actions actions) {
+		actionHandler(actions, null);
+	}
+	
+	public void actionHandler(Actions actions, String additionalInfo) {
 		switch (actions) {
 		case HOME:
 			mainPanel.showHome();
+			currentView = Actions.HOME;
 			break;
 		case HISTORY:
 			mainPanel.showHistory();
+			currentView = Actions.HISTORY;
 			break;
 		case OPTIMAL:
 			mainPanel.showOptimization();
+			currentView = Actions.OPTIMAL;
 			break;
 		case MARKET:
 			mainPanel.showMarkets();
+			currentView = Actions.MARKET;
 			break;
 		case ADD:
-			String omxId_add = getString("Type omxId of stock to add to portfolio:");
+			String omxId_add = MainOptionPane.getString("Type omxId of stock to add to portfolio:");
 			if (omxId_add == null) { break; }
 			try {
 				investments.addStockToPortfolio(omxId_add);
@@ -147,9 +162,10 @@ public class PortfolioView extends JFrame implements WindowListener {
 						"OMXInvest", JOptionPane.ERROR_MESSAGE);
 			}
 			mainPanel.showHome();
+			currentView = Actions.HOME;
 			break;
 		case REMOVE:
-			String omxId_remove = getString("Type omxId of stock to remove from portfolio:");
+			String omxId_remove = MainOptionPane.getString("Type omxId of stock to remove from portfolio:");
 			if (omxId_remove == null) { break; }
 			try {
 				investments.removeStockfromPortfolio(omxId_remove);
@@ -158,54 +174,50 @@ public class PortfolioView extends JFrame implements WindowListener {
 						"OMXInvest", JOptionPane.ERROR_MESSAGE);
 			}
 			mainPanel.showHome();
+			currentView = Actions.HOME;
 			break;
 		case BUY:
-			String omxId_buy = getString("Type omxId of stock to buy shares in:");
+			String omxId_buy = MainOptionPane.getString("Type omxId of stock to buy shares in:");
 			if (omxId_buy == null || !getCurrentPortfolio().contains(omxId_buy)) { break; }
 			getCurrentPortfolio().buy(omxId_buy, 
-					getInteger("How many shares do you wish to buy?"),
+					MainOptionPane.getInteger("How many shares do you wish to buy?"),
 					investments.getLastValue(omxId_buy));
 			mainPanel.showHome();
+			currentView = Actions.HOME;
 			break;
 		case SELL:
-			String omxId_sell = getString("Type omxId of stock to sell shares of:");
+			String omxId_sell = MainOptionPane.getString("Type omxId of stock to sell shares of:");
 			if (omxId_sell == null || !getCurrentPortfolio().contains(omxId_sell)) { break; }
 			getCurrentPortfolio().sell(omxId_sell,
-					getInteger("How many shares do you wish to sell?"),
+					MainOptionPane.getInteger("How many shares do you wish to sell?"),
 					investments.getLastValue(omxId_sell));
 			mainPanel.showHome();
+			currentView = Actions.HOME;
 			break;
 		case LIQUID:
-			Double asset = getDouble("Set liquid asset to:");
+			Double asset = MainOptionPane.getDouble("Set liquid asset to:");
 			if (asset == null) { break; }
 			getCurrentPortfolio().setLiquidAsset(asset);
 			mainPanel.showHome();
+			currentView = Actions.HOME;
+			break;
+		case NEW:
+			Portfolio portfolio = MainOptionPane.makeNewPortfolio();
+			if (portfolio == null) { break; }
+			if (investments.addNewPortfolio(portfolio)) {
+				mainMenuBar.addPortfolio(portfolio);
+				actionHandler(Actions.SWITCH, portfolio.getName());
+			}
+			break;
+		case DELETE:
+			break;
+		case EDIT:
+			break;
+		case SWITCH:
+			investments.setCurrentPortfolio(additionalInfo);
+			actionHandler(currentView, "");
 			break;
 		}
-	}
-	
-	private String getString(String question) {
-		return JOptionPane.showInputDialog(question).toUpperCase();
-	}
-	
-	private Integer getInteger(String question) {
-		try {
-			return new Integer(getString(question));
-		} catch (NumberFormatException nfe) {
-			JOptionPane.showMessageDialog(null, "Please try again with a valid number",
-					"OMXInvest", JOptionPane.ERROR_MESSAGE);
-		}
-		return null;
-	}
-	
-	private Double getDouble(String question) {
-		try {
-			return new Double(getString(question));
-		} catch (NumberFormatException nfe) {
-			JOptionPane.showMessageDialog(null, "Please try again with a valid number",
-					"OMXInvest", JOptionPane.ERROR_MESSAGE);
-		}
-		return null;
 	}
 
 	@Override

@@ -29,13 +29,13 @@ public class Button extends JButton implements ActionListener {
 	public Button (Actions action, String text, String toolTip, PortfolioView view) {
 		super(text);
 		this.action = action;
-		setToolTipText(toolTip);
+		this.setToolTipText(toolTip);
 		this.view = view;
-		addActionListener(this);
+		this.addActionListener(this);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		view.actionHandler(action);
+		view.actionHandler(action, "");
 	}
 }
