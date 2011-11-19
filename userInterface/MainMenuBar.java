@@ -48,8 +48,13 @@ public class MainMenuBar extends JMenuBar {
 		}
 		this.add(portfolioMenu);
 		
+		JMenu admin = new JMenu("Admin");
+		admin.add(new MainMenuItem(Actions.REBUILD_HISTORY, "Rebuild histories", "Refetch all histories of the internet"));
+		admin.add(new MainMenuItem(Actions.UPDATE_MARKETS, "Rebuild markets", "Refetch all markets of the internet"));
+		this.add(admin);
+		
 		JMenu about = new JMenu("More");
-		about.add(new MainMenuItem(Actions.ABOUT, "About", "Who I am and the such"));
+		about.add(new MainMenuItem(Actions.ABOUT, "About", "Who I am"));
 		about.add(new MainMenuItem(Actions.LICENSE, "License", "The full ICS License text"));
 		this.add(about);
 	}

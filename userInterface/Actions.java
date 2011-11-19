@@ -20,5 +20,6 @@ public enum Actions {
 	HOME, HISTORY, OPTIMAL, MARKET,		// main panel content
 	ADD, REMOVE, BUY, SELL, LIQUID,		// home actions
 	NEW, DELETE, EDIT, SWITCH,			// portfolio menu actions 
+	UPDATE_MARKETS, REBUILD_HISTORY,	// admin menu actions
 	ABOUT, LICENSE;						// more menu actions
 }

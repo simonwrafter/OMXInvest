@@ -188,7 +188,19 @@ public class Investments {
 		double value = currentPortfolio.remove(omxId);
 		currentPortfolio.setLiquidAsset(value * getLastValue(omxId) + currentPortfolio.getLiquidAsset());
 	}
-
+	
+	public void updateMarkets() {
+		for (String m : MarketData.arrayMarkets) {
+			for (String c : MarketData.arrayCapital) {
+				try {
+					markets.get(m + " " + c).updateMarket(m, c);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	public void updateHistory()
 			throws IOException, ParserConfigurationException, SAXException {
 		for (String s : currentPortfolio.getStocksInPortfolio()) {

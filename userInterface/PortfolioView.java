@@ -232,6 +232,17 @@ public class PortfolioView extends JFrame implements WindowListener {
 			investments.setCurrentPortfolio(additionalInfo);
 			actionHandler(currentView);
 			break;
+		case REBUILD_HISTORY:
+			try {
+				investments.rebuildHistory();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			actionHandler(currentView);
+			break;
+		case UPDATE_MARKETS:
+			investments.updateMarkets();
+			break;
 		case ABOUT:
 			MainOptionPane.infoPopUp(
 				"This program, OMXInvest is being developed by me, Simon,\n" +

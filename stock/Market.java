@@ -48,7 +48,32 @@ public class Market implements Comparable<Market>, Serializable {
 	}
 	
 	public SortedMap<String, Stock> getMarketMap() {
-		return availableStocks;
+		return new TreeMap<String, Stock>(availableStocks);
+	}
+	
+	public void updateMarket(String market, String cap)
+			throws ParserConfigurationException, SAXException, IOException {
+		int[] index = MarketData.marketIndex(market, cap);
+		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		boolean success = false;
+		Document doc = null;
+		int times = 0;
+		while (!success && times <= 5) {
+			try {
+				doc = db.parse(MarketData.buildListURL(index[0], index[1]));
+				success = true;
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+			times += 1;
+		}
+		NodeList nl = doc.getElementsByTagName("inst");
+
+		for (int i=0; i<nl.getLength(); i++) {
+			Element e = (Element) nl.item(i);
+			if (!availableStocks.containsKey(e.getAttribute("id")))
+				availableStocks.put(e.getAttribute("id"), buildStock(e));
+		}
 	}
 	
 	public boolean contains(String omxId) {
