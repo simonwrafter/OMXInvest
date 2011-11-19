@@ -80,4 +80,8 @@ public class MainOptionPane extends JOptionPane {
 	public static void infoPopUp(String s) {
 		showMessageDialog(null, s, "OMXInvest", INFORMATION_MESSAGE);
 	}
+	
+	public static void errorPopUp(String s) {
+		showMessageDialog(null, s, "OMXInvest", ERROR_MESSAGE);
+	}
 }

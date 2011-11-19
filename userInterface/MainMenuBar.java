@@ -55,7 +55,8 @@ public class MainMenuBar extends JMenuBar {
 		
 		JMenu about = new JMenu("More");
 		about.add(new MainMenuItem(Actions.ABOUT, "About", "Who I am"));
-		about.add(new MainMenuItem(Actions.LICENSE, "License", "The full ICS License text"));
+		about.add(new MainMenuItem(Actions.ICS_LICENSE, "ICS license", "The ICS License text"));
+		about.add(new MainMenuItem(Actions.JAMA_C, "JAMA © notice", "JAMA copyright notice"));
 		this.add(about);
 	}
 	

@@ -22,13 +22,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
-import java.util.NoSuchElementException;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.naming.NamingException;
 import javax.swing.JLabel;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -43,7 +41,7 @@ public class Investments {
 	private Portfolio currentPortfolio;
 
 	public Investments(JLabel label)
-			throws ParserConfigurationException, SAXException, IOException, NamingException {
+			throws ParserConfigurationException, SAXException, IOException {
 		portfolios = new TreeSet<Portfolio>();
 		markets = new TreeMap<String, Market>();
 
@@ -52,7 +50,8 @@ public class Investments {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void buildMarkets(boolean forceWeb, JLabel label) throws ParserConfigurationException, SAXException, IOException {
+	private void buildMarkets(boolean forceWeb, JLabel label)
+			throws ParserConfigurationException, SAXException, IOException {
 		if (forceWeb) {
 			buildMarketsInternet(label);
 		} else {
@@ -67,7 +66,8 @@ public class Investments {
 		}
 	}
 	
-	private void buildMarketsInternet(JLabel label) throws ParserConfigurationException, SAXException, IOException {
+	private void buildMarketsInternet(JLabel label)
+			throws ParserConfigurationException, SAXException, IOException {
 		for (String m : MarketData.arrayMarkets) {
 			for (String c : MarketData.arrayCapital) {
 				String marketName = m + " " + c;
@@ -80,7 +80,7 @@ public class Investments {
 	
 	@SuppressWarnings("unchecked")
 	private void buildPortfolios(JLabel label)
-			throws IOException, ParserConfigurationException, SAXException, NamingException {
+			throws IOException, ParserConfigurationException, SAXException {
 		try {
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream(portfolioSaveFile));
 			label.setText("Rebuilding portfolios from file...");
@@ -118,7 +118,7 @@ public class Investments {
 	}
 	
 	private Portfolio buildDefaultPortfolio()
-			throws IOException, ParserConfigurationException, SAXException, NamingException {
+			throws IOException, ParserConfigurationException, SAXException {
 		Portfolio result = new Portfolio("default", Currency.SEK, 10000);
 		setDefaultPortfolio(result);
 		setCurrentPortfolio(result);
@@ -162,13 +162,14 @@ public class Investments {
 		return setCurrentPortfolio(defaultPortfolio);
 	}
 	
-	public void addStockToPortfolio(String omxId)
-			throws IOException, ParserConfigurationException, SAXException, NamingException {
+	public boolean addStockToPortfolio(String omxId)
+			throws IOException, ParserConfigurationException, SAXException {
 		if (getCurrencyOfStock(omxId).equals(currentPortfolio.getCurrency())) {
 			rebuildHistory(omxId);
 			currentPortfolio.add(omxId);
+			return true;
 		} else {
-			throw new NamingException(omxId + " does not match portfolio currency");
+			return false;
 		}
 	}
 
@@ -178,15 +179,16 @@ public class Investments {
 				return m.getStock(omxId).getCurrency();
 			}
 		}
-		throw new NoSuchElementException(omxId + " is not a known stock.");
+		return null;
 	}
 
-	public void removeStockfromPortfolio(String omxId) {
+	public boolean removeStockfromPortfolio(String omxId) {
 		if (!currentPortfolio.contains(omxId)) {
-			throw new NoSuchElementException(omxId + " is not a registered stock.");
+			return false;
 		}
 		double value = currentPortfolio.remove(omxId);
 		currentPortfolio.setLiquidAsset(value * getLastValue(omxId) + currentPortfolio.getLiquidAsset());
+		return true;
 	}
 	
 	public void updateMarkets() {
@@ -208,15 +210,15 @@ public class Investments {
 		}
 	}
 	
-	public void updateHistory(String omxId)
+	public boolean updateHistory(String omxId)
 			throws IOException, ParserConfigurationException, SAXException {
 		for (Market m : markets.values()) {
 			if (m.contains(omxId)) {
 				m.updateHistory(omxId);
-				return;
+				return true;
 			}
 		}
-		throw new NoSuchElementException(omxId + " is not a known stock.");
+		return false;
 	}
 
 	public void rebuildHistory()
@@ -226,15 +228,15 @@ public class Investments {
 		}
 	}
 	
-	public void rebuildHistory(String omxId)
+	public boolean rebuildHistory(String omxId)
 			throws IOException, ParserConfigurationException, SAXException {
 		for (Market m : markets.values()) {
 			if (m.contains(omxId)) {
 				m.rebuildHistory(omxId);
-				return;
+				return true;
 			}
 		}
-		throw new NoSuchElementException(omxId + " is not a known stock.");
+		return false;
 	}
 	
 	public Double[][] getHistory(int historyType) {
