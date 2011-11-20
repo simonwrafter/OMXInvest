@@ -16,46 +16,25 @@
 
 package userInterface;
 
-import java.awt.GridLayout;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 
-public class MainPanel extends JPanel {
+public class MainPanel extends JTabbedPane {
 	private static final long serialVersionUID = 9193463064365388089L;
 	private Tables tables;
 	private PortfolioView view;
 	
 	public MainPanel(PortfolioView view) {
-		super(new GridLayout(1,0));
+		super();
 		this.view = view;
-		tables = new Tables(view);
-		add(tables.getHomeTable());
-	}
-	
-	public void showHome() {
-		remove(0);
-		add(tables.getHomeTable());
-		updateUI();
-	}
-	
-	public void showHistory() {
-		remove(0);
-		add(tables.getHistoryTable());
-		updateUI();
-	}
-	
-	public void showOptimization() {
-		remove(0);
-		add(tables.getOptimizationTable());
-		updateUI();
-	}
-	
-	public void showMarkets() {
-		remove(0);
-		add(tables.getMarketTable());
-		updateUI();
+		this.tables = new Tables(view);
+		addTab("Home", tables.getHomeTable());
+		addTab("History", tables.getHistoryTable());
+		addTab("Optimization", tables.getOptimizationTable());
+		addTab("Markets", tables.getMarketTable());
 	}
 	
 	public void updateOptimization() {

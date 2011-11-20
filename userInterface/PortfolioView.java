@@ -35,7 +35,7 @@ import stock.Portfolio;
 
 public class PortfolioView extends JFrame implements WindowListener {
 	private static final long serialVersionUID = -7129233116646387153L;
-	private MainCommandPanel mainCommandPanel;
+//	private MainCommandPanel mainCommandPanel;
 	private MainMenuBar mainMenuBar;
 	private MainPanel mainPanel;
 	private Investments investments;
@@ -57,8 +57,8 @@ public class PortfolioView extends JFrame implements WindowListener {
 		this.setVisible(false);
 		this.remove(label);
 
-		mainCommandPanel = new MainCommandPanel(this);
-		this.add(mainCommandPanel, BorderLayout.SOUTH);
+//		mainCommandPanel = new MainCommandPanel(this);
+//		this.add(mainCommandPanel, BorderLayout.SOUTH);
 
 		mainPanel = new MainPanel(this);
 		this.add(mainPanel, BorderLayout.CENTER);
@@ -132,22 +132,22 @@ public class PortfolioView extends JFrame implements WindowListener {
 
 	public void actionHandler(Actions actions, String additionalInfo) {
 		switch (actions) {
-		case HOME:
-			mainPanel.showHome();
-			currentView = Actions.HOME;
-			break;
-		case HISTORY:
-			mainPanel.showHistory();
-			currentView = Actions.HISTORY;
-			break;
-		case OPTIMAL:
-			mainPanel.showOptimization();
-			currentView = Actions.OPTIMAL;
-			break;
-		case MARKET:
-			mainPanel.showMarkets();
-			currentView = Actions.MARKET;
-			break;
+//		case HOME:
+//			mainPanel.showHome();
+//			currentView = Actions.HOME;
+//			break;
+//		case HISTORY:
+//			mainPanel.showHistory();
+//			currentView = Actions.HISTORY;
+//			break;
+//		case OPTIMAL:
+//			mainPanel.showOptimization();
+//			currentView = Actions.OPTIMAL;
+//			break;
+//		case MARKET:
+//			mainPanel.showMarkets();
+//			currentView = Actions.MARKET;
+//			break;
 		case ADD:
 			String omxId_add = MainOptionPane.getString("Type omxId of stock to add to portfolio:");
 			if (omxId_add == null) { break; }
@@ -157,7 +157,6 @@ public class PortfolioView extends JFrame implements WindowListener {
 			} catch (Exception e) {
 				MainOptionPane.errorPopUp(e.getMessage());
 			}
-			mainPanel.showHome();
 			currentView = Actions.HOME;
 			break;
 		case REMOVE:
@@ -168,7 +167,6 @@ public class PortfolioView extends JFrame implements WindowListener {
 				MainOptionPane.errorPopUp("No company with id " + omxId_remove + " was found in this portfolio");
 				break;
 			}
-			mainPanel.showHome();
 			currentView = Actions.HOME;
 			break;
 		case BUY:
@@ -182,7 +180,6 @@ public class PortfolioView extends JFrame implements WindowListener {
 			getCurrentPortfolio().buy(omxId_buy,
 					MainOptionPane.getInteger("How many shares do you wish to buy?"),
 					investments.getLastValue(omxId_buy));
-			mainPanel.showHome();
 			currentView = Actions.HOME;
 			break;
 		case SELL:
@@ -196,14 +193,12 @@ public class PortfolioView extends JFrame implements WindowListener {
 			getCurrentPortfolio().sell(omxId_sell,
 					MainOptionPane.getInteger("How many shares do you wish to sell?"),
 					investments.getLastValue(omxId_sell));
-			mainPanel.showHome();
 			currentView = Actions.HOME;
 			break;
 		case LIQUID:
 			Double asset = MainOptionPane.getDouble("Set liquid asset to:");
 			if (asset == null) { break; }
 			getCurrentPortfolio().setLiquidAsset(asset);
-			mainPanel.showHome();
 			currentView = Actions.HOME;
 			break;
 		case NEW:
