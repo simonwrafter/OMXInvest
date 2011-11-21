@@ -178,6 +178,18 @@ public class Investments {
 		return true;
 	}
 	
+	public boolean removeStockfromPortfolioByName(String name) {
+		int i=0;
+		for (String s : getStockNames()) {
+			if (s.equals(name))
+				break;
+			i++;
+		}
+		if (i >= currentPortfolio.size())
+			return false;
+		return removeStockfromPortfolio(getStockIds()[i]);
+	}
+	
 	public void updateMarkets() {
 		for (String m : MarketData.arrayMarkets) {
 			for (String c : MarketData.arrayCapital) {

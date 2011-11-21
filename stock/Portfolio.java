@@ -121,11 +121,11 @@ public class Portfolio implements Comparable<Portfolio>, Serializable {
 	}
 	
 	public String[] getStocksInPortfolio() {
-		Set<Map.Entry<String, Integer>> ent = stockmap.entrySet();
-		String[] result = new String[ent.size()];
+		Set<String> ids = stockmap.keySet();
+		String[] result = new String[ids.size()];
 		int i = 0;
-		for (Map.Entry<String, Integer> me : ent)
-			result[i++] = me.getKey();
+		for (String s : ids)
+			result[i++] = s;
 		return result;
 	}
 	

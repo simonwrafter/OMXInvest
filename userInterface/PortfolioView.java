@@ -161,11 +161,10 @@ public class PortfolioView extends JFrame implements WindowListener {
 			currentView = Actions.HOME;
 			break;
 		case REMOVE:
-			String omxId_remove = MainOptionPane.getString("Type omxId of stock to remove from portfolio:");
-			if (omxId_remove == null) { break; }
-			omxId_remove = omxId_remove.toUpperCase();
-			if (!investments.removeStockfromPortfolio(omxId_remove)) {
-				MainOptionPane.errorPopUp("No company with id " + omxId_remove + " was found in this portfolio");
+			String name_remove = (String) MainOptionPane.dropDownOptions("Choose stock to remove from portfolio:", getStockNames(), 0);
+			if (name_remove == null) { break; }
+			if (!investments.removeStockfromPortfolioByName(name_remove)) {
+				MainOptionPane.errorPopUp("No company with name " + name_remove + " was found in this portfolio");
 				break;
 			}
 			mainPanel.showHome();

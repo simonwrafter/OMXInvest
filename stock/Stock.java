@@ -218,10 +218,22 @@ public class Stock implements Serializable {
 		String nt = e.getAttribute("nt"); //trades
 		String to = e.getAttribute("to"); //turnover
 		
-		if (ip.isEmpty() || lp.isEmpty() || cp.isEmpty() || avp.isEmpty() || tv.isEmpty() || nt.isEmpty() || to.isEmpty())
+		if (ip.isEmpty() || cp.isEmpty())
 			return false;
-		double factor = Double.parseDouble(ip);
+		if (lp.isEmpty())
+			lp = cp;
+		if (hp.isEmpty())
+			hp = cp;
+		if (avp.isEmpty())
+			avp = cp;
+		if (tv.isEmpty())
+			tv = "0.0";
+		if (nt.isEmpty())
+			nt = "0.0";
+		if (to.isEmpty())
+			to = "0.0";
 		
+		double factor = Double.parseDouble(ip);		
 		histValue[1][i] = Double.parseDouble(lp)*factor; 
 		histValue[2][i] = Double.parseDouble(hp)*factor;
 		histValue[3][i] = Double.parseDouble(cp)*factor;
