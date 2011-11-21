@@ -22,14 +22,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class Portfolio implements Comparable<Portfolio>, Serializable {
+public class Portfolio implements Comparable<Portfolio>, Serializable, HasName {
 	private static final long serialVersionUID = -4320867018986118171L;
 	private SortedMap<String, Integer> stockmap;
 	private double liquidAsset;
 	private String name;
 	private double lambda;
 	private Currency currency;
-	private boolean defaultPortfolio;
 	
 	public Portfolio(String name, Currency currency) {
 		this(name, currency,  0);
@@ -73,14 +72,6 @@ public class Portfolio implements Comparable<Portfolio>, Serializable {
 	
 	public boolean contains(String omxId) {
 		return stockmap.containsKey(omxId);
-	}
-	
-	public boolean isDefaultPortfolio() {
-		return defaultPortfolio;
-	}
-	
-	public void setDefaultPortfolio(boolean defaultPortfolio) {
-		this.defaultPortfolio = defaultPortfolio;
 	}
 	
 	public boolean add(String omxId) {

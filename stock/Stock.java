@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
 
 import util.InvestDate;
 
-public class Stock implements Serializable {
+public class Stock implements Serializable, HasName {
 	private static final long serialVersionUID = -206098643689779796L;
 	private String omxId;
 	private String shortName;
@@ -76,7 +76,7 @@ public class Stock implements Serializable {
 		return shortName;
 	}
 
-	public String getFullName() {
+	public String getName() {
 		return fullName;
 	}
 
@@ -117,7 +117,7 @@ public class Stock implements Serializable {
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
-			times += 1;
+			times++;
 		}
 		
 		NodeList nl = doc.getElementsByTagName("hi");
@@ -135,7 +135,18 @@ public class Stock implements Serializable {
 		int today = new Integer(InvestDate.todayNoDash());
 		if (lastDate != today) {
 			DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document doc = db.parse(MarketData.buildHistoryURL(omxId, InvestDate.dateWithDash(lastDate)));
+			Document doc = null;
+			boolean success = false;
+			int times = 0;
+			while (!success && times <= 5) {
+				try {
+					doc = db.parse(MarketData.buildHistoryURL(omxId, InvestDate.dateWithDash(lastDate)));
+					success = true;
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+				times++;
+			}
 			NodeList nl = doc.getElementsByTagName("hi");
 			Double[][] newHistValue = new Double[8][500];
 			

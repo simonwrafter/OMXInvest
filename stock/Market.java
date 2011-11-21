@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class Market implements Comparable<Market>, Serializable {
+public class Market implements Comparable<Market>, Serializable, HasName {
 	private static final long serialVersionUID = 1283431577549478467L;
 	private SortedMap<String, Stock> availableStocks;
 	private String listName;
@@ -43,7 +43,7 @@ public class Market implements Comparable<Market>, Serializable {
 		buildStockMap(market, capital);
 	}
 	
-	public String getListName() {
+	public String getName() {
 		return listName;
 	}
 	

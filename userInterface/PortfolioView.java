@@ -217,7 +217,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 			actionHandler(Actions.SWITCH, portfolio.getName());
 			break;
 		case DELETE:
-			String name = MainOptionPane.getString("Name of portfolio to remove");
+			String name = (String) MainOptionPane.dropDownOptions("Name of portfolio to remove", investments.getPortfolios());
 			if (name == null) { break; }
 			if (investments.getPortfolios().size() < 2) {
 				MainOptionPane.errorPopUp("You can not remove any more portfolios");
@@ -256,12 +256,12 @@ public class PortfolioView extends JFrame implements WindowListener {
 					"This program, OMXInvest, is being developed by me, Simon Wrafter,\n" +
 					"because it is good fun. Also it might come in handy, if not for me,\n" +
 					"maybe for you or your friend.\n\n" +
-					"If you find it to be useful or just like java programming or any\n" +
-					"other valid reason, feel free to participate in what way you can.\n" +
-					"Or just send me an e mail with a happy smiley.\n\n" +
+					"If you find it to be useful or just like java programming or any other\n" +
+					"valid reason, feel free to participate in what way you can.\n" +
+					"Or just send me an e mail with a happy smiley! :D\n\n" +
 					"OMXInvest is mainley licensed under the ICS license, which can be\n" +
 					"found under 'ICS License' in the 'More' menu. Some of the code is\n" +
-					"public domain, a copy right notice can be found under 'JAMA © Notice'" +
+					"public domain, a copy right notice can be found under 'JAMA © Notice'\n" +
 					"in the 'More' menu.\n\n" +
 					"Code hosted at https://github.com/simonwrafter/OMXInvest");
 			break;

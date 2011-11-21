@@ -37,7 +37,6 @@ public class Investments {
 	private final String marketSaveFile= "markets.mkt";
 	private SortedSet<Portfolio> portfolios;
 	private SortedMap<String, Market> markets;
-	private Portfolio defaultPortfolio;
 	private Portfolio currentPortfolio;
 
 	public Investments(JLabel label)
@@ -86,13 +85,11 @@ public class Investments {
 			label.setText("Rebuilding portfolios from file...");
 			portfolios = (TreeSet<Portfolio>) in.readObject();
 			for (Portfolio p : portfolios) {
-				if (p.isDefaultPortfolio()) {
-					currentPortfolio = defaultPortfolio = p;
-				}
 				for (String id : p.getStocksInPortfolio()) {
 					updateHistory(id);
 				}
 			}
+			currentPortfolio = portfolios.first();
 			System.out.println("built portfolios from file");
 		} catch (Exception e) {
 			label.setText("Building a firstrun portfolio");
@@ -115,10 +112,8 @@ public class Investments {
 	
 	public boolean removePortfolio(String name) {
 		Portfolio newP = new Portfolio(name, null);
-		for (Portfolio p : portfolios) {
-			if (p.isDefaultPortfolio() && p.compareTo(newP) == 0){
-				setDefaultPortfolio(portfolios.first());
-			}
+		if (currentPortfolio.compareTo(newP) == 0) {
+			setCurrentPortfolio(portfolios.first());
 		}
 		return portfolios.remove(newP);
 	}
@@ -126,7 +121,6 @@ public class Investments {
 	private Portfolio buildDefaultPortfolio()
 			throws IOException, ParserConfigurationException, SAXException {
 		Portfolio result = new Portfolio("default", Currency.SEK, 10000);
-		setDefaultPortfolio(result);
 		setCurrentPortfolio(result);
 		addStockToPortfolio("SSE3966");
 		addStockToPortfolio("SSE18634");
@@ -135,19 +129,6 @@ public class Investments {
 		addStockToPortfolio("SSE101");
 		return result;
 	}
-	
-	public Portfolio getDefaultPortfolio() {
-		return defaultPortfolio;
-	}
-
-	public Portfolio setDefaultPortfolio(Portfolio portfolio) {
-		Portfolio p = defaultPortfolio;
-		defaultPortfolio = portfolio;
-		if (p!=null)
-			p.setDefaultPortfolio(false);
-		defaultPortfolio.setDefaultPortfolio(true);
-		return p;
-	} 
 
 	public Portfolio getCurrentPortfolio() {
 		return currentPortfolio;
@@ -165,7 +146,7 @@ public class Investments {
 				return setCurrentPortfolio(p);
 			}
 		}
-		return setCurrentPortfolio(defaultPortfolio);
+		return setCurrentPortfolio(portfolios.first());
 	}
 	
 	public boolean addStockToPortfolio(String omxId)
@@ -316,7 +297,7 @@ public class Investments {
 		for (int i=0; i<stocks.length; i++) {
 			for (Market m : markets.values()) {
 				if (m.contains(stocks[i])) {
-					result[i] = m.getStock(stocks[i]).getFullName();
+					result[i] = m.getStock(stocks[i]).getName();
 					break;
 				}
 			}

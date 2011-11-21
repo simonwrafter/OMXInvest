@@ -16,9 +16,12 @@
 
 package userInterface;
 
+import java.util.SortedSet;
+
 import javax.swing.JOptionPane;
 
 import stock.Currency;
+import stock.HasName;
 import stock.Portfolio;
 
 public class MainOptionPane extends JOptionPane {
@@ -38,8 +41,7 @@ public class MainOptionPane extends JOptionPane {
 			String i = getString(question, "0");
 			return i == null ? null : new Integer(i);
 		} catch (NumberFormatException nfe) {
-			showMessageDialog(null, "Please try again with a valid number",
-					"OMXInvest", JOptionPane.ERROR_MESSAGE);
+			showMessageDialog(null, "Please try again with a valid number", "OMXInvest", JOptionPane.ERROR_MESSAGE);
 		}
 		return null;
 	}
@@ -49,31 +51,35 @@ public class MainOptionPane extends JOptionPane {
 			String d = getString(question, "0");
 			return d == null ? null : new Double(d);
 		} catch (NumberFormatException nfe) {
-			showMessageDialog(null, "Please try again with a valid number",
-					"OMXInvest", JOptionPane.ERROR_MESSAGE);
+			showMessageDialog(null, "Please try again with a valid number", "OMXInvest", JOptionPane.ERROR_MESSAGE);
 		}
 		return null;
 	}
 	
+	public static Object dropDownOptions(String question, Object[] options, int initial) {
+		return showInputDialog(null, question, "OMXInvest", QUESTION_MESSAGE, null, options, options[initial]);
+	}
+	
+	public static <T extends HasName> Object dropDownOptions(String question, SortedSet<T> set) {
+		Object[] array = new Object[set.size()];
+		int i=0;
+		for(T t : set) { array[i++] = t.getName(); }
+		return dropDownOptions(question, array, 0);
+	}
+	
 	public static Portfolio makeNewPortfolio() {
 		String name = getString("New portfolio name.");
-		if (name==null)
-			return null;
-		Currency currency = (Currency) showInputDialog(null,
-				"Currency for new portfolio", "OMXInvest", QUESTION_MESSAGE,
-				null, Currency.currencies, Currency.currencies[0]);
-		if (currency==null)
-			return null;
+		if (name==null) return null;
+		Currency currency = (Currency) dropDownOptions("Currency for new portfolio", Currency.currencies, 0);
+		if (currency==null) return null;
 		Integer liquid = getInteger("Initial liquid assets");
-		if (liquid==null)
-			return null;
+		if (liquid==null) return null;
 		return new Portfolio(name, currency, liquid);
 	}
 	
 	public static void editPortfolioName(Portfolio portfolio) {
 		String name = getString("New portfolio name.", portfolio.getName());
-		if (name==null)
-			return;
+		if (name==null) return;
 		portfolio.setName(name);
 	}
 	
