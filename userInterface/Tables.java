@@ -92,7 +92,7 @@ public class Tables {
 			header[x] = m.getName();
 			for(Map.Entry<String, Stock> e : m.getMarketMap().entrySet()) {
 				Stock s = e.getValue();
-				data[y][x] = s.getName();
+				data[y][x] = s.getFullName();
 				data[y][x+1] = s.getShortName();
 				data[y][x+2] = s.getOmxId();
 				y++;

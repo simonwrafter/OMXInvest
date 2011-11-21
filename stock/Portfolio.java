@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class Portfolio implements Comparable<Portfolio>, Serializable, HasName {
+public class Portfolio implements Comparable<Portfolio>, Serializable {
 	private static final long serialVersionUID = -4320867018986118171L;
 	private SortedMap<String, Integer> stockmap;
 	private double liquidAsset;
@@ -141,5 +141,10 @@ public class Portfolio implements Comparable<Portfolio>, Serializable, HasName {
 	@Override
 	public int compareTo(Portfolio o) {
 		return name.compareTo(o.name);
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 }

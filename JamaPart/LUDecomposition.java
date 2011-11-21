@@ -19,11 +19,11 @@ public class LUDecomposition {
 	private int m, n, pivsign; 
 	private int[] piv;
 
-	public LUDecomposition (Matrix matrix) {
+	public LUDecomposition (Matrix A) {
 		// Use a "left-looking", dot-product, Crout/Doolittle algorithm.
-		LU = matrix.getArrayCopy();
-		m = matrix.getRowDimension();
-		n = matrix.getColumnDimension();
+		LU = A.getArrayCopy();
+		m = A.getRowDimension();
+		n = A.getColumnDimension();
 		piv = new int[m];
 		for (int i = 0; i < m; i++) {
 			piv[i] = i;

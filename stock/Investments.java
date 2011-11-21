@@ -297,7 +297,7 @@ public class Investments {
 		for (int i=0; i<stocks.length; i++) {
 			for (Market m : markets.values()) {
 				if (m.contains(stocks[i])) {
-					result[i] = m.getStock(stocks[i]).getName();
+					result[i] = m.getStock(stocks[i]).getFullName();
 					break;
 				}
 			}

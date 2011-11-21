@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
 
 import util.InvestDate;
 
-public class Stock implements Serializable, HasName {
+public class Stock implements Serializable {
 	private static final long serialVersionUID = -206098643689779796L;
 	private String omxId;
 	private String shortName;
@@ -76,7 +76,7 @@ public class Stock implements Serializable, HasName {
 		return shortName;
 	}
 
-	public String getName() {
+	public String getFullName() {
 		return fullName;
 	}
 
@@ -122,8 +122,10 @@ public class Stock implements Serializable, HasName {
 		
 		NodeList nl = doc.getElementsByTagName("hi");
 		histValue = new Double[8][500];
+		for (int i=0; i<8; i++)
+			Arrays.fill(histValue[i], Double.NaN);
 		int len = nl.getLength()-1;
-		for (int i=0; i<500; i++, len--) {
+		for (int i=0; i<500 && len>=0; i++, len--) {
 			if(!makeHistoryRow(histValue, nl.item(len), i))
 				i--;
 		}
@@ -183,30 +185,23 @@ public class Stock implements Serializable, HasName {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		Stock other = (Stock) obj;
-		if (ISIN == null) {
-			if (other.ISIN != null) {
+		if (ISIN == null)
+			if (other.ISIN != null)
 				return false;
-			}
-		} else if (!ISIN.equals(other.ISIN)) {
+		else if (!ISIN.equals(other.ISIN))
 			return false;
-		}
-		if (omxId == null) {
-			if (other.omxId != null) {
+		if (omxId == null)
+			if (other.omxId != null)
 				return false;
-			}
-		} else if (!omxId.equals(other.omxId)) {
+		else if (!omxId.equals(other.omxId))
 			return false;
-		}
 		return true;
 	}
 	

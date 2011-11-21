@@ -23,8 +23,11 @@ import JamaPart.Matrix;
 public class CalcModels {
 	
 	public static Double[] logHist(Double[] history) {
-		Double[] result = new Double[history.length-1];
-		for (int i=0; i < history.length-1; i++) {
+		int limit=history.length-1;
+		while (history[limit] == null)
+			limit--;
+		Double[] result = new Double[limit];
+		for (int i=0; i < limit; i++) {
 			if (Double.isNaN(history[i]) || Double.isNaN(history[i+1]))
 				result[i] = result[i-1];
 			else
@@ -37,11 +40,11 @@ public class CalcModels {
 		return logExpectedValue(logHist(history));
 	}
 	
-	public static Double logExpectedValue(Double[] lH) {
+	public static Double logExpectedValue(Double[] logHistory) {
 		double sum = 0;
-		for (int i=0; i < lH.length; i++)
-			sum += lH[i];
-		return (250.0 / (lH.length+1)) * sum;
+		for (int i=0; i < logHistory.length; i++)
+			sum += logHistory[i];
+		return (250.0 / (logHistory.length+1)) * sum;
 	}
 	
 	public static Double[] portfolioExpectedValue(Double[][] histories) {
@@ -55,9 +58,8 @@ public class CalcModels {
 		Double[] lH = logHist(history);
 		double expVal = logExpectedValue(lH);
 		double sum = 0;
-		for (int i=history.length-1; i >= 0; i--) {
+		for (int i=lH.length-1; i >= 0; i--)
 			sum += square(lH[i] - expVal/250);
-		}
 		return 250.0/499 * sum;
 	}
 	
@@ -70,9 +72,10 @@ public class CalcModels {
 				Double[] lHj = logHist(histories[j]);
 				double expValj = logExpectedValue(lHj);
 				double sum = 0;
-				for (int k=lHi.length-1; k >= 0; k--)
+				int days = Math.min(lHi.length-1, lHj.length-1);
+				for (int k=days; k >= 0; k--)
 					sum += (lHi[k] - expVali/250) * (lHj[k] - expValj/250);
-				prodMatrix[i-1][j-1] = 250.0/499 * sum;
+				prodMatrix[i-1][j-1] = 250.0/days * sum;
 			}
 		}
 		return prodMatrix;
@@ -80,11 +83,9 @@ public class CalcModels {
 	
 	public static Double portfolioVariance(Double[] proportions, Double[][] covariance) {
 		double result = 0;
-		for (int i=0; i<proportions.length; i++) {
-			for (int j=0; j<proportions.length; j++) {
+		for (int i=0; i<proportions.length; i++)
+			for (int j=0; j<proportions.length; j++)
 				result += proportions[i] * covariance[i][j] * proportions[j];
-			}
-		}
 		return result;
 	}
 	
@@ -95,23 +96,15 @@ public class CalcModels {
 	public static Double[] optimizeLowRisk(Double[][] coVariance) {
 		Double[] result = new Double[coVariance.length];
 		Arrays.fill(result, new Double(0.0));
-		
 		Double[][] coV = new Matrix(coVariance).inverse().getArrayCopy();
-		
-		for (int i=0; i<coV.length; i++) {
-			for (int j=0; j<coV.length; j++) {
+		for (int i=0; i<coV.length; i++)
+			for (int j=0; j<coV.length; j++)
 				result[i] += coV[i][j];
-			}
-		}
-		
 		double sum = 0;
-		for (int i=0; i<result.length; i++) {
+		for (int i=0; i<result.length; i++)
 			sum += result[i];
-		}
-		for (int i=0; i<result.length; i++) {
+		for (int i=0; i<result.length; i++)
 			result[i] /= sum;
-		}
-		
 		return result;
 	}
 	
@@ -122,30 +115,19 @@ public class CalcModels {
 		Double[] result = new Double[bound];
 		Arrays.fill(arrTmp, new Double(0.0));
 		Arrays.fill(result, new Double(0.0));
-		
 		Double[][] coV = new Matrix(coVariance).inverse().getArrayCopy();
-		
-		for (int i=0; i<bound; i++) {
-			for (int j=0; j<coV.length; j++) {
+		for (int i=0; i<bound; i++)
+			for (int j=0; j<coV.length; j++)
 				arrTmp[i] += coV[j][i];
-			}
-		}
-		
 		for (int i=0; i<bound; i++) {
 			prod += arrTmp[i] * expValues[i];
 			sum += arrTmp[i];
 		}
-		
-		for (int i=0; i<bound; i++) {
+		for (int i=0; i<bound; i++)
 			arrTmp[i] = expValues[i] - (prod-1)/sum;
-		}
-		
-		for (int i=0; i<bound; i++) {
-			for (int j=0; j<coV.length; j++) {
+		for (int i=0; i<bound; i++)
+			for (int j=0; j<coV.length; j++)
 				result[i] += (coV[i][j] * arrTmp[j]);
-			}
-		}
-		
 		return result;
 	}
 	

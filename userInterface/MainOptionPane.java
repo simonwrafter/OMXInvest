@@ -21,7 +21,6 @@ import java.util.SortedSet;
 import javax.swing.JOptionPane;
 
 import stock.Currency;
-import stock.HasName;
 import stock.Portfolio;
 
 public class MainOptionPane extends JOptionPane {
@@ -60,10 +59,10 @@ public class MainOptionPane extends JOptionPane {
 		return showInputDialog(null, question, "OMXInvest", QUESTION_MESSAGE, null, options, options[initial]);
 	}
 	
-	public static <T extends HasName> Object dropDownOptions(String question, SortedSet<T> set) {
+	public static <T> Object dropDownOptions(String question, SortedSet<T> set) {
 		Object[] array = new Object[set.size()];
 		int i=0;
-		for(T t : set) { array[i++] = t.getName(); }
+		for(T t : set) { array[i++] = t.toString(); }
 		return dropDownOptions(question, array, 0);
 	}
 	
