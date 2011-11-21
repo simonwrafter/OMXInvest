@@ -114,7 +114,13 @@ public class Investments {
 	}
 	
 	public boolean removePortfolio(String name) {
-		return portfolios.remove(new Portfolio(name, null));
+		Portfolio newP = new Portfolio(name, null);
+		for (Portfolio p : portfolios) {
+			if (p.isDefaultPortfolio() && p.compareTo(newP) == 0){
+				setDefaultPortfolio(portfolios.first());
+			}
+		}
+		return portfolios.remove(newP);
 	}
 	
 	private Portfolio buildDefaultPortfolio()

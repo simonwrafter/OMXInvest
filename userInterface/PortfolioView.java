@@ -252,14 +252,17 @@ public class PortfolioView extends JFrame implements WindowListener {
 			investments.updateMarkets();
 			break;
 		case ABOUT:
-			MainOptionPane.infoPopUp("This program, OMXInvest, is being developed by me, Simon Wrafter,\n" +
-					"because it is good fun. Also it might come in handy, if not for\n" +
-					"me, maybe for you or your friend.\n\n" +
-					"If you find it use full or just like java programming or any\n" +
+			MainOptionPane.infoPopUp(
+					"This program, OMXInvest, is being developed by me, Simon Wrafter,\n" +
+					"because it is good fun. Also it might come in handy, if not for me,\n" +
+					"maybe for you or your friend.\n\n" +
+					"If you find it to be useful or just like java programming or any\n" +
 					"other valid reason, feel free to participate in what way you can.\n" +
 					"Or just send me an e mail with a happy smiley.\n\n" +
-					"OMXInvest is mainley licensed under the ICS license, it can be\n" +
-					"found under 'License' in the 'More' menu.\n\n" +
+					"OMXInvest is mainley licensed under the ICS license, which can be\n" +
+					"found under 'ICS License' in the 'More' menu. Some of the code is\n" +
+					"public domain, a copy right notice can be found under 'JAMA © Notice'" +
+					"in the 'More' menu.\n\n" +
 					"Code hosted at https://github.com/simonwrafter/OMXInvest");
 			break;
 		case ICS_LICENSE:
