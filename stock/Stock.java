@@ -98,16 +98,15 @@ public class Stock implements Serializable {
 	
 	public Double[][] getHistory(int days) {
 		Double[][] result = new Double[8][];
-		
 		for (int i=0; i<8; i++) {
 			result[i] = Arrays.copyOfRange(histValue[i], 0, days);
 		}
 		return result;
 	}
 	
-	public void rebuildHistory() throws ParserConfigurationException, SAXException, IOException {
+	public void rebuildHistory()
+			throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		
 		boolean success = false;
 		Document doc = null;
 		int times = 0;
@@ -130,7 +129,8 @@ public class Stock implements Serializable {
 		}
 	}
 	
-	public void updateHistory() throws IOException, ParserConfigurationException, SAXException {
+	public void updateHistory()
+			throws IOException, ParserConfigurationException, SAXException {
 		int lastDate = histValue[0][0].intValue();
 		int today = new Integer(InvestDate.todayNoDash());
 		if (lastDate != today) {
@@ -139,14 +139,16 @@ public class Stock implements Serializable {
 			NodeList nl = doc.getElementsByTagName("hi");
 			Double[][] newHistValue = new Double[8][500];
 			
-			int i=nl.getLength()-1;
-			for (int j = i; j>0; j--) {
-				if(!makeHistoryRow(newHistValue, nl.item(j), i-j))
-					i++;
+			int i, diff=0, len = nl.getLength()-2;
+			for (i=0; i < len ; i++) {
+				if(!makeHistoryRow(newHistValue, nl.item(len-i-diff), i-diff)) {
+					diff++;
+					i--;
+				}
 			}
-			for (int j=0; j+i<500; j++) {
+			for (int j=i; j<500; j++) {
 				for(int k=0; k<8; k++) {
-					newHistValue[k][j+i] = histValue[k][j];
+					newHistValue[k][j] = histValue[k][j-i];
 				}
 			}
 			histValue = newHistValue;
@@ -198,7 +200,6 @@ public class Stock implements Serializable {
 	}
 	
 	private static boolean makeHistoryRow(Double[][] histValue, Node n, int i) {
-		
 		Element e = (Element) n;
 		histValue[0][i] = (double) InvestDate.makeDateInt(e.getAttribute("dt"));
 		
@@ -213,7 +214,6 @@ public class Stock implements Serializable {
 		
 		if (ip.isEmpty() || lp.isEmpty() || cp.isEmpty() || avp.isEmpty() || tv.isEmpty() || nt.isEmpty() || to.isEmpty())
 			return false;
-		
 		double factor = Double.parseDouble(ip);
 		
 		histValue[1][i] = Double.parseDouble(lp)*factor; 
@@ -223,7 +223,6 @@ public class Stock implements Serializable {
 		histValue[5][i] = Double.parseDouble(tv);
 		histValue[6][i] = Double.parseDouble(nt);
 		histValue[7][i] = Double.parseDouble(to);
-		
 		return true;
 	}
 }

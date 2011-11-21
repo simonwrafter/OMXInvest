@@ -252,8 +252,8 @@ public class PortfolioView extends JFrame implements WindowListener {
 			investments.updateMarkets();
 			break;
 		case ABOUT:
-			MainOptionPane.infoPopUp("This program, OMXInvest is being developed by me, Simon Wrafter,\n" +
-					"because it is good fun. Also it might come in hand, if not for\n" +
+			MainOptionPane.infoPopUp("This program, OMXInvest, is being developed by me, Simon Wrafter,\n" +
+					"because it is good fun. Also it might come in handy, if not for\n" +
 					"me, maybe for you or your friend.\n\n" +
 					"If you find it use full or just like java programming or any\n" +
 					"other valid reason, feel free to participate in what way you can.\n" +

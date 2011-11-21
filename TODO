@@ -1,18 +1,18 @@
 Short term
 ----------
-test history update
-time limit when trying to fetch information of the internet
+*test history update
+*tag a first stable release
 
 ----------
 Mid term
 ----------
-tabs instead of buttons for the main views
-
+*tabs instead of buttons for the main views
 
 ----------
 Long term
 ----------
-threading! 
-	lose the windowlistener in class PortfolioView
-	fetch internet resourses in a seperate thread
-	speed up things generally
+*threading!
+	-time limit when trying to fetch information of the internet 
+	-lose the windowlistener in class PortfolioView
+	-fetch internet resourses in a seperate thread
+	-speed up things generally
