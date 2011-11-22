@@ -29,6 +29,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import stock.Currency;
 import stock.Investments;
 import stock.Market;
 import stock.Portfolio;
@@ -155,85 +156,74 @@ public class PortfolioView extends JFrame implements WindowListener {
 			try {
 				investments.addStockToPortfolio(omxId_add);
 			} catch (Exception e) {
-				MainOptionPane.errorPopUp(e.getMessage());
+				MainOptionPane.errorPopUp("Adding " + omxId_add + " to portfolio failed!");
 			}
-			mainPanel.showHome();
-			currentView = Actions.HOME;
+			actionHandler(Actions.HOME);
 			break;
 		case REMOVE:
-			String name_remove = (String) MainOptionPane.dropDownOptions("Choose stock to remove from portfolio:", getStockNames(), 0);
-			if (name_remove == null) { break; }
-			if (!investments.removeStockfromPortfolioByName(name_remove)) {
-				MainOptionPane.errorPopUp("No company with name " + name_remove + " was found in this portfolio");
-				break;
+			String omxName_remove = (String) MainOptionPane.dropDownOptions("Choose stock to remove from portfolio:", getStockNames(), 0);
+			if (omxName_remove == null) { break; }
+			if (investments.removeStockfromPortfolioByName(omxName_remove)) {
+				actionHandler(Actions.HOME);
 			}
-			mainPanel.showHome();
-			currentView = Actions.HOME;
 			break;
 		case BUY:
-			String omxId_buy = MainOptionPane.getString("Type omxId of stock to buy shares in:");
-			if (omxId_buy == null) { break; }
-			omxId_buy = omxId_buy.toUpperCase();
-			if (!getCurrentPortfolio().contains(omxId_buy)) {
-				MainOptionPane.errorPopUp("No company with id " + omxId_buy + " was found in this portfolio");
-				break;
-			}
-			getCurrentPortfolio().buy(omxId_buy,
-					MainOptionPane.getInteger("How many shares do you wish to buy?"),
-					investments.getLastValue(omxId_buy));
-			mainPanel.showHome();
-			currentView = Actions.HOME;
+			String omxName_buy = (String) MainOptionPane.dropDownOptions("Stock to buy shares in:", getStockNames(), 0);
+			if (omxName_buy == null) { break; }
+			Integer nbrToBuy = MainOptionPane.getInteger("How many shares do you wish to buy?");
+			if (nbrToBuy == null) { break; }
+			if (investments.buy(omxName_buy, nbrToBuy))
+				actionHandler(Actions.HOME);
 			break;
 		case SELL:
-			String omxId_sell = MainOptionPane.getString("Type omxId of stock to sell shares of:");
-			if (omxId_sell == null) { break; }
-			omxId_sell = omxId_sell.toUpperCase();
-			if (!getCurrentPortfolio().contains(omxId_sell)) {
-				MainOptionPane.errorPopUp("No company with id " + omxId_sell + " was found in this portfolio");
-				break;
-			}
-			getCurrentPortfolio().sell(omxId_sell,
-					MainOptionPane.getInteger("How many shares do you wish to sell?"),
-					investments.getLastValue(omxId_sell));
-			mainPanel.showHome();
-			currentView = Actions.HOME;
+			String omxName_sell = (String) MainOptionPane.dropDownOptions("Stock to sell shares in:", getStockNames(), 0);
+			if (omxName_sell == null) { break; }
+			Integer nbrToSell = MainOptionPane.getInteger("How many shares you wish to sell:");
+			if (nbrToSell == null) { break; }
+			if (investments.sell(omxName_sell, nbrToSell));
+				actionHandler(Actions.HOME);
 			break;
 		case LIQUID:
 			Double asset = MainOptionPane.getDouble("Set liquid asset to:");
 			if (asset == null) { break; }
-			getCurrentPortfolio().setLiquidAsset(asset);
-			mainPanel.showHome();
-			currentView = Actions.HOME;
+			investments.setLiquidAsset(asset);
+			actionHandler(Actions.HOME);
 			break;
 		case NEW:
-			Portfolio portfolio = MainOptionPane.makeNewPortfolio();
-			if (portfolio == null) { break; }
-			if (!investments.addNewPortfolio(portfolio)) {
-				MainOptionPane.errorPopUp("A portfolio with this name already exists");
+			String nameOfNewP = MainOptionPane.getString("New portfolio name.");
+			if (nameOfNewP==null) { break; }
+			Currency currency = (Currency) MainOptionPane.dropDownOptions("Currency for new portfolio", Currency.currencies, 0);
+			if (currency==null) { break; }
+			Integer liquid = MainOptionPane.getInteger("Initial liquid assets");
+			if (liquid==null) { break; }
+			if (!investments.addNewPortfolio(nameOfNewP, currency, liquid)) {
+				MainOptionPane.errorPopUp("A portfolio with this name already exists!");
 				break;
 			}
-			mainMenuBar.addPortfolio(portfolio);
-			actionHandler(Actions.SWITCH, portfolio.getName());
+			mainMenuBar.addPortfolio(nameOfNewP);
+			actionHandler(Actions.SWITCH, nameOfNewP);
 			break;
 		case DELETE:
-			String name = (String) MainOptionPane.dropDownOptions("Name of portfolio to remove", investments.getPortfolios());
+			String name = (String) MainOptionPane.dropDownOptions("Name of portfolio to remove:", investments.getPortfolios());
 			if (name == null) { break; }
 			if (investments.getPortfolios().size() < 2) {
-				MainOptionPane.errorPopUp("You can not remove any more portfolios");
+				MainOptionPane.errorPopUp("You can not remove any more portfolios!");
 				break;
 			}
 			if (!investments.removePortfolio(name)) {
-				MainOptionPane.errorPopUp("No portfolio with this name exists");
+				MainOptionPane.errorPopUp("No portfolio with this name exists!");
 				break;
 			}
 			mainMenuBar.removePortfolio(name);
 			actionHandler(Actions.SWITCH);
 			break;
 		case EDIT:
-			String oldName = getCurrentPortfolio().getName();
-			MainOptionPane.editPortfolioName(getCurrentPortfolio());
+			String oldName = investments.getCurrentPortfolioName();
+			String newName = MainOptionPane.getString("Type new name for portfolio:", oldName);
+			if (newName == null || newName.equals(oldName)) { break; }
+			investments.setCurrentPortfolioName(newName);
 			mainMenuBar.removePortfolio(oldName);
-			mainMenuBar.addPortfolio(getCurrentPortfolio());
+			mainMenuBar.addPortfolio(newName);
 			break;
 		case SWITCH:
 			investments.setCurrentPortfolio(additionalInfo);
@@ -259,9 +249,9 @@ public class PortfolioView extends JFrame implements WindowListener {
 					"valid reason, feel free to participate in what way you can.\n" +
 					"Or just send me an e mail with a happy smiley! :D\n\n" +
 					"OMXInvest is mainley licensed under the ICS license, which can be\n" +
-					"found under 'ICS License' in the 'More' menu. Some of the code is\n" +
-					"public domain, a copy right notice can be found under 'JAMA © Notice'\n" +
-					"in the 'More' menu.\n\n" +
+					"found under 'ICS License' in the 'More' menu. The code from JAMA is\n" +
+					"public domain, a copyright notice containing more information can\n" +
+					"be found under 'JAMA © Notice' in the 'More' menu.\n\n" +
 					"Code hosted at https://github.com/simonwrafter/OMXInvest");
 			break;
 		case ICS_LICENSE:

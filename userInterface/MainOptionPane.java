@@ -20,9 +20,6 @@ import java.util.SortedSet;
 
 import javax.swing.JOptionPane;
 
-import stock.Currency;
-import stock.Portfolio;
-
 public class MainOptionPane extends JOptionPane {
 	private static final long serialVersionUID = 4211870191745791511L;
 	
@@ -64,22 +61,6 @@ public class MainOptionPane extends JOptionPane {
 		int i=0;
 		for(T t : set) { array[i++] = t.toString(); }
 		return dropDownOptions(question, array, 0);
-	}
-	
-	public static Portfolio makeNewPortfolio() {
-		String name = getString("New portfolio name.");
-		if (name==null) return null;
-		Currency currency = (Currency) dropDownOptions("Currency for new portfolio", Currency.currencies, 0);
-		if (currency==null) return null;
-		Integer liquid = getInteger("Initial liquid assets");
-		if (liquid==null) return null;
-		return new Portfolio(name, currency, liquid);
-	}
-	
-	public static void editPortfolioName(Portfolio portfolio) {
-		String name = getString("New portfolio name.", portfolio.getName());
-		if (name==null) return;
-		portfolio.setName(name);
 	}
 	
 	public static void infoPopUp(String s) {

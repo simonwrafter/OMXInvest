@@ -44,7 +44,7 @@ public class MainMenuBar extends JMenuBar {
 		portfolioMenu.add(new MainMenuItem(Actions.EDIT, "Edit Portfolio", "Change name of current portfolio"));
 		portfolioMenu.addSeparator();
 		for(Portfolio p : view.getPortfolios()) {
-			addPortfolio(p);
+			addPortfolio(p.getName());
 		}
 		this.add(portfolioMenu);
 		
@@ -79,8 +79,8 @@ public class MainMenuBar extends JMenuBar {
 		}
 	}
 
-	public void addPortfolio(Portfolio portfolio) {
-		MainMenuItem mmi = new MainMenuItem(Actions.SWITCH, portfolio.getName(), "change portfolio");
+	public void addPortfolio(String name) {
+		MainMenuItem mmi = new MainMenuItem(Actions.SWITCH, name, "change portfolio");
 		portfolioMenu.add(mmi);
 		items.add(mmi);
 	}

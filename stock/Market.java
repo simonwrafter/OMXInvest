@@ -77,21 +77,31 @@ public class Market implements Comparable<Market>, Serializable {
 	}
 	
 	public boolean contains(String omxId) {
-		return availableStocks.containsKey(omxId);
+		if (!availableStocks.isEmpty() && omxId.substring(0, 3).equals(availableStocks.firstKey().substring(0, 3)))
+			return availableStocks.containsKey(omxId);
+		return false;
 	}
 	
-	public void rebuildHistory(String omxId)
+	public boolean rebuildHistory(String omxId)
 			throws IOException, ParserConfigurationException, SAXException {
-		availableStocks.get(omxId).rebuildHistory();
+		Stock s = getStock(omxId);
+		if (s == null) { return false; }
+		s.rebuildHistory();
+		return true;
 	}
 	
-	public void updateHistory(String omxId)
+	public boolean updateHistory(String omxId)
 			throws IOException, ParserConfigurationException, SAXException {
-		availableStocks.get(omxId).updateHistory();
+		Stock s = getStock(omxId);
+		if (s == null) { return false; }
+		s.updateHistory();
+		return true;
 	}
 	
 	public Stock getStock(String omxId) {
-		return availableStocks.get(omxId);
+		if (omxId.substring(0, 3).equals(availableStocks.firstKey().substring(0, 3)))
+			return availableStocks.get(omxId);
+		return null;
 	}
 	
 	private void buildStockMap(String market, String cap)

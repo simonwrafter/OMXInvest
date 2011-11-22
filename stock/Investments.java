@@ -93,7 +93,7 @@ public class Investments {
 			System.out.println("built portfolios from file");
 		} catch (Exception e) {
 			label.setText("Building a firstrun portfolio");
-			addNewPortfolio(buildDefaultPortfolio());
+			buildDefaultPortfolio();
 			System.out.println("built new portfolio");
 		}
 	}
@@ -106,8 +106,8 @@ public class Investments {
 		return new TreeSet<Portfolio>(portfolios);
 	}
 	
-	public boolean addNewPortfolio(Portfolio portfolio) {
-		return portfolios.add(portfolio);
+	public boolean addNewPortfolio(String name, Currency currency, double liquid) {
+		return portfolios.add(new Portfolio(name, currency, liquid));
 	}
 	
 	public boolean removePortfolio(String name) {
@@ -149,7 +149,27 @@ public class Investments {
 		return setCurrentPortfolio(portfolios.first());
 	}
 	
-	public boolean addStockToPortfolio(String omxId)
+	public Stock getStock(String omxId) {
+		for (Market m : markets.values()) {
+			if (m.contains(omxId)) {
+				return m.getStock(omxId);
+			}
+		}
+		return null;
+	}
+	
+	private String getIdOfStock(String name) {
+		int i=0;
+		for (String s : getStockNames())
+			if (s.equals(name))
+				break;
+			i++;
+		if (i >= currentPortfolio.size())
+			return null;
+		return getStockIds()[i];
+	}
+	
+	public boolean addStockToPortfolio(String omxId) 
 			throws IOException, ParserConfigurationException, SAXException {
 		if (getCurrencyOfStock(omxId).equals(currentPortfolio.getCurrency())) {
 			rebuildHistory(omxId);
@@ -160,13 +180,10 @@ public class Investments {
 		}
 	}
 
-	public Currency getCurrencyOfStock(String omxId) {
-		for (Market m : markets.values()) {
-			if (m.contains(omxId)) {
-				return m.getStock(omxId).getCurrency();
-			}
-		}
-		return null;
+	private Currency getCurrencyOfStock(String omxId) {
+		Stock s = getStock(omxId);
+		if (s == null) { return null; }
+		return s.getCurrency();
 	}
 
 	public boolean removeStockfromPortfolio(String omxId) {
@@ -179,15 +196,9 @@ public class Investments {
 	}
 	
 	public boolean removeStockfromPortfolioByName(String name) {
-		int i=0;
-		for (String s : getStockNames()) {
-			if (s.equals(name))
-				break;
-			i++;
-		}
-		if (i >= currentPortfolio.size())
-			return false;
-		return removeStockfromPortfolio(getStockIds()[i]);
+		String id = getIdOfStock(name);
+		if (id == null) {return false;}
+		return removeStockfromPortfolio(id);
 	}
 	
 	public void updateMarkets() {
@@ -209,7 +220,7 @@ public class Investments {
 		}
 	}
 	
-	public boolean updateHistory(String omxId)
+	private boolean updateHistory(String omxId)
 			throws IOException, ParserConfigurationException, SAXException {
 		for (Market m : markets.values()) {
 			if (m.contains(omxId)) {
@@ -227,7 +238,7 @@ public class Investments {
 		}
 	}
 	
-	public boolean rebuildHistory(String omxId)
+	private boolean rebuildHistory(String omxId)
 			throws IOException, ParserConfigurationException, SAXException {
 		for (Market m : markets.values()) {
 			if (m.contains(omxId)) {
@@ -302,37 +313,27 @@ public class Investments {
 	public void setPortfolioLiquid(double value) {
 		currentPortfolio.setLiquidAsset(value);
 	}
+
+	public String[] getStockIds() {
+		return currentPortfolio.getStocksInPortfolio();
+	}
 	
 	public String[] getStockNames() {
-		String[] stocks = currentPortfolio.getStocksInPortfolio();
+		String[] stocks = getStockIds();
 		String[] result = new String[stocks.length];
 		for (int i=0; i<stocks.length; i++) {
-			for (Market m : markets.values()) {
-				if (m.contains(stocks[i])) {
-					result[i] = m.getStock(stocks[i]).getFullName();
-					break;
-				}
-			}
+			result[i] = getStock(stocks[i]).getFullName();
 		}
 		return result;
 	}
 	
 	public String[] getShortNames() {
-		String[] stocks = currentPortfolio.getStocksInPortfolio();
+		String[] stocks = getStockIds();
 		String[] result = new String[stocks.length];
 		for (int i=0; i<stocks.length; i++) {
-			for (Market m : markets.values()) {
-				if (m.contains(stocks[i])) {
-					result[i] = m.getStock(stocks[i]).getShortName();
-					break;
-				}
-			}
+			result[i] = getStock(stocks[i]).getShortName();
 		}
 		return result;
-	}
-
-	public String[] getStockIds() {
-		return currentPortfolio.getStocksInPortfolio();
 	}
 
 	public void save() {
@@ -345,5 +346,33 @@ public class Investments {
 			e.getStackTrace();
 			System.out.println("save failed");
 		}
+	}
+
+	
+	public boolean portfolioContainsByName(String fullName) {
+		for (String s : getStockNames())
+			if (s.equals(fullName))
+				return true;
+		return false;
+	}
+	
+	public boolean buy(String omxId, Integer nbrOfStocks) {
+		return currentPortfolio.buy(omxId, nbrOfStocks, getLastValue(omxId));
+	}
+	
+	public boolean sell(String omxId, Integer nbrOfStocks) {
+		return currentPortfolio.sell(omxId, nbrOfStocks, getLastValue(omxId));
+	}
+
+	public String getCurrentPortfolioName() {
+		return currentPortfolio.getName();
+	}
+	
+	public void setCurrentPortfolioName(String name) {
+		currentPortfolio.setName(name);
+	}
+
+	public void setLiquidAsset(Double asset) {
+		currentPortfolio.setLiquidAsset(asset);
 	}
 }
