@@ -24,14 +24,18 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import stock.Investments;
+
 public class LambdaSlider extends JSlider {
 	private static final long serialVersionUID = 3962195519446513896L;
-	private PortfolioView view;
+	private Investments invest;
+	private MainPanel panel;
 	
-	public LambdaSlider(PortfolioView view) {
+	public LambdaSlider(Investments invest, MainPanel panel) {
 		super(0,100);
-		this.view = view;
-		setValue((int) Math.round(view.getCurrentPortfolio().getLambda()*100));
+		this.invest = invest;
+		this.panel = panel;
+		setValue((int) Math.round(invest.getLambda()*100));
 		setMajorTickSpacing(20);
 		setMinorTickSpacing(5);
 		
@@ -47,8 +51,8 @@ public class LambdaSlider extends JSlider {
 	private class SL implements ChangeListener {
 		@Override
 		public void stateChanged(ChangeEvent e) {
-			view.getCurrentPortfolio().setLambda(getValue() / 100.0);
-			view.updateOptimization();
+			invest.setLambda(getValue() / 100.0);
+			panel.updateOptimization();
 		}
 	}
 }

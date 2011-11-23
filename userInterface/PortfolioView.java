@@ -21,7 +21,6 @@ import java.awt.Dimension;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
-import java.util.Collection;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,8 +30,6 @@ import org.xml.sax.SAXException;
 
 import stock.Currency;
 import stock.Investments;
-import stock.Market;
-import stock.Portfolio;
 
 public class PortfolioView extends JFrame implements WindowListener {
 	private static final long serialVersionUID = -7129233116646387153L;
@@ -61,11 +58,11 @@ public class PortfolioView extends JFrame implements WindowListener {
 		mainCommandPanel = new MainCommandPanel(this);
 		this.add(mainCommandPanel, BorderLayout.SOUTH);
 
-		mainPanel = new MainPanel(this);
+		mainPanel = new MainPanel(investments, this);
 		this.add(mainPanel, BorderLayout.CENTER);
 		currentView = Actions.HOME;
 
-		mainMenuBar = new MainMenuBar(this);
+		mainMenuBar = new MainMenuBar(this, investments);
 		this.setJMenuBar(mainMenuBar);
 
 		this.addWindowListener(this);
@@ -74,59 +71,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 		this.setVisible(true);
 		System.out.println("Done!");
 	}
-
-	public Collection<Market> getMarketSet() {
-		return investments.getMarketSet();
-	}
-
-	public Collection<Portfolio> getPortfolios() {
-		return investments.getPortfolios();
-	}
-
-	public Portfolio getCurrentPortfolio() {
-		return investments.getCurrentPortfolio();
-	}
-
-	public Double[][] getPortfolioHistory() {
-		return investments.getHistory(4);
-	}
-
-	public Double[][] getPortfolioHistory(int nbrOfDays) {
-		return investments.getHistory(4, nbrOfDays);
-	}
-
-	public void updateOptimization() {
-		mainPanel.updateOptimization();
-	}
-
-	public double portfolioValue() {
-		return investments.getPortfolioValueSum();
-	}
-
-	public Double[] getPortfolioDistribution() {
-		return investments.getPortfolioDistribution();
-	}
-
-	public double getPortfolioLiquid() {
-		return investments.getPortfolioLiquid();
-	}
-
-	public void setPortfolioLiquid(double value) {
-		investments.setPortfolioLiquid(value);
-	}
-
-	public String[] getStockIds() {
-		return investments.getStockIds();
-	}
-
-	public String[] getStockNames() {
-		return investments.getStockNames();
-	}
-
-	public String[] getShortNames() {
-		return investments.getShortNames();
-	}
-
+	
 	public void actionHandler(Actions actions) {
 		actionHandler(actions, null);
 	}
@@ -161,14 +106,14 @@ public class PortfolioView extends JFrame implements WindowListener {
 			actionHandler(Actions.HOME);
 			break;
 		case REMOVE:
-			String omxName_remove = (String) MainOptionPane.dropDownOptions("Choose stock to remove from portfolio:", getStockNames(), 0);
+			String omxName_remove = (String) MainOptionPane.dropDownOptions("Choose stock to remove from portfolio:", investments.getStockNames(), 0);
 			if (omxName_remove == null) { break; }
 			if (investments.removeStockfromPortfolioByName(omxName_remove)) {
 				actionHandler(Actions.HOME);
 			}
 			break;
 		case BUY:
-			String omxName_buy = (String) MainOptionPane.dropDownOptions("Stock to buy shares in:", getStockNames(), 0);
+			String omxName_buy = (String) MainOptionPane.dropDownOptions("Stock to buy shares in:", investments.getStockNames(), 0);
 			if (omxName_buy == null) { break; }
 			Integer nbrToBuy = MainOptionPane.getInteger("How many shares do you wish to buy?");
 			if (nbrToBuy == null) { break; }
@@ -176,7 +121,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 				actionHandler(Actions.HOME);
 			break;
 		case SELL:
-			String omxName_sell = (String) MainOptionPane.dropDownOptions("Stock to sell shares in:", getStockNames(), 0);
+			String omxName_sell = (String) MainOptionPane.dropDownOptions("Stock to sell shares in:", investments.getStockNames(), 0);
 			if (omxName_sell == null) { break; }
 			Integer nbrToSell = MainOptionPane.getInteger("How many shares you wish to sell:");
 			if (nbrToSell == null) { break; }

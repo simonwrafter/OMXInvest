@@ -160,10 +160,11 @@ public class Investments {
 	
 	private String getIdOfStock(String name) {
 		int i=0;
-		for (String s : getStockNames())
+		for (String s : getStockNames()) {
 			if (s.equals(name))
 				break;
 			i++;
+		}
 		if (i >= currentPortfolio.size())
 			return null;
 		return getStockIds()[i];
@@ -215,7 +216,7 @@ public class Investments {
 	
 	public void updateHistory()
 			throws IOException, ParserConfigurationException, SAXException {
-		for (String s : currentPortfolio.getStocksInPortfolio()) {
+		for (String s : getStockIds()) {
 			rebuildHistory(s);
 		}
 	}
@@ -233,7 +234,7 @@ public class Investments {
 
 	public void rebuildHistory()
 			throws IOException, ParserConfigurationException, SAXException {
-		for (String s : currentPortfolio.getStocksInPortfolio()) {
+		for (String s : getStockIds()) {
 			rebuildHistory(s);
 		}
 	}
@@ -256,7 +257,7 @@ public class Investments {
 	public Double[][] getHistory(int historyType, int nbrOfDays) {
 		Double[][] result = new Double[currentPortfolio.size()+1][];
 		int i=1;
-		for (String s : currentPortfolio.getStocksInPortfolio()) { 
+		for (String s : getStockIds()) { 
 			for (Market m : markets.values()) {
 				if (m.contains(s)) {
 					if (result[0] == null)
@@ -276,6 +277,10 @@ public class Investments {
 			}
 		}
 		return 0;
+	}
+	
+	public Integer[] getPortfolioNbrOfShares() {
+		return currentPortfolio.getShareDistribution();
 	}
 	
 	public Double[] getPortfolioDistribution() {
@@ -347,7 +352,6 @@ public class Investments {
 			System.out.println("save failed");
 		}
 	}
-
 	
 	public boolean portfolioContainsByName(String fullName) {
 		for (String s : getStockNames())
@@ -356,12 +360,14 @@ public class Investments {
 		return false;
 	}
 	
-	public boolean buy(String omxId, Integer nbrOfStocks) {
-		return currentPortfolio.buy(omxId, nbrOfStocks, getLastValue(omxId));
+	public boolean buy(String name, Integer nbrOfStocks) {
+		String id = getIdOfStock(name);
+		return currentPortfolio.buy(id, nbrOfStocks, getLastValue(id));
 	}
 	
-	public boolean sell(String omxId, Integer nbrOfStocks) {
-		return currentPortfolio.sell(omxId, nbrOfStocks, getLastValue(omxId));
+	public boolean sell(String name, Integer nbrOfStocks) {
+		String id = getIdOfStock(name);
+		return currentPortfolio.sell(id, nbrOfStocks, getLastValue(id));
 	}
 
 	public String getCurrentPortfolioName() {
@@ -374,5 +380,21 @@ public class Investments {
 
 	public void setLiquidAsset(Double asset) {
 		currentPortfolio.setLiquidAsset(asset);
+	}
+	
+	public double getLambda() {
+		return currentPortfolio.getLambda();
+	}
+	
+	public void setLambda(double lambda) {
+		currentPortfolio.setLambda(lambda);
+	}
+	
+	public Currency getCurrency() {
+		return currentPortfolio.getCurrency();
+	}
+	
+	public int size() {
+		return currentPortfolio.size();
 	}
 }

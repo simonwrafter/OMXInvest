@@ -25,6 +25,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import stock.Investments;
 import stock.Portfolio;
 
 public class MainMenuBar extends JMenuBar {
@@ -33,7 +34,7 @@ public class MainMenuBar extends JMenuBar {
 	private JMenu portfolioMenu;
 	private LinkedList<MainMenuItem> items;
 	
-	public MainMenuBar(PortfolioView view) {
+	public MainMenuBar(PortfolioView view, Investments invest) {
 		super();
 		this.view = view;
 		
@@ -43,7 +44,7 @@ public class MainMenuBar extends JMenuBar {
 		portfolioMenu.add(new MainMenuItem(Actions.DELETE, "Remove Portfolio", "Remove portfolio"));
 		portfolioMenu.add(new MainMenuItem(Actions.EDIT, "Edit Portfolio", "Change name of current portfolio"));
 		portfolioMenu.addSeparator();
-		for(Portfolio p : view.getPortfolios()) {
+		for(Portfolio p : invest.getPortfolios()) {
 			addPortfolio(p.getName());
 		}
 		this.add(portfolioMenu);

@@ -24,7 +24,7 @@ public class MainOptionPane extends JOptionPane {
 	private static final long serialVersionUID = 4211870191745791511L;
 	
 	public static String getString(String question, String text) {
-		String s = showInputDialog(question, text);
+		String s = (String) showInputDialog(null, question, "OMXInvest", JOptionPane.QUESTION_MESSAGE, null, null, text);
 		return (s==null || s.isEmpty()) ? null : s;
 	}
 	

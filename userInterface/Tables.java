@@ -28,6 +28,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumn;
 
+import stock.Investments;
 import stock.Market;
 import stock.Stock;
 import stock.Portfolio;
@@ -36,17 +37,17 @@ import util.InvestMatrix;
 import util.CalcModels;;
 
 public class Tables {
-	private PortfolioView view;
+	private Investments invest;
 	private Double[] minRisk;
 	private Double[] maxGrowth;
 	
-	public Tables(PortfolioView view) { 
-		this.view = view;
+	public Tables(Investments invest) { 
+		this.invest = invest;
 	}
 	
 	public Component getHistoryTable() {
-		Object[] header = InvestDate.addDateHeader(view.getShortNames());
-		Object[][] data = InvestMatrix.transpose(view.getPortfolioHistory());
+		Object[] header = InvestDate.addDateHeader(invest.getShortNames());
+		Object[][] data = InvestMatrix.transpose(invest.getHistory(4));
 		
 		for(Object[] o : data) {
 			o[0] = InvestDate.dateWithDash(((Double) o[0]).intValue());
@@ -73,7 +74,7 @@ public class Tables {
 	}
 	
 	public Component getMarketTable() {
-		Collection<Market> set = view.getMarketSet();
+		Collection<Market> set = invest.getMarketSet();
 		int x = set.size()*3;
 		int y = 0;
 		for(Market m : set) {
@@ -118,8 +119,8 @@ public class Tables {
 		return new JScrollPane(table);
 	}
 
-	public Component getOptimizationTable() {
-		String[] stocks = view.getShortNames();
+	public Component getOptimizationTable(MainPanel panel) {
+		String[] stocks = invest.getShortNames();
 		int width = 6;
 		int height = Math.max(stocks.length, 5);
 		
@@ -131,9 +132,9 @@ public class Tables {
 			Arrays.fill(o, "");
 		}
 		
-		Double portfolioValue = view.portfolioValue();
-		Double portfolioLiquid = view.getPortfolioLiquid();
-		Double[][] histories = view.getPortfolioHistory();
+		Double portfolioValue = invest.getPortfolioValueSum();
+		Double portfolioLiquid = invest.getPortfolioLiquid();
+		Double[][] histories = invest.getHistory(4);
 		Double[][] coV = CalcModels.covariance(histories);
 		minRisk = CalcModels.optimizeLowRisk(coV);
 		maxGrowth = CalcModels.optimizeHighGrowth(coV, 
@@ -156,7 +157,7 @@ public class Tables {
 		}
 		
 		data[0][5] = "Lambda";
-		data[1][5] = view.getCurrentPortfolio().getLambda();
+		data[1][5] = invest.getLambda();
 		
 		JTable table = new JTable(data, header);
 		
@@ -175,22 +176,22 @@ public class Tables {
 		
 		JPanel ip = new JPanel(new BorderLayout());
 		ip.add(new JScrollPane(table), BorderLayout.CENTER);
-		ip.add(new LambdaSlider(view), BorderLayout.SOUTH);
+		ip.add(new LambdaSlider(invest, panel), BorderLayout.SOUTH);
 		return ip;
 	}
 	
 	public Double[] getPersonal() {
-		return CalcModels.personalPortfolio(minRisk, maxGrowth, view.getCurrentPortfolio().getLambda());
+		return CalcModels.personalPortfolio(minRisk, maxGrowth, invest.getLambda());
 	}
 
-	public Component getHomeTable() {
-		Portfolio portfolio = view.getCurrentPortfolio();
+	public Component getHomeTable(PortfolioView view) {
+		Portfolio portfolio = invest.getCurrentPortfolio();
 		
-		String[] omxIds = view.getStockIds();
-		String[] stocks = view.getStockNames();
-		String[] shortName = view.getShortNames();
-		Integer[] nbrOf = portfolio.getShareDistribution();
-		Double[][] history = view.getPortfolioHistory(1);
+		String[] omxIds = invest.getStockIds();
+		String[] stocks = invest.getStockNames();
+		String[] shortName = invest.getShortNames();
+		Integer[] nbrOf = invest.getPortfolioNbrOfShares();
+		Double[][] history = invest.getHistory(4, 1);
 		
 		int height = Math.max(stocks.length, 6); //8);
 		int width = 7;
