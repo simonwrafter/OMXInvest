@@ -33,11 +33,9 @@ import stock.Investments;
 
 public class PortfolioView extends JFrame implements WindowListener {
 	private static final long serialVersionUID = -7129233116646387153L;
-	private MainCommandPanel mainCommandPanel;
-	private MainMenuBar mainMenuBar;
+	private MenuBar mainMenuBar;
 	private MainPanel mainPanel;
 	private Investments investments;
-	private Actions	currentView;
 
 	public PortfolioView()
 			throws IOException, ParserConfigurationException, SAXException {
@@ -55,14 +53,10 @@ public class PortfolioView extends JFrame implements WindowListener {
 		this.setVisible(false);
 		this.remove(label);
 
-		mainCommandPanel = new MainCommandPanel(this);
-		this.add(mainCommandPanel, BorderLayout.SOUTH);
-
 		mainPanel = new MainPanel(investments, this);
 		this.add(mainPanel, BorderLayout.CENTER);
-		currentView = Actions.HOME;
 
-		mainMenuBar = new MainMenuBar(this, investments);
+		mainMenuBar = new MenuBar(this, investments);
 		this.setJMenuBar(mainMenuBar);
 
 		this.addWindowListener(this);
@@ -71,92 +65,90 @@ public class PortfolioView extends JFrame implements WindowListener {
 		this.setVisible(true);
 		System.out.println("Done!");
 	}
-	
+
 	public void actionHandler(Actions actions) {
 		actionHandler(actions, null);
 	}
 
 	public void actionHandler(Actions actions, String additionalInfo) {
 		switch (actions) {
-		case HOME:
-			mainPanel.showHome();
-			currentView = Actions.HOME;
-			break;
-		case HISTORY:
-			mainPanel.showHistory();
-			currentView = Actions.HISTORY;
-			break;
-		case OPTIMAL:
-			mainPanel.showOptimization();
-			currentView = Actions.OPTIMAL;
-			break;
-		case MARKET:
-			mainPanel.showMarkets();
-			currentView = Actions.MARKET;
-			break;
 		case ADD:
-			String omxId_add = MainOptionPane.getString("Type omxId of stock to add to portfolio:");
-			if (omxId_add == null) { break; }
-			omxId_add = omxId_add.toUpperCase();
-			try {
-				investments.addStockToPortfolio(omxId_add);
-			} catch (Exception e) {
-				MainOptionPane.errorPopUp("Adding " + omxId_add + " to portfolio failed!");
+			String omxId_add = PopUpQuestion.getString("Type omxId of stock to add to portfolio:");
+			if (omxId_add != null) {
+				omxId_add = omxId_add.toUpperCase();
+				try {
+					investments.addStockToPortfolio(omxId_add);
+					mainPanel.updateHomePanel();
+					mainPanel.updateHistoryPanel();
+					mainPanel.updateOptimizationPanel();
+				} catch (Exception e) {
+					PopUpQuestion.errorPopUp("Adding " + omxId_add + " to portfolio failed!");
+				}
 			}
-			actionHandler(Actions.HOME);
 			break;
 		case REMOVE:
-			String omxName_remove = (String) MainOptionPane.dropDownOptions("Choose stock to remove from portfolio:", investments.getStockNames(), 0);
-			if (omxName_remove == null) { break; }
-			if (investments.removeStockfromPortfolioByName(omxName_remove)) {
-				actionHandler(Actions.HOME);
+			String omxName_remove = (String) PopUpQuestion.dropDownOptions("Choose stock to remove from portfolio:", investments.getStockNames(), 0);
+			if (omxName_remove != null) {
+				if (investments.removeStockfromPortfolioByName(omxName_remove)) {
+					mainPanel.updateHomePanel();
+					mainPanel.updateHistoryPanel();
+					mainPanel.updateOptimizationPanel();
+				}
 			}
 			break;
 		case BUY:
-			String omxName_buy = (String) MainOptionPane.dropDownOptions("Stock to buy shares in:", investments.getStockNames(), 0);
-			if (omxName_buy == null) { break; }
-			Integer nbrToBuy = MainOptionPane.getInteger("How many shares do you wish to buy?");
-			if (nbrToBuy == null) { break; }
-			if (investments.buy(omxName_buy, nbrToBuy))
-				actionHandler(Actions.HOME);
+			String omxName_buy = (String) PopUpQuestion.dropDownOptions("Stock to buy shares in:", investments.getStockNames(), 0);
+			if (omxName_buy != null) {
+				Integer nbrToBuy = PopUpQuestion.getInteger("How many shares do you wish to buy?");
+				if (nbrToBuy != null) {
+					if (investments.buy(omxName_buy, nbrToBuy)) {
+						mainPanel.updateHomePanel();
+					}
+				}
+			}
 			break;
 		case SELL:
-			String omxName_sell = (String) MainOptionPane.dropDownOptions("Stock to sell shares in:", investments.getStockNames(), 0);
-			if (omxName_sell == null) { break; }
-			Integer nbrToSell = MainOptionPane.getInteger("How many shares you wish to sell:");
-			if (nbrToSell == null) { break; }
-			if (investments.sell(omxName_sell, nbrToSell));
-				actionHandler(Actions.HOME);
+			String omxName_sell = (String) PopUpQuestion.dropDownOptions("Stock to sell shares in:", investments.getStockNames(), 0);
+			if (omxName_sell != null) {
+				Integer nbrToSell = PopUpQuestion.getInteger("How many shares you wish to sell:");
+				if (nbrToSell != null) {
+					if (investments.sell(omxName_sell, nbrToSell)) {
+						mainPanel.updateHomePanel();
+					}
+				}
+			}
 			break;
 		case LIQUID:
-			Double asset = MainOptionPane.getDouble("Set liquid asset to:");
-			if (asset == null) { break; }
-			investments.setLiquidAsset(asset);
-			actionHandler(Actions.HOME);
+			Double asset = PopUpQuestion.getDouble("Set liquid asset to:", investments.getLiquid());
+			if (asset != null) {
+				investments.setLiquidAsset(asset);
+				mainPanel.updateHomePanel();
+				mainPanel.updateOptimizationPanel();
+			}
 			break;
 		case NEW:
-			String nameOfNewP = MainOptionPane.getString("New portfolio name.");
+			String nameOfNewP = PopUpQuestion.getString("New portfolio name.");
 			if (nameOfNewP==null) { break; }
-			Currency currency = (Currency) MainOptionPane.dropDownOptions("Currency for new portfolio", Currency.currencies, 0);
+			Currency currency = (Currency) PopUpQuestion.dropDownOptions("Currency for new portfolio", Currency.currencies, 0);
 			if (currency==null) { break; }
-			Integer liquid = MainOptionPane.getInteger("Initial liquid assets");
+			Integer liquid = PopUpQuestion.getInteger("Initial liquid assets");
 			if (liquid==null) { break; }
 			if (!investments.addNewPortfolio(nameOfNewP, currency, liquid)) {
-				MainOptionPane.errorPopUp("A portfolio with this name already exists!");
+				PopUpQuestion.errorPopUp("A portfolio with this name already exists!");
 				break;
 			}
 			mainMenuBar.addPortfolio(nameOfNewP);
 			actionHandler(Actions.SWITCH, nameOfNewP);
 			break;
 		case DELETE:
-			String name = (String) MainOptionPane.dropDownOptions("Name of portfolio to remove:", investments.getPortfolios());
+			String name = (String) PopUpQuestion.dropDownOptions("Name of portfolio to remove:", investments.getPortfolios());
 			if (name == null) { break; }
 			if (investments.getPortfolios().size() < 2) {
-				MainOptionPane.errorPopUp("You can not remove any more portfolios!");
+				PopUpQuestion.errorPopUp("You can not remove any more portfolios!");
 				break;
 			}
 			if (!investments.removePortfolio(name)) {
-				MainOptionPane.errorPopUp("No portfolio with this name exists!");
+				PopUpQuestion.errorPopUp("No portfolio with this name exists!");
 				break;
 			}
 			mainMenuBar.removePortfolio(name);
@@ -164,15 +156,18 @@ public class PortfolioView extends JFrame implements WindowListener {
 			break;
 		case EDIT:
 			String oldName = investments.getCurrentPortfolioName();
-			String newName = MainOptionPane.getString("Type new name for portfolio:", oldName);
-			if (newName == null || newName.equals(oldName)) { break; }
-			investments.setCurrentPortfolioName(newName);
-			mainMenuBar.removePortfolio(oldName);
-			mainMenuBar.addPortfolio(newName);
+			String newName = PopUpQuestion.getString("Type new name for portfolio:", oldName);
+			if (newName != null && !newName.equals(oldName)) {
+				investments.setCurrentPortfolioName(newName);
+				mainMenuBar.removePortfolio(oldName);
+				mainMenuBar.addPortfolio(newName);
+			}
 			break;
 		case SWITCH:
 			investments.setCurrentPortfolio(additionalInfo);
-			actionHandler(currentView);
+			mainPanel.updateHomePanel();
+			mainPanel.updateHistoryPanel();
+			mainPanel.updateOptimizationPanel();
 			break;
 		case REBUILD_HISTORY:
 			try {
@@ -180,27 +175,28 @@ public class PortfolioView extends JFrame implements WindowListener {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			actionHandler(currentView);
+			mainPanel.updateHistoryPanel();
 			break;
 		case UPDATE_MARKETS:
 			investments.updateMarkets();
+			mainPanel.updateMarketPanel();
 			break;
 		case ABOUT:
-			MainOptionPane.infoPopUp(
+			PopUpQuestion.infoPopUp(
 					"This program, OMXInvest, is being developed by me, Simon Wrafter,\n" +
-					"because it is good fun. Also it might come in handy, if not for me,\n" +
-					"maybe for you or your friend.\n\n" +
-					"If you find it to be useful or just like java programming or any other\n" +
-					"valid reason, feel free to participate in what way you can.\n" +
-					"Or just send me an e mail with a happy smiley! :D\n\n" +
-					"OMXInvest is mainley licensed under the ICS license, which can be\n" +
-					"found under 'ICS License' in the 'More' menu. The code from JAMA is\n" +
-					"public domain, a copyright notice containing more information can\n" +
-					"be found under 'JAMA © Notice' in the 'More' menu.\n\n" +
+							"because it is good fun. Also it might come in handy, if not for me,\n" +
+							"maybe for you or your friend.\n\n" +
+							"If you find it to be useful or just like java programming or any other\n" +
+							"valid reason, feel free to participate in what way you can.\n" +
+							"Or just send me an e mail with a happy smiley! :D\n\n" +
+							"OMXInvest is mainley licensed under the ICS license, which can be\n" +
+							"found under 'ICS License' in the 'More' menu. The code from JAMA is\n" +
+							"public domain, a copyright notice containing more information can\n" +
+							"be found under 'JAMA © Notice' in the 'More' menu.\n\n" +
 					"Code hosted at https://github.com/simonwrafter/OMXInvest");
 			break;
 		case ICS_LICENSE:
-			MainOptionPane.infoPopUp("Copyright (c) 2011, Simon Wrafter <simon.wrafter@gmail.com>\n\n" +
+			PopUpQuestion.infoPopUp("Copyright (c) 2011, Simon Wrafter <simon.wrafter@gmail.com>\n\n" +
 					"Permission to use, copy, modify, and/or distribute this software for any\n" +
 					"purpose with or without fee is hereby granted, provided that the above\n" +
 					"copyright notice and this permission notice appear in all copies.\n\n" +
@@ -213,7 +209,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 					"OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.");
 			break;
 		case JAMA_C:
-			MainOptionPane.infoPopUp("JAMA Copyright Notice\n\n" +
+			PopUpQuestion.infoPopUp("JAMA Copyright Notice\n\n" +
 					"This software is a cooperative product of The MathWorks and the National\n" +
 					"Institute of Standards and Technology (NIST) which has been released to the\n" +
 					"public domain. Neither The MathWorks nor NIST assumes any responsibility\n" +

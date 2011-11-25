@@ -16,60 +16,61 @@
 
 package userInterface;
 
-import java.awt.GridLayout;
-import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 
 import stock.Investments;
 
-public class MainPanel extends JPanel {
+public class MainPanel extends JTabbedPane {
 	private static final long serialVersionUID = 9193463064365388089L;
-	private Tables tables;
-	private PortfolioView view;
 	private Investments invest;
+	private HomePanel home;
+	private HistoryPanel history;
+	private OptimizationPanel optimal;
+	private MarketPanel market;
 	
 	public MainPanel(Investments invest, PortfolioView view) {
-		super(new GridLayout(1,0));
-		this.view = view;
+		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
 		this.invest = invest;
-		tables = new Tables(invest);
-		add(tables.getHomeTable(view));
+		
+		home = new HomePanel(view, invest);
+		history = new HistoryPanel(invest);
+		optimal = new OptimizationPanel(this, invest);
+		market = new MarketPanel(invest);
+		
+		addTab("Home", home);
+		addTab("History", history);
+		addTab("Optimal", optimal);
+		addTab("Market", market);
 	}
 	
-	public void showHome() {
-		remove(0);
-		add(tables.getHomeTable(view));
-		updateUI();
-	}
-	
-	public void showHistory() {
-		remove(0);
-		add(tables.getHistoryTable());
-		updateUI();
-	}
-	
-	public void showOptimization() {
-		remove(0);
-		add(tables.getOptimizationTable(this));
-		updateUI();
-	}
-	
-	public void showMarkets() {
-		remove(0);
-		add(tables.getMarketTable());
-		updateUI();
-	}
-	
-	public void updateOptimization() {
-		Double[] personal = tables.getPersonal();
-		Double value = invest.getPortfolioValueSum() + invest.getPortfolioLiquid();
-		JTable table = (JTable) ((JViewport) ((JScrollPane) ((JPanel) getComponent(0)).getComponent(0)).getComponent(0)).getComponent(0);
+	public void updatePersonalOptimization() {
+		Double[] personal = optimal.getPersonal();
+		Double value = invest.getPortfolioValueSum() + invest.getLiquid();
+		JTable table = (JTable) ((JViewport) ((JScrollPane) optimal.getComponent(0)).getComponent(0)).getComponent(0);
 		Double[][] histories = invest.getHistory(4, 1);
 		for (int i=0; i<personal.length; i++) {
 			table.setValueAt(new Integer((int) Math.round(personal[i] * value / histories[i+1][0])), i, 2);
 		}
+		((JTable) ((JViewport) ((JScrollPane) home.getComponent(0)).getComponent(0)).getComponent(0)).setValueAt(invest.getLambda(), 3, 6);
 		table.setValueAt(invest.getLambda(), 1, 5);
+	}
+	
+	public void updateHomePanel() {
+		home.updatePanel();
+	}
+	
+	public void updateHistoryPanel() {
+		history.updatePanel();
+	}
+	
+	public void updateOptimizationPanel() {
+		optimal.updatePanel();
+	}
+	
+	public void updateMarketPanel() {
+		market.updatePanel();
 	}
 }

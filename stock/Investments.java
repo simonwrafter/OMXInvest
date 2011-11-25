@@ -255,7 +255,10 @@ public class Investments {
 	}
 	
 	public Double[][] getHistory(int historyType, int nbrOfDays) {
-		Double[][] result = new Double[currentPortfolio.size()+1][];
+		if (size() == 0) {
+			return new Double[][] {{0.0}};
+		}
+		Double[][] result = new Double[size()+1][];
 		int i=1;
 		for (String s : getStockIds()) { 
 			for (Market m : markets.values()) {
@@ -311,7 +314,7 @@ public class Investments {
 		return result;
 	}
 	
-	public double getPortfolioLiquid() {
+	public double getLiquid() {
 		return currentPortfolio.getLiquidAsset();
 	}
 	
@@ -396,5 +399,9 @@ public class Investments {
 	
 	public int size() {
 		return currentPortfolio.size();
+	}
+
+	public int nbrOfMarkets() {
+		return markets.size();
 	}
 }

@@ -28,13 +28,13 @@ import javax.swing.JMenuItem;
 import stock.Investments;
 import stock.Portfolio;
 
-public class MainMenuBar extends JMenuBar {
+public class MenuBar extends JMenuBar {
 	private static final long serialVersionUID = -7643064728379040865L;
 	private PortfolioView view;
 	private JMenu portfolioMenu;
 	private LinkedList<MainMenuItem> items;
 	
-	public MainMenuBar(PortfolioView view, Investments invest) {
+	public MenuBar(PortfolioView view, Investments invest) {
 		super();
 		this.view = view;
 		

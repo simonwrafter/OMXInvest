@@ -20,7 +20,7 @@ import java.util.SortedSet;
 
 import javax.swing.JOptionPane;
 
-public class MainOptionPane extends JOptionPane {
+public class PopUpQuestion extends JOptionPane {
 	private static final long serialVersionUID = 4211870191745791511L;
 	
 	public static String getString(String question, String text) {
@@ -43,8 +43,12 @@ public class MainOptionPane extends JOptionPane {
 	}
 	
 	public static Double getDouble(String question) {
+		return getDouble(question, 0.);
+	}
+	
+	public static Double getDouble(String question, Double amount) {
 		try {
-			String d = getString(question, "0");
+			String d = getString(question, amount.toString());
 			return d == null ? null : new Double(d);
 		} catch (NumberFormatException nfe) {
 			showMessageDialog(null, "Please try again with a valid number", "OMXInvest", JOptionPane.ERROR_MESSAGE);
