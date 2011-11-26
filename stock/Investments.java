@@ -33,8 +33,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 public class Investments {
-	private final String portfolioSaveFile = "portfolios.pfo";
-	private final String marketSaveFile= "markets.mkt";
+	private final String base = System.getenv("HOME");
+	private final String portfolioSaveFile = base + "/portfolios.omx";
+	private final String marketSaveFile = base + "/markets.omx";
 	private SortedSet<Portfolio> portfolios;
 	private SortedMap<String, Market> markets;
 	private Portfolio currentPortfolio;
@@ -43,7 +44,9 @@ public class Investments {
 			throws ParserConfigurationException, SAXException, IOException {
 		portfolios = new TreeSet<Portfolio>();
 		markets = new TreeMap<String, Market>();
-
+		
+		System.out.println(marketSaveFile);
+		
 		buildMarkets(false, label);
 		buildPortfolios(label);
 	}
@@ -121,6 +124,7 @@ public class Investments {
 	private Portfolio buildDefaultPortfolio()
 			throws IOException, ParserConfigurationException, SAXException {
 		Portfolio result = new Portfolio("default", Currency.SEK, 10000);
+		portfolios.add(result);
 		setCurrentPortfolio(result);
 		addStockToPortfolio("SSE3966");
 		addStockToPortfolio("SSE18634");
@@ -282,20 +286,20 @@ public class Investments {
 		return 0;
 	}
 	
-	public Integer[] getPortfolioNbrOfShares() {
+	public Integer[] getShareDistribution() {
 		return currentPortfolio.getShareDistribution();
 	}
 	
-	public Double[] getPortfolioDistribution() {
-		Double[] dist = getPortfolioValueDistributed();
-		double sum = getPortfolioValueSum();
+	public Double[] getValueDistribution() {
+		Double[] dist = getValueByShare();
+		double sum = getValueSum();
 		for (int i=0; i<currentPortfolio.size();i++) {
 			dist[i] /= sum;
 		}
 		return dist;
 	}
 	
-	public Double[] getPortfolioValueDistributed() {
+	public Double[] getValueByShare() {
 		Double[][] latest = getHistory(4, 1);
 		Integer[] nbrOf = currentPortfolio.getShareDistribution();
 		Double result[] = new Double[currentPortfolio.size()];
@@ -305,9 +309,9 @@ public class Investments {
 		return result;
 	}
 
-	public double getPortfolioValueSum() {
+	public double getValueSum() {
 		double result=0;
-		Double[] values = getPortfolioValueDistributed();
+		Double[] values = getValueByShare();
 		for(int i=0; i<values.length; i++) {
 			result += values[i];
 		}
@@ -356,7 +360,7 @@ public class Investments {
 		}
 	}
 	
-	public boolean portfolioContainsByName(String fullName) {
+	public boolean containsByName(String fullName) {
 		for (String s : getStockNames())
 			if (s.equals(fullName))
 				return true;
@@ -373,11 +377,11 @@ public class Investments {
 		return currentPortfolio.sell(id, nbrOfStocks, getLastValue(id));
 	}
 
-	public String getCurrentPortfolioName() {
+	public String getPortfolioName() {
 		return currentPortfolio.getName();
 	}
 	
-	public void setCurrentPortfolioName(String name) {
+	public void setPortfolioName(String name) {
 		currentPortfolio.setName(name);
 	}
 

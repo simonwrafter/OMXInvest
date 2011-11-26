@@ -1,16 +1,3 @@
-Short term
-----------
-*test history update
-*tag a first stable release
-
-----------
-Mid term
-----------
-*tabs instead of buttons for the main views
-
-----------
-Long term
-----------
 *threading!
 	-time limit when trying to fetch information of the internet 
 	-lose the windowlistener in class PortfolioView

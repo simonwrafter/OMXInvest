@@ -6,54 +6,27 @@ import java.util.Hashtable;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSlider;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
 import stock.Investments;
 import util.CalcModels;
 
-public class OptimizationPanel extends JPanel {
+
+public class OptimizationPanel extends AbstractDataPanel {
 	private static final long serialVersionUID = 841107539929338322L;
-	private Investments invest;
 	private MainPanel panel;
-	private DefaultTableModel model;
 	private Double[] minRisk;
 	private Double[] maxGrowth;
 
 	public OptimizationPanel(MainPanel panel, Investments invest) {
-		super(new BorderLayout());
-		this.invest = invest;
+		super(invest);
 		this.panel = panel;
-		
-		model = new DefaultTableModel();
-		JTable table = new JTable(model);
-		
-		updatePanel();
-		
-		for (int i = 0; i < 6; i++) {
-			TableColumn column = table.getColumnModel().getColumn(i);
-			if (i == 0) {
-				column.setPreferredWidth(75);
-			} else {
-				column.setPreferredWidth(80);
-			}
-		}
-		
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		table.setCellSelectionEnabled(true);
-
-		this.add(new JScrollPane(table), BorderLayout.CENTER);
 		this.add(new LambdaSlider(), BorderLayout.SOUTH);
 	}
-
+	
+	@Override
 	public void updatePanel() {
 		String[] stocks = invest.getShortNames();
 		int width = 6;
@@ -62,7 +35,7 @@ public class OptimizationPanel extends JPanel {
 		Object[] header = {"name", "min risk", "personal", "max growth", "", ""};
 		Object[][] data = new Object[height][width];
 		
-		Double portfolioValue = invest.getPortfolioValueSum();
+		Double portfolioValue = invest.getValueSum();
 		Double portfolioLiquid = invest.getLiquid();
 		Double[][] histories;
 		histories = invest.getHistory(4);

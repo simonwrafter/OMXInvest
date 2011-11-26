@@ -33,13 +33,18 @@ public class PopUpQuestion extends JOptionPane {
 	}
 	
 	public static Integer getInteger(String question) {
-		try {
-			String i = getString(question, "0");
-			return i == null ? null : new Integer(i);
-		} catch (NumberFormatException nfe) {
-			showMessageDialog(null, "Please try again with a valid number", "OMXInvest", JOptionPane.ERROR_MESSAGE);
+		boolean doAgain = true;
+		Integer result = null;
+		while (doAgain) {
+			try {
+				String i = getString(question, "0");
+				result = i == null ? null : new Integer(i);
+				doAgain = false;
+			} catch (NumberFormatException nfe) {
+				showMessageDialog(null, "Please try again with a valid number", "OMXInvest", JOptionPane.ERROR_MESSAGE);
+			}
 		}
-		return null;
+		return result;
 	}
 	
 	public static Double getDouble(String question) {
@@ -47,13 +52,18 @@ public class PopUpQuestion extends JOptionPane {
 	}
 	
 	public static Double getDouble(String question, Double amount) {
-		try {
-			String d = getString(question, amount.toString());
-			return d == null ? null : new Double(d);
-		} catch (NumberFormatException nfe) {
-			showMessageDialog(null, "Please try again with a valid number", "OMXInvest", JOptionPane.ERROR_MESSAGE);
+		boolean doAgain = true;
+		Double result = null;
+		while (doAgain) {
+			try {
+				String d = getString(question, amount.toString());
+				result = d == null ? null : new Double(d);
+				doAgain = false;
+			} catch (NumberFormatException nfe) {
+				showMessageDialog(null, "Please try again with a valid number", "OMXInvest", JOptionPane.ERROR_MESSAGE);
+			}
 		}
-		return null;
+		return result;
 	}
 	
 	public static Object dropDownOptions(String question, Object[] options, int initial) {

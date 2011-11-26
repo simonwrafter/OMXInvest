@@ -48,7 +48,7 @@ public class MainPanel extends JTabbedPane {
 	
 	public void updatePersonalOptimization() {
 		Double[] personal = optimal.getPersonal();
-		Double value = invest.getPortfolioValueSum() + invest.getLiquid();
+		Double value = invest.getValueSum() + invest.getLiquid();
 		JTable table = (JTable) ((JViewport) ((JScrollPane) optimal.getComponent(0)).getComponent(0)).getComponent(0);
 		Double[][] histories = invest.getHistory(4, 1);
 		for (int i=0; i<personal.length; i++) {

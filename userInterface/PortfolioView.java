@@ -155,10 +155,10 @@ public class PortfolioView extends JFrame implements WindowListener {
 			actionHandler(Actions.SWITCH);
 			break;
 		case EDIT:
-			String oldName = investments.getCurrentPortfolioName();
+			String oldName = investments.getPortfolioName();
 			String newName = PopUpQuestion.getString("Type new name for portfolio:", oldName);
 			if (newName != null && !newName.equals(oldName)) {
-				investments.setCurrentPortfolioName(newName);
+				investments.setPortfolioName(newName);
 				mainMenuBar.removePortfolio(oldName);
 				mainMenuBar.addPortfolio(newName);
 			}
