@@ -66,11 +66,13 @@ public class PortfolioView extends JFrame implements WindowListener {
 		System.out.println("Done!");
 	}
 
-	public void actionHandler(Actions actions) {
+	public void actionHandler(Actions actions)
+			throws ParserConfigurationException {
 		actionHandler(actions, null);
 	}
 
-	public void actionHandler(Actions actions, String additionalInfo) {
+	public void actionHandler(Actions actions, String additionalInfo)
+			throws ParserConfigurationException {
 		switch (actions) {
 		case ADD:
 			String omxId_add = PopUpQuestion.getString("Type omxId of stock to add to portfolio:");
@@ -121,7 +123,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 		case LIQUID:
 			Double asset = PopUpQuestion.getDouble("Set liquid asset to:", investments.getLiquid());
 			if (asset != null) {
-				investments.setLiquidAsset(asset);
+				investments.setLiquid(asset);
 				mainPanel.updateHomePanel();
 				mainPanel.updateOptimizationPanel();
 			}

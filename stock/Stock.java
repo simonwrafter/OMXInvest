@@ -54,8 +54,7 @@ public class Stock implements Serializable {
 	 *  [5][] = volume		tv  -  8
 	 *  [6][] = trades		nt  -  9
 	 *  [7][] = turnover	to  - 10 
-	 * } 
-	 *  
+	 * }
 	 */
 	
 	public Stock(String omxId, String shortName, String fullName, String ISIN, String market, Currency currency) {
@@ -101,6 +100,33 @@ public class Stock implements Serializable {
 		for (int i=0; i<8; i++) {
 			result[i] = Arrays.copyOfRange(histValue[i], 0, days);
 		}
+		return result;
+	}
+	
+	public Double[] getLastValues()
+			throws ParserConfigurationException {
+		Double[] result = new Double[6];
+		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		boolean success = false;
+		Document doc = null;
+		int times = 0;
+		while (!success && times <= 5) {
+			try {
+				doc = db.parse(MarketData.buildLatestURL(omxId));
+				success = true;
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+			times++;
+		}
+		Element e = (Element) doc.getElementsByTagName("inst").item(0);
+		
+		result[0] = Double.parseDouble(e.getAttribute("ch")); //change
+		result[1] = Double.parseDouble(e.getAttribute("chp")); //change percent
+		result[2] = Double.parseDouble(e.getAttribute("bp")); //buy price
+		result[3] = Double.parseDouble(e.getAttribute("ap")); //sell price
+		result[4] = Double.parseDouble(e.getAttribute("hp")); //high
+		result[5] = Double.parseDouble(e.getAttribute("lp")); //low
 		return result;
 	}
 	

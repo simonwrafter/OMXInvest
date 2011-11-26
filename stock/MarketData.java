@@ -43,11 +43,11 @@ public class MarketData {
 	
 	private static final String listQuestion = "SubSystem=Prices&Action=Search&inst.an=nm,fnm,isin,tp,cr&InstrumentType=S&List=";
 	private static final String historyQuestion = "SubSystem=History&Action=GetDataSeries&Instrument=";
-	private static final String derivQuestion = "SubSystem=Prices&Action=GetDerivatives&Instrument=";
+	private static final String latestQuestion = "SubSystem=Prices&Action=GetInstrument&Instrument=";
 	private static final String fromDate = "&fromDate=";
 	private static final String toDate = "&toDate=";
 	private static final String historyValues = "&hi.a=0,2,1,4,21,8,9,10,11"; //"0,1,2,4,5,6,7,8,9,10,11,21,32,33,34,35,36,37,38,39,41,42,43,44,45,55,56"; // not sure what they all mean :/
-	private static final String derivValues = "&inst.an=id,nm,isin,bp,ap,hp,lp,lsp,tv,ed";
+	private static final String latestValues = "&inst.an=id,ch,chp,tv,lsp,ltp,bp,ap,hp,lp";
 	
 	@SuppressWarnings("unused")
 	private static final String newsURL = "https://newsclient.omxgroup.com/cdsPublic/viewDisclosure.action?";
@@ -77,15 +77,19 @@ public class MarketData {
 	}
 	
 	public static final String buildHistoryURL(String omxID, int days) {
-		return buildHistoryURL(omxID, InvestDate.date(days));
+		String s = buildHistoryURL(omxID, InvestDate.date(days));
+		System.out.println(s);
+		return s;
 	}
 	
 	public static final String buildHistoryURL(String omxID, String date) {
 		return proxyURL + historyQuestion + omxID + fromDate + date + toDate + InvestDate.date(1) + historyValues;
 	}
 	
-	public static final String buildDerivativeURL(String omxId) {
-		return proxyURL + derivQuestion + omxId + derivValues;
+	public static final String buildLatestURL(String omxId) {
+		String s = proxyURL + latestQuestion + omxId + latestValues;
+		System.out.println(s);
+		return s;
 	}
 	
 	public static final int[] marketIndex(String market, String cap) {

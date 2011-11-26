@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.util.Arrays;
 
 import javax.swing.JPanel;
+import javax.xml.parsers.ParserConfigurationException;
 
 import stock.Investments;
 
@@ -12,23 +13,25 @@ public class HomePanel extends AbstractDataPanel {
 	private static final long serialVersionUID = -2461367753369663611L;
 	private PortfolioView view;
 	
-	public HomePanel(PortfolioView view, Investments invest) {
+	public HomePanel(PortfolioView view, Investments invest) throws ParserConfigurationException {
 		super(invest);
 		this.view = view;
 		this.add(new HomeCommandPanel(), BorderLayout.SOUTH);
 	}
 	
 	@Override
-	public void updatePanel() {
-		Object[] header = {"omxId", "name", "short name", "nbrOf", "last value", "total", ""};
+	public void updatePanel()
+			throws ParserConfigurationException {
+		Object[] header = {"omxId", "name", "short name", "nbrOf", "last buy value", "last sell value", "total", ""};
 		String[] omxIds = invest.getStockIds();
 		String[] stocks = invest.getStockNames();
 		String[] shortName = invest.getShortNames();
 		Integer[] nbrOf = invest.getShareDistribution();
-		Double[][] history = invest.getHistory(4, 1);
+		Double[] buy = invest.getLastValue(2);
+		Double[] sell = invest.getLastValue(3);
 		
 		int size = Math.max(invest.size(), 6);
-		Object[][] data = new Object[size][7];
+		Object[][] data = new Object[size][8];
 		
 		for (Object[] o : data)
 			Arrays.fill(o, "");
@@ -38,17 +41,18 @@ public class HomePanel extends AbstractDataPanel {
 			data[i][1] = stocks[i];
 			data[i][2] = shortName[i];
 			data[i][3] = nbrOf[i];
-			data[i][4] = String.format("%.02f", history[i+1][0]);
-			data[i][5] = String.format("%.02f", nbrOf[i]*history[i+1][0]);
-			data[i][6] = "";
+			data[i][4] = String.format("%.02f", buy[i]);
+			data[i][5] = String.format("%.02f", sell[i]);
+			data[i][6] = String.format("%.02f", nbrOf[i]*sell[i]);
+			data[i][7] = "";
 		}
 		
-		data[0][6] = "currency";
-		data[1][6] = invest.getCurrency();
-		data[2][6] = "lambda";
-		data[3][6] = invest.getLambda();
-		data[4][6] = "liquid";
-		data[5][6] = invest.getLiquid();
+		data[0][7] = "currency";
+		data[1][7] = invest.getCurrency();
+		data[2][7] = "lambda";
+		data[3][7] = String.format("%.02f", invest.getLambda());
+		data[4][7] = "liquid";
+		data[5][7] = String.format("%.02f", invest.getLiquid());
 		
 		model.setDataVector(data, header);
 		updateUI();

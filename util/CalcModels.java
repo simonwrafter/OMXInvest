@@ -89,10 +89,6 @@ public class CalcModels {
 		return result;
 	}
 	
-	public static double valueAtRisk(double value, double portVariance, double rho, double years) {
-		return value * portVariance * rho * Math.sqrt(years);
-	}
-	
 	public static Double[] optimizeLowRisk(Double[][] coVariance) {
 		Double[] result = new Double[coVariance.length];
 		Arrays.fill(result, new Double(0.0));

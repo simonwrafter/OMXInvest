@@ -9,10 +9,10 @@ import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.xml.parsers.ParserConfigurationException;
 
 import stock.Investments;
 import util.CalcModels;
-
 
 public class OptimizationPanel extends AbstractDataPanel {
 	private static final long serialVersionUID = 841107539929338322L;
@@ -20,7 +20,8 @@ public class OptimizationPanel extends AbstractDataPanel {
 	private Double[] minRisk;
 	private Double[] maxGrowth;
 
-	public OptimizationPanel(MainPanel panel, Investments invest) {
+	public OptimizationPanel(MainPanel panel, Investments invest)
+			throws ParserConfigurationException {
 		super(invest);
 		this.panel = panel;
 		this.add(new LambdaSlider(), BorderLayout.SOUTH);
@@ -66,7 +67,7 @@ public class OptimizationPanel extends AbstractDataPanel {
 		}
 
 		data[0][5] = "Lambda";
-		data[1][5] = invest.getLambda();
+		data[1][5] = String.format("%.02f", invest.getLambda());
 
 		model.setDataVector(data, header);
 		updateUI();

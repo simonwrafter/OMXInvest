@@ -121,17 +121,15 @@ public class Investments {
 		return portfolios.remove(newP);
 	}
 	
-	private Portfolio buildDefaultPortfolio()
+	private void buildDefaultPortfolio()
 			throws IOException, ParserConfigurationException, SAXException {
-		Portfolio result = new Portfolio("default", Currency.SEK, 10000);
-		portfolios.add(result);
-		setCurrentPortfolio(result);
+		addNewPortfolio("default", Currency.SEK, 10000);
+		setCurrentPortfolio(portfolios.first());
 		addStockToPortfolio("SSE3966");
 		addStockToPortfolio("SSE18634");
 		addStockToPortfolio("SSE402");
 		addStockToPortfolio("SSE3524");
 		addStockToPortfolio("SSE101");
-		return result;
 	}
 
 	public Portfolio getCurrentPortfolio() {
@@ -176,7 +174,7 @@ public class Investments {
 	
 	public boolean addStockToPortfolio(String omxId) 
 			throws IOException, ParserConfigurationException, SAXException {
-		if (getCurrencyOfStock(omxId).equals(currentPortfolio.getCurrency())) {
+		if (getCurrency(omxId).equals(currentPortfolio.getCurrency())) {
 			rebuildHistory(omxId);
 			currentPortfolio.add(omxId);
 			return true;
@@ -185,22 +183,18 @@ public class Investments {
 		}
 	}
 
-	private Currency getCurrencyOfStock(String omxId) {
-		Stock s = getStock(omxId);
-		if (s == null) { return null; }
-		return s.getCurrency();
-	}
-
-	public boolean removeStockfromPortfolio(String omxId) {
+	public boolean removeStockfromPortfolio(String omxId)
+			throws ParserConfigurationException {
 		if (!currentPortfolio.contains(omxId)) {
 			return false;
 		}
 		double value = currentPortfolio.remove(omxId);
-		currentPortfolio.setLiquidAsset(value * getLastValue(omxId) + currentPortfolio.getLiquidAsset());
+		currentPortfolio.setLiquidAsset(value * getLastValue(omxId, 3) + currentPortfolio.getLiquidAsset());
 		return true;
 	}
 	
-	public boolean removeStockfromPortfolioByName(String name) {
+	public boolean removeStockfromPortfolioByName(String name)
+			throws ParserConfigurationException {
 		String id = getIdOfStock(name);
 		if (id == null) {return false;}
 		return removeStockfromPortfolio(id);
@@ -277,13 +271,46 @@ public class Investments {
 		return result;
 	}
 	
-	public double getLastValue(String omxId) {
+	public Double[] getLastValue(int type)
+			throws ParserConfigurationException {
+		Double[] result = new Double[size()];
+		String[] ids = getStockIds();
+		for (int i=0; i<size(); i++) {
+			result[i] = getLastValue(ids[i], type);
+		}
+		return result;
+	}
+	
+	public Double getLastValue(String omxId, int type)
+			throws ParserConfigurationException {
 		for (Market m : markets.values()) {
 			if (m.contains(omxId)) {
-				return m.getStock(omxId).getHistory(1)[4][0];
+				return m.getStock(omxId).getLastValues()[type];
 			}
 		}
-		return 0;
+		return null;
+	}
+
+	public String[] getStockIds() {
+		return currentPortfolio.getStocksInPortfolio();
+	}
+	
+	public String[] getStockNames() {
+		String[] stocks = getStockIds();
+		String[] result = new String[stocks.length];
+		for (int i=0; i<stocks.length; i++) {
+			result[i] = getStock(stocks[i]).getFullName();
+		}
+		return result;
+	}
+	
+	public String[] getShortNames() {
+		String[] stocks = getStockIds();
+		String[] result = new String[stocks.length];
+		for (int i=0; i<stocks.length; i++) {
+			result[i] = getStock(stocks[i]).getShortName();
+		}
+		return result;
 	}
 	
 	public Integer[] getShareDistribution() {
@@ -322,42 +349,26 @@ public class Investments {
 		return currentPortfolio.getLiquidAsset();
 	}
 	
-	public void setPortfolioLiquid(double value) {
+	public void setLiquid(double value) {
 		currentPortfolio.setLiquidAsset(value);
 	}
 
-	public String[] getStockIds() {
-		return currentPortfolio.getStocksInPortfolio();
+	public double getLambda() {
+		return currentPortfolio.getLambda();
 	}
 	
-	public String[] getStockNames() {
-		String[] stocks = getStockIds();
-		String[] result = new String[stocks.length];
-		for (int i=0; i<stocks.length; i++) {
-			result[i] = getStock(stocks[i]).getFullName();
-		}
-		return result;
+	public void setLambda(double lambda) {
+		currentPortfolio.setLambda(lambda);
 	}
 	
-	public String[] getShortNames() {
-		String[] stocks = getStockIds();
-		String[] result = new String[stocks.length];
-		for (int i=0; i<stocks.length; i++) {
-			result[i] = getStock(stocks[i]).getShortName();
-		}
-		return result;
+	private Currency getCurrency(String omxId) {
+		Stock s = getStock(omxId);
+		if (s == null) { return null; }
+		return s.getCurrency();
 	}
-
-	public void save() {
-		try {
-			new ObjectOutputStream(new FileOutputStream(portfolioSaveFile)).writeObject(portfolios);
-			System.out.println("saved portfolio");
-			new ObjectOutputStream(new FileOutputStream(marketSaveFile)).writeObject(markets);
-			System.out.println("save successful");
-		} catch (Exception e) {
-			e.getStackTrace();
-			System.out.println("save failed");
-		}
+	
+	public int size() {
+		return currentPortfolio.size();
 	}
 	
 	public boolean containsByName(String fullName) {
@@ -367,14 +378,16 @@ public class Investments {
 		return false;
 	}
 	
-	public boolean buy(String name, Integer nbrOfStocks) {
+	public boolean buy(String name, Integer nbrOfStocks)
+			throws ParserConfigurationException {
 		String id = getIdOfStock(name);
-		return currentPortfolio.buy(id, nbrOfStocks, getLastValue(id));
+		return currentPortfolio.buy(id, nbrOfStocks, getLastValue(id, 2));
 	}
 	
-	public boolean sell(String name, Integer nbrOfStocks) {
+	public boolean sell(String name, Integer nbrOfStocks)
+			throws ParserConfigurationException {
 		String id = getIdOfStock(name);
-		return currentPortfolio.sell(id, nbrOfStocks, getLastValue(id));
+		return currentPortfolio.sell(id, nbrOfStocks, getLastValue(id, 3));
 	}
 
 	public String getPortfolioName() {
@@ -385,27 +398,23 @@ public class Investments {
 		currentPortfolio.setName(name);
 	}
 
-	public void setLiquidAsset(Double asset) {
-		currentPortfolio.setLiquidAsset(asset);
-	}
-	
-	public double getLambda() {
-		return currentPortfolio.getLambda();
-	}
-	
-	public void setLambda(double lambda) {
-		currentPortfolio.setLambda(lambda);
-	}
-	
 	public Currency getCurrency() {
 		return currentPortfolio.getCurrency();
 	}
 	
-	public int size() {
-		return currentPortfolio.size();
-	}
-
 	public int nbrOfMarkets() {
 		return markets.size();
+	}
+	
+	public void save() {
+		try {
+			new ObjectOutputStream(new FileOutputStream(portfolioSaveFile)).writeObject(portfolios);
+			System.out.println("saved portfolio");
+			new ObjectOutputStream(new FileOutputStream(marketSaveFile)).writeObject(markets);
+			System.out.println("save successful");
+		} catch (Exception e) {
+			e.getStackTrace();
+			System.out.println("save failed");
+		}
 	}
 }

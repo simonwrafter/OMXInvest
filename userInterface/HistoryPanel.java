@@ -1,5 +1,7 @@
 package userInterface;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import stock.Investments;
 import util.InvestDate;
 import util.InvestMatrix;
@@ -7,7 +9,7 @@ import util.InvestMatrix;
 public class HistoryPanel extends AbstractDataPanel {
 	private static final long serialVersionUID = -8300239271253271499L;
 	
-	public HistoryPanel(Investments invest) {
+	public HistoryPanel(Investments invest) throws ParserConfigurationException {
 		super(invest);
 	}
 	

@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import stock.Investments;
 import stock.Market;
 import stock.Stock;
@@ -11,7 +13,8 @@ import stock.Stock;
 public class MarketPanel extends AbstractDataPanel {
 	private static final long serialVersionUID = 871497467388558453L;
 
-	public MarketPanel(Investments invest) {
+	public MarketPanel(Investments invest)
+			throws ParserConfigurationException {
 		super(invest);
 	}
 	

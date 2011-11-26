@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.parsers.ParserConfigurationException;
 
 import stock.Investments;
 
@@ -16,7 +17,7 @@ public abstract class AbstractDataPanel extends JPanel {
 	protected Investments invest;
 	protected DefaultTableModel model;
 
-	public AbstractDataPanel(Investments invest) {
+	public AbstractDataPanel(Investments invest) throws ParserConfigurationException {
 		super(new BorderLayout());
 		this.invest = invest;
 		
@@ -32,5 +33,5 @@ public abstract class AbstractDataPanel extends JPanel {
 		this.add(new JScrollPane(table), BorderLayout.CENTER);
 	}
 
-	abstract public void updatePanel();
+	abstract public void updatePanel() throws ParserConfigurationException;
 }

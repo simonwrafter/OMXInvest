@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.xml.parsers.ParserConfigurationException;
 
 import stock.Investments;
 import stock.Portfolio;
@@ -76,7 +77,11 @@ public class MenuBar extends JMenuBar {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			view.actionHandler(action, text);
+			try {
+				view.actionHandler(action, text);
+			} catch (ParserConfigurationException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 

@@ -20,6 +20,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
+import javax.xml.parsers.ParserConfigurationException;
 
 import stock.Investments;
 
@@ -31,7 +32,8 @@ public class MainPanel extends JTabbedPane {
 	private OptimizationPanel optimal;
 	private MarketPanel market;
 	
-	public MainPanel(Investments invest, PortfolioView view) {
+	public MainPanel(Investments invest, PortfolioView view)
+			throws ParserConfigurationException {
 		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
 		this.invest = invest;
 		
@@ -58,7 +60,8 @@ public class MainPanel extends JTabbedPane {
 		table.setValueAt(invest.getLambda(), 1, 5);
 	}
 	
-	public void updateHomePanel() {
+	public void updateHomePanel()
+			throws ParserConfigurationException {
 		home.updatePanel();
 	}
 	

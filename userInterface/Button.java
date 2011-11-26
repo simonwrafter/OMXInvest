@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.xml.parsers.ParserConfigurationException;
 
 public class Button extends JButton implements ActionListener {
 	private static final long serialVersionUID = 6296920004478842871L;
@@ -36,6 +37,10 @@ public class Button extends JButton implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		view.actionHandler(action);
+		try {
+			view.actionHandler(action);
+		} catch (ParserConfigurationException e1) {
+			e1.printStackTrace();
+		}
 	}
 }
