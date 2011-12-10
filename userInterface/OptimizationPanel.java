@@ -28,7 +28,7 @@ public class OptimizationPanel extends AbstractDataPanel {
 	}
 	
 	@Override
-	public void updatePanel() {
+	public void updatePanel() throws ParserConfigurationException {
 		String[] stocks = invest.getShortNames();
 		int width = 6;
 		int height = Math.max(stocks.length, 5);
@@ -98,7 +98,11 @@ public class OptimizationPanel extends AbstractDataPanel {
 		@Override
 		public void stateChanged(ChangeEvent e) {
 			invest.setLambda(getValue() / 100.0);
-			panel.updatePersonalOptimization();
+			try {
+				panel.updatePersonalOptimization();
+			} catch (ParserConfigurationException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 }

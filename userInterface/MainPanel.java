@@ -28,6 +28,7 @@ public class MainPanel extends JTabbedPane {
 	private static final long serialVersionUID = 9193463064365388089L;
 	private Investments invest;
 	private HomePanel home;
+	private EventPanel events;
 	private HistoryPanel history;
 	private OptimizationPanel optimal;
 	private MarketPanel market;
@@ -38,17 +39,19 @@ public class MainPanel extends JTabbedPane {
 		this.invest = invest;
 		
 		home = new HomePanel(view, invest);
+		events = new EventPanel(invest);
 		history = new HistoryPanel(invest);
 		optimal = new OptimizationPanel(this, invest);
 		market = new MarketPanel(invest);
 		
 		addTab("Home", home);
+		addTab("Events", events);
 		addTab("History", history);
 		addTab("Optimal", optimal);
 		addTab("Market", market);
 	}
 	
-	public void updatePersonalOptimization() {
+	public void updatePersonalOptimization() throws ParserConfigurationException {
 		Double[] personal = optimal.getPersonal();
 		Double value = invest.getValueSum() + invest.getLiquid();
 		JTable table = (JTable) ((JViewport) ((JScrollPane) optimal.getComponent(0)).getComponent(0)).getComponent(0);
@@ -65,11 +68,16 @@ public class MainPanel extends JTabbedPane {
 		home.updatePanel();
 	}
 	
+	public void updateEventsPanel() {
+		events.updatePanel();
+	}
+	
 	public void updateHistoryPanel() {
 		history.updatePanel();
 	}
 	
-	public void updateOptimizationPanel() {
+	public void updateOptimizationPanel()
+			throws ParserConfigurationException {
 		optimal.updatePanel();
 	}
 	

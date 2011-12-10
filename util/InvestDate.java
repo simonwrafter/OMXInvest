@@ -28,6 +28,11 @@ public class InvestDate {
 		return dateNoDash(0);
 	}
 	
+	public static String currentTime() {
+		long epoch = System.currentTimeMillis();
+		return new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date(epoch));
+	}
+	
 	public static String date(int daysAgo) {
 		long epoch = System.currentTimeMillis() - (daysAgo * 86400000L);;
 		return new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date(epoch));

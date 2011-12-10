@@ -40,7 +40,7 @@ public class Stock implements Serializable {
 	private String ISIN;
 	private String market;
 	private Currency currency;
-	private Double[][] histValue; 
+	private Double[][] histValue;
 	/* 
 	 * vector	meaning		key	  hi.a
 	 * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -64,7 +64,7 @@ public class Stock implements Serializable {
 		this.ISIN = ISIN;
 		this.market = market;
 		this.currency = currency;
-		histValue = new Double[8][500];
+		this.histValue = new Double[8][500];
 	}
 
 	public String getOmxId() {

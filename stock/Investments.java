@@ -109,12 +109,12 @@ public class Investments {
 		return new TreeSet<Portfolio>(portfolios);
 	}
 	
-	public boolean addNewPortfolio(String name, Currency currency, double liquid) {
-		return portfolios.add(new Portfolio(name, currency, liquid));
+	public boolean addNewPortfolio(String name, Currency currency, double liquid) throws ParserConfigurationException {
+		return portfolios.add(new Portfolio(name, currency, liquid, this));
 	}
 	
-	public boolean removePortfolio(String name) {
-		Portfolio newP = new Portfolio(name, null);
+	public boolean removePortfolio(String name) throws ParserConfigurationException {
+		Portfolio newP = new Portfolio(name, null, this);
 		if (currentPortfolio.compareTo(newP) == 0) {
 			setCurrentPortfolio(portfolios.first());
 		}
@@ -149,6 +149,10 @@ public class Investments {
 			}
 		}
 		return setCurrentPortfolio(portfolios.first());
+	}
+	
+	public Object[][] getPortfolioEvents() {
+		return currentPortfolio.getEvents();
 	}
 	
 	public Stock getStock(String omxId) {
@@ -313,11 +317,21 @@ public class Investments {
 		return result;
 	}
 	
+	public String getShortName(String omxId) {
+		String[] stocks = getStockIds();
+		for (int i=0; i<stocks.length; i++) {
+			if (stocks[i].equals(omxId)) {
+				return getShortNames()[i];
+			}
+		}
+		return null;
+	}
+	
 	public Integer[] getShareDistribution() {
 		return currentPortfolio.getShareDistribution();
 	}
 	
-	public Double[] getValueDistribution() {
+	public Double[] getValueDistribution() throws ParserConfigurationException {
 		Double[] dist = getValueByShare();
 		double sum = getValueSum();
 		for (int i=0; i<currentPortfolio.size();i++) {
@@ -326,17 +340,17 @@ public class Investments {
 		return dist;
 	}
 	
-	public Double[] getValueByShare() {
-		Double[][] latest = getHistory(4, 1);
+	public Double[] getValueByShare() throws ParserConfigurationException {
+		Double[] latest = getLastValue(3);
 		Integer[] nbrOf = currentPortfolio.getShareDistribution();
 		Double result[] = new Double[currentPortfolio.size()];
 		for(int i=0; i<nbrOf.length; i++) {
-			result[i] = nbrOf[i] * latest[i+1][0];
+			result[i] = nbrOf[i] * latest[i];
 		}
 		return result;
 	}
 
-	public double getValueSum() {
+	public double getValueSum() throws ParserConfigurationException {
 		double result=0;
 		Double[] values = getValueByShare();
 		for(int i=0; i<values.length; i++) {
@@ -349,7 +363,7 @@ public class Investments {
 		return currentPortfolio.getLiquidAsset();
 	}
 	
-	public void setLiquid(double value) {
+	public void setLiquid(double value) throws ParserConfigurationException {
 		currentPortfolio.setLiquidAsset(value);
 	}
 
