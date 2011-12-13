@@ -51,6 +51,7 @@ public class MenuBar extends JMenuBar {
 		this.add(portfolioMenu);
 		
 		JMenu admin = new JMenu("Admin");
+		admin.add(new MainMenuItem(Actions.GET_LATEST, "Get Latest prices", "Fetch latest buy snd sell prices (15 minutes delay)"));
 		admin.add(new MainMenuItem(Actions.REBUILD_HISTORY, "Rebuild histories", "Refetch all histories of the internet"));
 		admin.add(new MainMenuItem(Actions.UPDATE_MARKETS, "Rebuild markets", "Refetch all markets of the internet"));
 		this.add(admin);

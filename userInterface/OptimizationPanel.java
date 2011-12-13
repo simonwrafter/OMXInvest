@@ -28,7 +28,8 @@ public class OptimizationPanel extends AbstractDataPanel {
 	}
 	
 	@Override
-	public void updatePanel() throws ParserConfigurationException {
+	public void updatePanel()
+			throws ParserConfigurationException {
 		String[] stocks = invest.getShortNames();
 		int width = 6;
 		int height = Math.max(stocks.length, 5);
@@ -41,6 +42,7 @@ public class OptimizationPanel extends AbstractDataPanel {
 		Double[][] histories;
 		histories = invest.getHistory(4);
 		Double[][] coV;
+		Double[] latest = invest.getLatestSell();
 		
 		if (invest.size() > 0) {
 			coV = CalcModels.covariance(histories);
@@ -51,7 +53,6 @@ public class OptimizationPanel extends AbstractDataPanel {
 			maxGrowth = new Double[0];
 		}
 		Double[] personal = getPersonal();
-
 		
 		for (Object[] o : data) {
 			Arrays.fill(o, "");
@@ -59,9 +60,9 @@ public class OptimizationPanel extends AbstractDataPanel {
 		
 		for (int i=0; i<stocks.length; i++) {
 			data[i][0] = stocks[i];
-			data[i][1] = new Integer((int) Math.round(minRisk[i] * (portfolioValue + portfolioLiquid) / histories[i+1][0]));
-			data[i][2] = new Integer((int) Math.round(personal[i] * (portfolioValue + portfolioLiquid) / histories[i+1][0]));
-			data[i][3] = new Integer((int) Math.round(maxGrowth[i] * (portfolioValue + portfolioLiquid) / histories[i+1][0]));
+			data[i][1] = new Integer((int) Math.round(minRisk[i] * (portfolioValue + portfolioLiquid) / latest[i]));
+			data[i][2] = new Integer((int) Math.round(personal[i] * (portfolioValue + portfolioLiquid) / latest[i]));
+			data[i][3] = new Integer((int) Math.round(maxGrowth[i] * (portfolioValue + portfolioLiquid) / latest[i]));
 			data[i][4] = "";
 			data[i][5] = "";
 		}
@@ -78,8 +79,8 @@ public class OptimizationPanel extends AbstractDataPanel {
 	}
 	
 	private class LambdaSlider extends JSlider implements ChangeListener {
-		private static final long serialVersionUID = 3962195519446513896L;
-		
+		private static final long serialVersionUID = -228995045879196099L;
+
 		private LambdaSlider() {
 			super(0,100);
 			setValue((int) Math.round(invest.getLambda()*100));

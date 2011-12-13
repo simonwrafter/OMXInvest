@@ -17,8 +17,8 @@
 package userInterface;
 
 public enum Actions {
-	ADD, REMOVE, BUY, SELL, LIQUID,		// home actions
-	NEW, DELETE, EDIT, SWITCH,			// portfolio menu actions 
-	UPDATE_MARKETS, REBUILD_HISTORY,	// admin menu actions
-	ABOUT, ICS_LICENSE, JAMA_C;			// more menu actions
+	ADD, REMOVE, BUY, SELL, LIQUID,					// home actions
+	NEW, DELETE, EDIT, SWITCH,						// portfolio menu actions 
+	GET_LATEST, UPDATE_MARKETS, REBUILD_HISTORY,	// admin menu actions
+	ABOUT, ICS_LICENSE, JAMA_C;						// more menu actions
 }

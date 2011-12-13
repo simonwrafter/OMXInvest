@@ -37,18 +37,43 @@ public class Portfolio implements Comparable<Portfolio>, Serializable {
 	private PortfolioEvents events;
 	private Investments invest;
 	
-	public Portfolio(String name, Currency currency, Investments invest) throws ParserConfigurationException {
+	private Double[] latestBuy;
+	private Double[] latestSell;
+	
+	public Portfolio(String name, Currency currency, Investments invest)
+			throws ParserConfigurationException {
 		this(name, currency, 0, invest);
 	}
 	
-	public Portfolio(String name, Currency currency, double liquid, Investments invest) throws ParserConfigurationException {
+	public Portfolio(String name, Currency currency, double liquid, Investments invest)
+			throws ParserConfigurationException {
 		this.name = name;
 		this.currency = currency;
 		this.stockmap = new TreeMap<String, Integer>();
 		this.invest = invest;
 		this.liquidAsset = liquid;
 		this.events = new PortfolioEvents();
+		this.latestBuy = null;
+		this.latestSell = null;
 		setLambda(0.3);
+	}
+	
+	public void updateLatestBuy()
+			throws ParserConfigurationException {
+		latestBuy = invest.getLastValue(2);
+	}
+	
+	public void updateLatestSell()
+			throws ParserConfigurationException {
+		latestSell = invest.getLastValue(3);
+	}
+	
+	public Double[] getLatestBuy() {
+		return latestBuy;
+	}
+	
+	public Double[] getLatestSell() {
+		return latestSell;
 	}
 	
 	public String getName() {
@@ -67,7 +92,8 @@ public class Portfolio implements Comparable<Portfolio>, Serializable {
 		return liquidAsset;
 	}
 	
-	public void setLiquidAsset(double liquidAsset) throws ParserConfigurationException {
+	public void setLiquidAsset(double liquidAsset)
+			throws ParserConfigurationException {
 		double old = this.liquidAsset;
 		this.liquidAsset = liquidAsset;
 		events.addEvent("set liquid asset", old-liquidAsset, liquidAsset);
@@ -85,44 +111,52 @@ public class Portfolio implements Comparable<Portfolio>, Serializable {
 		return stockmap.containsKey(omxId);
 	}
 	
-	public boolean add(String omxId) throws ParserConfigurationException {
+	public boolean add(String omxId)
+			throws ParserConfigurationException {
 		if (stockmap.containsKey(omxId)) {
 			return false;
 		}
 		stockmap.put(omxId, 0);
 		events.addEvent("Stock added to portfolio", omxId, invest.getShortName(omxId));
+		updateLatestBuy();
+		updateLatestSell();
 		return true;
 	}
 	
 	public double remove(String omxId) throws ParserConfigurationException {
 		if (stockmap.containsKey(omxId)) {
 			events.addEvent("Stock removed from portfolio", omxId, invest.getShortName(omxId));
+			updateLatestBuy();
+			updateLatestSell();
 			return stockmap.remove(omxId);
 		}
 		return 0;
 	}
 	
-	public boolean buy(String omxId, int nbrOfStocks, double price) throws ParserConfigurationException {
+	public boolean buy(String omxId, int nbrOfStocks, double price)
+			throws ParserConfigurationException {
 		if (stockmap.containsKey(omxId) && nbrOfStocks>0) {
 			stockmap.put(omxId, stockmap.get(omxId) + nbrOfStocks);
 			liquidAsset -= nbrOfStocks * price;
-			events.addEvent("shares bought", -1 * nbrOfStocks, nbrOfStocks * price);
+			events.addEvent("shares bought", nbrOfStocks, nbrOfStocks * price);
 			return true;
 		}
 		return false;
 	}
 	
-	public boolean sell(String omxId, int nbrOfStocks, double price) throws ParserConfigurationException {
+	public boolean sell(String omxId, int nbrOfStocks, double price)
+			throws ParserConfigurationException {
 		if (stockmap.containsKey(omxId) && nbrOfStocks>0) {
 			stockmap.put(omxId, stockmap.get(omxId) - nbrOfStocks);
 			liquidAsset += nbrOfStocks * price;
-			events.addEvent("shares sold", nbrOfStocks, nbrOfStocks * price);
+			events.addEvent("shares sold", -1 * nbrOfStocks, nbrOfStocks * price);
 			return true;
 		}
 		return false;
 	}
 	
-	public int setOwn(String omxId, int nbrOfStocks, double price) throws ParserConfigurationException {
+	public int setOwn(String omxId, int nbrOfStocks, double price)
+			throws ParserConfigurationException {
 		if (stockmap.containsKey(omxId)) {
 			int old = stockmap.get(omxId);
 			int change = nbrOfStocks - old;
@@ -161,6 +195,10 @@ public class Portfolio implements Comparable<Portfolio>, Serializable {
 	public Object[][] getEvents() {
 		return events.events;
 	}
+	
+	public int nbrOfEvents() {
+		return events.size;
+	}
 
 	@Override
 	public int compareTo(Portfolio o) {
@@ -172,7 +210,8 @@ public class Portfolio implements Comparable<Portfolio>, Serializable {
 		return name;
 	}
 	
-	private class PortfolioEvents {
+	private class PortfolioEvents implements Serializable{
+		private static final long serialVersionUID = 4801644126557869302L;
 		private Object[][] events;
 		int size;
 		/* 
@@ -189,7 +228,8 @@ public class Portfolio implements Comparable<Portfolio>, Serializable {
 		 * }
 		 */
 		
-		private PortfolioEvents() throws ParserConfigurationException {
+		private PortfolioEvents()
+				throws ParserConfigurationException {
 			this.events = new Object[10][7];
 			this.size = 1;
 			events[0] = new Object[] {InvestDate.today(), InvestDate.currentTime(), 
@@ -197,13 +237,14 @@ public class Portfolio implements Comparable<Portfolio>, Serializable {
 					liquidAsset, 0};
 		}
 		
-		private void addEvent(String message, Object change, Object changeValue) throws ParserConfigurationException {
-			if (size == events.length) {
-				Arrays.copyOf(events, size*2);
-			}
+		private void addEvent(String message, Object change, Object changeValue)
+				throws ParserConfigurationException {
 			events[size++] = new Object[] {InvestDate.today(), InvestDate.currentTime(),
 					message, change, changeValue,
 					getLiquidAsset(), invest.getValueSum()};
+			if (size >= events.length) {
+				Arrays.copyOf(events, size*2);
+			}
 		}
 	}
 }

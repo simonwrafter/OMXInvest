@@ -83,6 +83,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 					mainPanel.updateHomePanel();
 					mainPanel.updateHistoryPanel();
 					mainPanel.updateOptimizationPanel();
+					mainPanel.updateEventsPanel();
 				} catch (Exception e) {
 					PopUpQuestion.errorPopUp("Adding " + omxId_add + " to portfolio failed!");
 				}
@@ -95,6 +96,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 					mainPanel.updateHomePanel();
 					mainPanel.updateHistoryPanel();
 					mainPanel.updateOptimizationPanel();
+					mainPanel.updateEventsPanel();
 				}
 			}
 			break;
@@ -105,6 +107,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 				if (nbrToBuy != null) {
 					if (investments.buy(omxName_buy, nbrToBuy)) {
 						mainPanel.updateHomePanel();
+						mainPanel.updateEventsPanel();
 					}
 				}
 			}
@@ -116,6 +119,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 				if (nbrToSell != null) {
 					if (investments.sell(omxName_sell, nbrToSell)) {
 						mainPanel.updateHomePanel();
+						mainPanel.updateEventsPanel();
 					}
 				}
 			}
@@ -126,6 +130,7 @@ public class PortfolioView extends JFrame implements WindowListener {
 				investments.setLiquid(asset);
 				mainPanel.updateHomePanel();
 				mainPanel.updateOptimizationPanel();
+				mainPanel.updateEventsPanel();
 			}
 			break;
 		case NEW:
@@ -170,7 +175,13 @@ public class PortfolioView extends JFrame implements WindowListener {
 			mainPanel.updateHomePanel();
 			mainPanel.updateHistoryPanel();
 			mainPanel.updateOptimizationPanel();
+			mainPanel.updateEventsPanel();
 			break;
+		case GET_LATEST:
+			investments.updateLatestBuy();
+			investments.updateLatestSell();
+			mainPanel.updateHomePanel();
+			mainPanel.updateOptimizationPanel();
 		case REBUILD_HISTORY:
 			try {
 				investments.rebuildHistory();

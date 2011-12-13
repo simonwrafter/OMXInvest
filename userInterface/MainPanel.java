@@ -51,13 +51,14 @@ public class MainPanel extends JTabbedPane {
 		addTab("Market", market);
 	}
 	
-	public void updatePersonalOptimization() throws ParserConfigurationException {
+	public void updatePersonalOptimization()
+			throws ParserConfigurationException {
 		Double[] personal = optimal.getPersonal();
 		Double value = invest.getValueSum() + invest.getLiquid();
 		JTable table = (JTable) ((JViewport) ((JScrollPane) optimal.getComponent(0)).getComponent(0)).getComponent(0);
-		Double[][] histories = invest.getHistory(4, 1);
+		Double[] histories = invest.getLatestSell();
 		for (int i=0; i<personal.length; i++) {
-			table.setValueAt(new Integer((int) Math.round(personal[i] * value / histories[i+1][0])), i, 2);
+			table.setValueAt(new Integer((int) Math.round(personal[i] * value / histories[i])), i, 2);
 		}
 		((JTable) ((JViewport) ((JScrollPane) home.getComponent(0)).getComponent(0)).getComponent(0)).setValueAt(invest.getLambda(), 3, 6);
 		table.setValueAt(invest.getLambda(), 1, 5);

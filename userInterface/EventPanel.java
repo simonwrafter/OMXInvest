@@ -1,5 +1,7 @@
 package userInterface;
 
+import java.util.Arrays;
+
 import javax.xml.parsers.ParserConfigurationException;
 
 import stock.Investments;
@@ -14,7 +16,7 @@ public class EventPanel extends AbstractDataPanel {
 	@Override
 	public void updatePanel() {
 		Object[] header = new Object[] {"Date", "Time", "Mesage", "Change", "Value of Change", "Liquid", "Invested Value"};
-		Object[][] data = invest.getPortfolioEvents();
+		Object[][] data = Arrays.copyOf(invest.getPortfolioEvents(), invest.nbrOfEvents());
 		
 		model.setDataVector(data, header);
 		updateUI();

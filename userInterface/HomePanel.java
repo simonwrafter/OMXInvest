@@ -13,7 +13,8 @@ public class HomePanel extends AbstractDataPanel {
 	private static final long serialVersionUID = -2461367753369663611L;
 	private PortfolioView view;
 	
-	public HomePanel(PortfolioView view, Investments invest) throws ParserConfigurationException {
+	public HomePanel(PortfolioView view, Investments invest)
+			throws ParserConfigurationException {
 		super(invest);
 		this.view = view;
 		this.add(new HomeCommandPanel(), BorderLayout.SOUTH);
@@ -27,8 +28,8 @@ public class HomePanel extends AbstractDataPanel {
 		String[] stocks = invest.getStockNames();
 		String[] shortName = invest.getShortNames();
 		Integer[] nbrOf = invest.getShareDistribution();
-		Double[] buy = invest.getLastValue(2);
-		Double[] sell = invest.getLastValue(3);
+		Double[] buy = invest.getLatestBuy();
+		Double[] sell = invest.getLatestSell();
 		
 		int size = Math.max(invest.size(), 6);
 		Object[][] data = new Object[size][8];
