@@ -35,9 +35,12 @@ import org.xml.sax.SAXException;
 
 public class Investments implements Serializable {
 	private static final long serialVersionUID = 7195967105523187053L;
-	private final String base = System.getenv("HOME");
-	private final String portfolioSaveFile = base + "/portfolios.omx";
-	private final String marketSaveFile = base + "/markets.omx";
+	
+	private final String base = System.getProperty("user.home") + System.getProperty("file.separator");
+	private final String portfolioSaveFile = base + "portfolios.omx";
+	private final String marketSaveFile = base + "markets.omx";
+	
+	
 	private SortedSet<Portfolio> portfolios;
 	private SortedMap<String, Market> markets;
 	private Portfolio currentPortfolio;
