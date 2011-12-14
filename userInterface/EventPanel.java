@@ -18,6 +18,10 @@ public class EventPanel extends AbstractDataPanel {
 		Object[] header = new Object[] {"Date", "Time", "Mesage", "Change", "Value of Change", "Liquid", "Invested Value"};
 		Object[][] data = Arrays.copyOf(invest.getPortfolioEvents(), invest.nbrOfEvents());
 		
+		for (int i=0; i < data.length; i++) {
+			
+		}
+		
 		model.setDataVector(data, header);
 		updateUI();
 	}

@@ -63,7 +63,6 @@ public class PortfolioView extends JFrame implements WindowListener {
 		this.pack();
 		this.setLocationRelativeTo(this.getOwner());
 		this.setVisible(true);
-		System.out.println("Done!");
 	}
 
 	public void actionHandler(Actions actions)

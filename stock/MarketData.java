@@ -77,9 +77,7 @@ public class MarketData {
 	}
 	
 	public static final String buildHistoryURL(String omxID, int days) {
-		String s = buildHistoryURL(omxID, InvestDate.date(days));
-		System.out.println(s);
-		return s;
+		return buildHistoryURL(omxID, InvestDate.date(days));
 	}
 	
 	public static final String buildHistoryURL(String omxID, String date) {
@@ -87,9 +85,7 @@ public class MarketData {
 	}
 	
 	public static final String buildLatestURL(String omxId) {
-		String s = proxyURL + latestQuestion + omxId + latestValues;
-		System.out.println(s);
-		return s;
+		return proxyURL + latestQuestion + omxId + latestValues;
 	}
 	
 	public static final int[] marketIndex(String market, String cap) {

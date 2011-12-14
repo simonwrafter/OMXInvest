@@ -18,8 +18,8 @@ package stock;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.SortedMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -68,8 +68,28 @@ public class Portfolio implements Comparable<Portfolio>, Serializable {
 		latestSell = invest.getLastValue(3);
 	}
 	
+	public Double getLatestBuy(String omxId) {
+		String[] ids = getStocksInPortfolio();
+		for (int i=0; i < ids.length ; i++) {
+			if (ids[i].equals(omxId)) {
+				return getLatestBuy()[i];
+			}
+		}
+		return null;
+	}
+	
 	public Double[] getLatestBuy() {
 		return latestBuy;
+	}
+	
+	public Double getLatestSell(String omxId) {
+		String[] ids = getStocksInPortfolio();
+		for (int i=0; i < ids.length ; i++) {
+			if (ids[i].equals(omxId)) {
+				return getLatestSell()[i];
+			}
+		}
+		return null;
 	}
 	
 	public Double[] getLatestSell() {
@@ -117,13 +137,14 @@ public class Portfolio implements Comparable<Portfolio>, Serializable {
 			return false;
 		}
 		stockmap.put(omxId, 0);
-		events.addEvent("Stock added to portfolio", omxId, invest.getShortName(omxId));
 		updateLatestBuy();
 		updateLatestSell();
+		events.addEvent("Stock added to portfolio", omxId, invest.getShortName(omxId));
 		return true;
 	}
 	
-	public double remove(String omxId) throws ParserConfigurationException {
+	public double remove(String omxId)
+			throws ParserConfigurationException {
 		if (stockmap.containsKey(omxId)) {
 			events.addEvent("Stock removed from portfolio", omxId, invest.getShortName(omxId));
 			updateLatestBuy();
@@ -184,11 +205,11 @@ public class Portfolio implements Comparable<Portfolio>, Serializable {
 	}
 	
 	public Integer[] getShareDistribution() {
-		Set<Map.Entry<String, Integer>> ent = stockmap.entrySet();
-		Integer[] result = new Integer[ent.size()];
+		Collection<Integer> vals = stockmap.values();
+		Integer[] result = new Integer[vals.size()];
 		int i = 0;
-		for (Map.Entry<String, Integer> me : ent)
-			result[i++] = me.getValue();
+		for (Integer val : vals)
+			result[i++] = val;
 		return result;
 	}
 	
@@ -233,18 +254,21 @@ public class Portfolio implements Comparable<Portfolio>, Serializable {
 			this.events = new Object[10][7];
 			this.size = 1;
 			events[0] = new Object[] {InvestDate.today(), InvestDate.currentTime(), 
-					"initiate portfolio", liquidAsset, liquidAsset,
-					liquidAsset, 0};
+					"initiate portfolio", String.format("%.02f", liquidAsset), String.format("%.02f", liquidAsset),
+					String.format("%.02f", liquidAsset), "0.00"};
 		}
 		
 		private void addEvent(String message, Object change, Object changeValue)
 				throws ParserConfigurationException {
-			events[size++] = new Object[] {InvestDate.today(), InvestDate.currentTime(),
-					message, change, changeValue,
-					getLiquidAsset(), invest.getValueSum()};
 			if (size >= events.length) {
-				Arrays.copyOf(events, size*2);
+				events = Arrays.copyOf(events, events.length*2);
 			}
+			events[size++] = new Object[] {InvestDate.today(), InvestDate.currentTime(),
+					message,
+					change instanceof Double ? String.format("%.02f", change) : change,
+					changeValue instanceof Double ? String.format("%.02f", changeValue) : changeValue,
+					String.format("%.02f", getLiquidAsset()),
+					String.format("%.02f", invest.getValueSum())};
 		}
 	}
 }

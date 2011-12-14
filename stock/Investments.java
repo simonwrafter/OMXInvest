@@ -197,7 +197,8 @@ public class Investments implements Serializable {
 			throws ParserConfigurationException {
 		if (currentPortfolio.contains(omxId)) {
 			double value = currentPortfolio.remove(omxId);
-			currentPortfolio.setLiquidAsset(value * getLastValue(omxId, 3) + currentPortfolio.getLiquidAsset());
+			if (value != 0)
+				currentPortfolio.setLiquidAsset(value * getLastValue(omxId, 3) + currentPortfolio.getLiquidAsset());
 			return true;
 		}
 		return false;
@@ -405,13 +406,17 @@ public class Investments implements Serializable {
 	public boolean buy(String name, Integer nbrOfStocks)
 			throws ParserConfigurationException {
 		String id = getIdOfStock(name);
-		return currentPortfolio.buy(id, nbrOfStocks, getLastValue(id, 2));
+		updateLatestBuy();
+		updateLatestSell();
+		return currentPortfolio.buy(id, nbrOfStocks, getLatestBuy(id));
 	}
 	
 	public boolean sell(String name, Integer nbrOfStocks)
 			throws ParserConfigurationException {
 		String id = getIdOfStock(name);
-		return currentPortfolio.sell(id, nbrOfStocks, getLastValue(id, 3));
+		updateLatestBuy();
+		updateLatestSell();
+		return currentPortfolio.sell(id, nbrOfStocks, getLatestSell(id));
 	}
 
 	public String getPortfolioName() {
@@ -442,6 +447,14 @@ public class Investments implements Serializable {
 	
 	public Double[] getLatestSell() {
 		return currentPortfolio.getLatestSell();
+	}
+	
+	public Double getLatestBuy(String omxId) {
+		return currentPortfolio.getLatestBuy(omxId);
+	}
+	
+	public Double getLatestSell(String omxId) {
+		return currentPortfolio.getLatestSell(omxId);
 	}
 	
 	public int nbrOfMarkets() {
