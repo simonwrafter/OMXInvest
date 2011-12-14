@@ -91,6 +91,8 @@ public class Investments implements Serializable {
 				}
 			}
 			currentPortfolio = portfolios.first();
+			updateLatestBuy();
+			updateLatestSell();
 		} catch (Exception e) {
 			label.setText("Building a firstrun portfolio");
 			buildDefaultPortfolio();

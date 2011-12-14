@@ -77,6 +77,10 @@ public class PopUpQuestion extends JOptionPane {
 		return dropDownOptions(question, array, 0);
 	}
 	
+	public static boolean yesNoQuestion(String question) {
+		return showConfirmDialog(null, question, "OMXInvest", YES_NO_OPTION, QUESTION_MESSAGE) == YES_OPTION;
+	}
+	
 	public static void infoPopUp(String s) {
 		showMessageDialog(null, s, "OMXInvest", INFORMATION_MESSAGE);
 	}

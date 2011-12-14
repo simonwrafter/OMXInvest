@@ -49,14 +49,16 @@ public class PortfolioView extends JFrame implements WindowListener {
 		this.setVisible(true);
 
 		investments = new Investments(label);
-
+		
+		label.setText("Building UI");
+		
+		mainPanel = new MainPanel(investments, this);
+		mainMenuBar = new MenuBar(this, investments);
+		
 		this.setVisible(false);
 		this.remove(label);
-
-		mainPanel = new MainPanel(investments, this);
+		
 		this.add(mainPanel, BorderLayout.CENTER);
-
-		mainMenuBar = new MenuBar(this, investments);
 		this.setJMenuBar(mainMenuBar);
 
 		this.addWindowListener(this);
@@ -78,47 +80,55 @@ public class PortfolioView extends JFrame implements WindowListener {
 			if (omxId_add != null) {
 				omxId_add = omxId_add.toUpperCase();
 				try {
-					investments.addStockToPortfolio(omxId_add);
-					mainPanel.updateHomePanel();
-					mainPanel.updateHistoryPanel();
-					mainPanel.updateOptimizationPanel();
-					mainPanel.updateEventsPanel();
+					if (PopUpQuestion.yesNoQuestion("add " + investments.getStock(omxId_add).getFullName() + " to Portfolio?")) {
+						investments.addStockToPortfolio(omxId_add);
+						mainPanel.updateHomePanel();
+						mainPanel.updateHistoryPanel();
+						mainPanel.updateOptimizationPanel();
+						mainPanel.updateEventsPanel();
+					}
 				} catch (Exception e) {
 					PopUpQuestion.errorPopUp("Adding " + omxId_add + " to portfolio failed!");
 				}
 			}
 			break;
 		case REMOVE:
-			String omxName_remove = (String) PopUpQuestion.dropDownOptions("Choose stock to remove from portfolio:", investments.getStockNames(), 0);
-			if (omxName_remove != null) {
-				if (investments.removeStockfromPortfolioByName(omxName_remove)) {
-					mainPanel.updateHomePanel();
-					mainPanel.updateHistoryPanel();
-					mainPanel.updateOptimizationPanel();
-					mainPanel.updateEventsPanel();
-				}
-			}
-			break;
-		case BUY:
-			String omxName_buy = (String) PopUpQuestion.dropDownOptions("Stock to buy shares in:", investments.getStockNames(), 0);
-			if (omxName_buy != null) {
-				Integer nbrToBuy = PopUpQuestion.getInteger("How many shares do you wish to buy?");
-				if (nbrToBuy != null) {
-					if (investments.buy(omxName_buy, nbrToBuy)) {
+			if (investments.size() != 0) {
+				String omxName_remove = (String) PopUpQuestion.dropDownOptions("Choose stock to remove from portfolio:", investments.getStockNames(), 0);
+				if (omxName_remove != null) {
+					if (investments.removeStockfromPortfolioByName(omxName_remove)) {
 						mainPanel.updateHomePanel();
+						mainPanel.updateHistoryPanel();
+						mainPanel.updateOptimizationPanel();
 						mainPanel.updateEventsPanel();
 					}
 				}
 			}
 			break;
+		case BUY:
+			if (investments.size() != 0) {
+				String omxName_buy = (String) PopUpQuestion.dropDownOptions("Stock to buy shares in:", investments.getStockNames(), 0);
+				if (omxName_buy != null) {
+					Integer nbrToBuy = PopUpQuestion.getInteger("How many shares do you wish to buy?");
+					if (nbrToBuy != null) {
+						if (investments.buy(omxName_buy, nbrToBuy)) {
+							mainPanel.updateHomePanel();
+							mainPanel.updateEventsPanel();
+						}
+					}
+				}
+			}
+			break;
 		case SELL:
-			String omxName_sell = (String) PopUpQuestion.dropDownOptions("Stock to sell shares in:", investments.getStockNames(), 0);
-			if (omxName_sell != null) {
-				Integer nbrToSell = PopUpQuestion.getInteger("How many shares you wish to sell:");
-				if (nbrToSell != null) {
-					if (investments.sell(omxName_sell, nbrToSell)) {
-						mainPanel.updateHomePanel();
-						mainPanel.updateEventsPanel();
+			if (investments.size() != 0) {
+				String omxName_sell = (String) PopUpQuestion.dropDownOptions("Stock to sell shares in:", investments.getStockNames(), 0);
+				if (omxName_sell != null) {
+					Integer nbrToSell = PopUpQuestion.getInteger("How many shares you wish to sell:");
+					if (nbrToSell != null) {
+						if (investments.sell(omxName_sell, nbrToSell)) {
+							mainPanel.updateHomePanel();
+							mainPanel.updateEventsPanel();
+						}
 					}
 				}
 			}

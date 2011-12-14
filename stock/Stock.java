@@ -121,12 +121,44 @@ public class Stock implements Serializable {
 		}
 		Element e = (Element) doc.getElementsByTagName("inst").item(0);
 		
-		result[0] = Double.parseDouble(e.getAttribute("ch")); //change
-		result[1] = Double.parseDouble(e.getAttribute("chp")); //change percent
-		result[2] = Double.parseDouble(e.getAttribute("bp")); //buy price
-		result[3] = Double.parseDouble(e.getAttribute("ap")); //sell price
-		result[4] = Double.parseDouble(e.getAttribute("hp")); //high
-		result[5] = Double.parseDouble(e.getAttribute("lp")); //low
+		String ch = e.getAttribute("ch"); //change
+		String chp = e.getAttribute("chp"); //change percent
+		String bp = e.getAttribute("bp"); //buy price
+		String ap = e.getAttribute("ap"); //sell price
+		String hp = e.getAttribute("hp"); //high
+		String lp = e.getAttribute("lp"); //low
+		
+		if (ch.isEmpty()) {
+			result[0] = 0.0;
+		} else {
+			result[0] = Double.parseDouble(ch);
+		}
+		if (chp.isEmpty()) {
+			result[1] = 0.0;
+		} else {
+			result[1] = Double.parseDouble(chp);
+		}
+		if (bp.isEmpty()) {
+			result[2] = histValue[4][0];
+		} else {
+			result[2] = Double.parseDouble(bp);
+		}
+		if (ap.isEmpty()) {
+			result[3] = histValue[4][0];
+		} else {
+			result[3] = Double.parseDouble(bp);
+		}
+		if (hp.isEmpty()) {
+			result[4] = 0.0;
+		} else {
+			result[4] = Double.parseDouble(hp);
+		}
+		if (lp.isEmpty()) {
+			result[5] = 0.0;
+		} else {
+			result[5] = Double.parseDouble(lp);
+		}
+
 		return result;
 	}
 	

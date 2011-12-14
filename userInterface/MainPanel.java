@@ -60,7 +60,7 @@ public class MainPanel extends JTabbedPane {
 		for (int i=0; i<personal.length; i++) {
 			table.setValueAt(new Integer((int) Math.round(personal[i] * value / latest[i])), i, 2);
 		}
-		((JTable) ((JViewport) ((JScrollPane) home.getComponent(0)).getComponent(0)).getComponent(0)).setValueAt(invest.getLambda(), 3, 6);
+		((JTable) ((JViewport) ((JScrollPane) home.getComponent(0)).getComponent(0)).getComponent(0)).setValueAt(invest.getLambda(), 3, 7);
 		table.setValueAt(invest.getLambda(), 1, 5);
 	}
 	

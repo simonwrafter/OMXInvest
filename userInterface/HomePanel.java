@@ -31,13 +31,14 @@ public class HomePanel extends AbstractDataPanel {
 		Double[] buy = invest.getLatestBuy();
 		Double[] sell = invest.getLatestSell();
 		
-		int size = Math.max(invest.size(), 6);
+		int size = Math.max(invest.size()+1, 6);
 		Object[][] data = new Object[size][8];
 		
 		for (Object[] o : data)
 			Arrays.fill(o, "");
 		
-		for (int i=0; i<stocks.length; i++) {
+		int i=0;
+		for (i=0; i<stocks.length; i++) {
 			data[i][0] = omxIds[i];
 			data[i][1] = stocks[i];
 			data[i][2] = shortName[i];
@@ -54,6 +55,7 @@ public class HomePanel extends AbstractDataPanel {
 		data[3][7] = String.format("%.02f", invest.getLambda());
 		data[4][7] = "liquid";
 		data[5][7] = String.format("%.02f", invest.getLiquid());
+		data[i][6] = String.format("%.02f", invest.getValueSum());
 		
 		model.setDataVector(data, header);
 		updateUI();
